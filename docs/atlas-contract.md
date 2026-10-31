@@ -89,6 +89,30 @@ The game plays these by name. Each must exist in every theme.
 | `button.left.idle`, `button.left.pressed` | yes |
 | `button.right.idle`, `button.right.pressed` | yes |
 
+### Title and sound controls (anchor: top left)
+
+These required `ui.*` animations replace PR #4's placeholder buttons. Each state
+contains one frame named `<animation>.0`, with `duration: 1000` and `loop: true`.
+The duration is a static hold; input chooses the state, not an animation timer.
+All frames have anchor **(0,0)**. Draw at native size without scaling or padding.
+
+| Animation prefix | Required states | Frame size | Screen position / tap target |
+|---|---|---|---|
+| `ui.title_theme` | `idle`, `pressed` | 56×16 | (100,190), `titleTheme` |
+| `ui.title_sound` | `idle`, `pressed`, `muted`, `muted_pressed` | 56×16 | (164,190), `titleMute` |
+| `ui.hud_sound` | `idle`, `pressed`, `muted`, `muted_pressed` | 36×16 | (142,4), `hudMute` |
+
+Combine prefix and state with a dot: for example `ui.hud_sound.muted` references
+`ui.hud_sound.muted.0`. `pressed` means sound on + pointer down;
+`muted_pressed` means sound off + pointer down. Both muted frames retain a crossed
+speaker. The HUD label reads SND when on and MUTE when off. Title labels remain
+THEME and SOUND. Keyboard shortcut hints can be drawn separately by the renderer.
+
+Geometry is copied exactly from PR #4 `src/config/layout.ts` at `3621b0d`.
+These are additional names within contract v1; all previously required names,
+sizes, anchors and animation sequences remain unchanged. Art supplies the
+states; renderer/input integration remains with Forge.
+
 ## Required single frames
 
 - `background`: the full 320×240 scene without sprites, craters, plate or HUD text. The 32 px gutters on both sides are part of it.

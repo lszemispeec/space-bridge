@@ -66,6 +66,16 @@ export const REQUIRED_ANIMATIONS = [
   'button.right.pressed',
   'hud.icon.score',
   'hud.icon.life',
+  'ui.title_theme.idle',
+  'ui.title_theme.pressed',
+  'ui.title_sound.idle',
+  'ui.title_sound.pressed',
+  'ui.title_sound.muted',
+  'ui.title_sound.muted_pressed',
+  'ui.hud_sound.idle',
+  'ui.hud_sound.pressed',
+  'ui.hud_sound.muted',
+  'ui.hud_sound.muted_pressed',
 ] as const;
 
 /** Single frames the game draws by name. */

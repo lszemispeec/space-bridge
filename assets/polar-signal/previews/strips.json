@@ -1,0 +1,335 @@
+[
+  {
+    "animation": "cosmonaut.emerge",
+    "file": "cosmonaut.emerge-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.crouch",
+    "file": "cosmonaut.crouch-strip.png",
+    "loop": true,
+    "durations": [
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.takeoff",
+    "file": "cosmonaut.takeoff-strip.png",
+    "loop": false,
+    "durations": [
+      60
+    ]
+  },
+  {
+    "animation": "cosmonaut.rise",
+    "file": "cosmonaut.rise-strip.png",
+    "loop": true,
+    "durations": [
+      100
+    ]
+  },
+  {
+    "animation": "cosmonaut.apex",
+    "file": "cosmonaut.apex-strip.png",
+    "loop": true,
+    "durations": [
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.descend",
+    "file": "cosmonaut.descend-strip.png",
+    "loop": true,
+    "durations": [
+      100
+    ]
+  },
+  {
+    "animation": "cosmonaut.land",
+    "file": "cosmonaut.land-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.crater_fall",
+    "file": "cosmonaut.crater_fall-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      100,
+      140
+    ]
+  },
+  {
+    "animation": "cosmonaut.board",
+    "file": "cosmonaut.board-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      100
+    ]
+  },
+  {
+    "animation": "cosmonaut.idle",
+    "file": "cosmonaut.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "plate.idle",
+    "file": "plate.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "plate.move",
+    "file": "plate.move-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      1000
+    ]
+  },
+  {
+    "animation": "plate.move_right",
+    "file": "plate.move_right-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      1000
+    ]
+  },
+  {
+    "animation": "plate.dip",
+    "file": "plate.dip-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80,
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.door_closed",
+    "file": "rocket.door_closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.door_open",
+    "file": "rocket.door_open-strip.png",
+    "loop": false,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.idle",
+    "file": "rover.idle-strip.png",
+    "loop": true,
+    "durations": [
+      420,
+      420
+    ]
+  },
+  {
+    "animation": "rover.door_open",
+    "file": "rover.door_open-strip.png",
+    "loop": false,
+    "durations": [
+      420,
+      420
+    ]
+  },
+  {
+    "animation": "ambient.sky",
+    "file": "ambient.sky-strip.png",
+    "loop": true,
+    "durations": [
+      500,
+      500,
+      500,
+      500
+    ]
+  },
+  {
+    "animation": "ambient.drift",
+    "file": "ambient.drift-strip.png",
+    "loop": true,
+    "durations": [
+      120,
+      120,
+      240,
+      2520
+    ]
+  },
+  {
+    "animation": "ambient.signal",
+    "file": "ambient.signal-strip.png",
+    "loop": true,
+    "durations": [
+      250,
+      250,
+      250,
+      250
+    ]
+  },
+  {
+    "animation": "crater.idle",
+    "file": "crater.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "hud.icon.score",
+    "file": "hud.icon.score-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "hud.icon.life",
+    "file": "hud.icon.life-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "hud.icon.life_empty",
+    "file": "hud.icon.life_empty-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.left.idle",
+    "file": "button.left.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.left.pressed",
+    "file": "button.left.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.right.idle",
+    "file": "button.right.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.right.pressed",
+    "file": "button.right.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_theme.idle",
+    "file": "ui.title_theme.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_theme.pressed",
+    "file": "ui.title_theme.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.idle",
+    "file": "ui.title_sound.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.pressed",
+    "file": "ui.title_sound.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.muted",
+    "file": "ui.title_sound.muted-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.muted_pressed",
+    "file": "ui.title_sound.muted_pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.idle",
+    "file": "ui.hud_sound.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.pressed",
+    "file": "ui.hud_sound.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.muted",
+    "file": "ui.hud_sound.muted-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.muted_pressed",
+    "file": "ui.hud_sound.muted_pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  }
+]

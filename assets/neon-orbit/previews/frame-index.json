@@ -1,0 +1,499 @@
+[
+  {
+    "name": "background",
+    "x": 2,
+    "y": 2,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "cosmonaut.emerge.0",
+    "x": 326,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.emerge.1",
+    "x": 350,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.emerge.2",
+    "x": 374,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crouch.0",
+    "x": 398,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.takeoff.0",
+    "x": 422,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.rise.0",
+    "x": 446,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.apex.0",
+    "x": 470,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.descend.0",
+    "x": 494,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.land.0",
+    "x": 518,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.land.1",
+    "x": 542,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crater_fall.0",
+    "x": 566,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crater_fall.1",
+    "x": 590,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crater_fall.2",
+    "x": 614,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.board.0",
+    "x": 2,
+    "y": 246,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.board.1",
+    "x": 26,
+    "y": 246,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.idle.0",
+    "x": 50,
+    "y": 246,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "rocket.door_closed.0",
+    "x": 74,
+    "y": 246,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rocket.door_open.0",
+    "x": 111,
+    "y": 246,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rover.idle.0",
+    "x": 148,
+    "y": 246,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.door_open.0",
+    "x": 185,
+    "y": 246,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.idle.1",
+    "x": 222,
+    "y": 246,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.door_open.1",
+    "x": 259,
+    "y": 246,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "plate.idle.0",
+    "x": 296,
+    "y": 246,
+    "w": 26,
+    "h": 6
+  },
+  {
+    "name": "plate.move.0",
+    "x": 326,
+    "y": 246,
+    "w": 26,
+    "h": 6
+  },
+  {
+    "name": "plate.move.1",
+    "x": 356,
+    "y": 246,
+    "w": 26,
+    "h": 6
+  },
+  {
+    "name": "plate.dip.0",
+    "x": 386,
+    "y": 246,
+    "w": 26,
+    "h": 6
+  },
+  {
+    "name": "plate.dip.1",
+    "x": 416,
+    "y": 246,
+    "w": 26,
+    "h": 6
+  },
+  {
+    "name": "crater.idle.0",
+    "x": 446,
+    "y": 246,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.front.0",
+    "x": 474,
+    "y": 246,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "hud.icon.life.0",
+    "x": 502,
+    "y": 246,
+    "w": 14,
+    "h": 16
+  },
+  {
+    "name": "hud.icon.score.0",
+    "x": 520,
+    "y": 246,
+    "w": 12,
+    "h": 12
+  },
+  {
+    "name": "hud.icon.life_empty.0",
+    "x": 536,
+    "y": 246,
+    "w": 14,
+    "h": 16
+  },
+  {
+    "name": "hud.digit.0",
+    "x": 554,
+    "y": 246,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.1",
+    "x": 566,
+    "y": 246,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.2",
+    "x": 578,
+    "y": 246,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.3",
+    "x": 590,
+    "y": 246,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.4",
+    "x": 602,
+    "y": 246,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.5",
+    "x": 614,
+    "y": 246,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.6",
+    "x": 626,
+    "y": 246,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.7",
+    "x": 2,
+    "y": 339,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.8",
+    "x": 14,
+    "y": 339,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "hud.digit.9",
+    "x": 26,
+    "y": 339,
+    "w": 8,
+    "h": 10
+  },
+  {
+    "name": "button.left.idle.0",
+    "x": 38,
+    "y": 339,
+    "w": 24,
+    "h": 48
+  },
+  {
+    "name": "button.left.pressed.0",
+    "x": 66,
+    "y": 339,
+    "w": 24,
+    "h": 48
+  },
+  {
+    "name": "button.right.idle.0",
+    "x": 94,
+    "y": 339,
+    "w": 24,
+    "h": 48
+  },
+  {
+    "name": "button.right.pressed.0",
+    "x": 122,
+    "y": 339,
+    "w": 24,
+    "h": 48
+  },
+  {
+    "name": "hud.label.score.0",
+    "x": 150,
+    "y": 339,
+    "w": 36,
+    "h": 10
+  },
+  {
+    "name": "hud.label.lives.0",
+    "x": 190,
+    "y": 339,
+    "w": 36,
+    "h": 10
+  },
+  {
+    "name": "ambient.sky.0",
+    "x": 230,
+    "y": 339,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.sky.1",
+    "x": 2,
+    "y": 583,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.sky.2",
+    "x": 2,
+    "y": 827,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.sky.3",
+    "x": 2,
+    "y": 1071,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.drift.0",
+    "x": 2,
+    "y": 1315,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.drift.1",
+    "x": 2,
+    "y": 1559,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.drift.2",
+    "x": 2,
+    "y": 1803,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.drift.3",
+    "x": 2,
+    "y": 2047,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.signal.0",
+    "x": 2,
+    "y": 2291,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.signal.1",
+    "x": 2,
+    "y": 2535,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.signal.2",
+    "x": 2,
+    "y": 2779,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ambient.signal.3",
+    "x": 2,
+    "y": 3023,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "ui.title_theme.idle.0",
+    "x": 1,
+    "y": 3267,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_theme.pressed.0",
+    "x": 59,
+    "y": 3267,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.idle.0",
+    "x": 117,
+    "y": 3267,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.pressed.0",
+    "x": 175,
+    "y": 3267,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.muted.0",
+    "x": 233,
+    "y": 3267,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.muted_pressed.0",
+    "x": 291,
+    "y": 3267,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.idle.0",
+    "x": 349,
+    "y": 3267,
+    "w": 36,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.pressed.0",
+    "x": 387,
+    "y": 3267,
+    "w": 36,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.muted.0",
+    "x": 425,
+    "y": 3267,
+    "w": 36,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.muted_pressed.0",
+    "x": 463,
+    "y": 3267,
+    "w": 36,
+    "h": 16
+  }
+]

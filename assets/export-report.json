@@ -1,0 +1,101 @@
+{
+  "sourceAttachment": "01a1924b-bbfe-718c-afd5-e7b00317f354",
+  "contractCommit": "ba9d78d6791f0a2827cf9c34169a2d5eacdc30f9",
+  "themes": {
+    "polar-signal": {
+      "frames": 71,
+      "animations": 39,
+      "size": [
+        1024,
+        1470
+      ],
+      "palette": 16,
+      "backgroundSpecklePixelsConsolidated": 1142,
+      "cosmonautCell": [
+        20,
+        22
+      ],
+      "cosmonautAnchor": [
+        10,
+        22
+      ],
+      "visibleCosmonautHeight": [
+        16,
+        20
+      ],
+      "lifeIconCell": [
+        14,
+        16
+      ],
+      "lifeIconAnchor": [
+        0,
+        0
+      ],
+      "uiFrames": 10
+    },
+    "desert-expedition": {
+      "frames": 71,
+      "animations": 39,
+      "size": [
+        1024,
+        1470
+      ],
+      "palette": 16,
+      "backgroundSpecklePixelsConsolidated": 2026,
+      "cosmonautCell": [
+        20,
+        22
+      ],
+      "cosmonautAnchor": [
+        10,
+        22
+      ],
+      "visibleCosmonautHeight": [
+        16,
+        20
+      ],
+      "lifeIconCell": [
+        14,
+        16
+      ],
+      "lifeIconAnchor": [
+        0,
+        0
+      ],
+      "uiFrames": 10
+    },
+    "neon-orbit": {
+      "frames": 71,
+      "animations": 39,
+      "size": [
+        1024,
+        1470
+      ],
+      "palette": 16,
+      "backgroundSpecklePixelsConsolidated": 2423,
+      "cosmonautCell": [
+        20,
+        22
+      ],
+      "cosmonautAnchor": [
+        10,
+        22
+      ],
+      "visibleCosmonautHeight": [
+        16,
+        20
+      ],
+      "lifeIconCell": [
+        14,
+        16
+      ],
+      "lifeIconAnchor": [
+        0,
+        0
+      ],
+      "uiFrames": 10
+    }
+  },
+  "revision": 3,
+  "uiLayoutCommit": "3621b0d94b113a1021b7ee43591789ce3c525e17"
+}

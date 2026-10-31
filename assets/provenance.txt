@@ -1,0 +1,34 @@
+Accepted source: Astra Designer, space-bridge-art-v1.zip, Multica attachment
+01a1924b-bbfe-718c-afd5-e7b00317f354, DEIM-430.
+Original sheet art: built-in imagegen; Astra's original packaging: ImageMagick.
+Production adaptation: Pixel. Background cleanup and revision-2 cosmonaut edit:
+built-in imagegen, not API/CLI.
+Native export: nearest-neighbour sampling, palette quantization without dithering,
+pixel-grid retouch, integer registration, binary-alpha export, ImageMagick PNG/GIF.
+No source images were substituted from the web. See per-theme changes.json.
+
+Cleanup inputs: the three source background frames, each cropped at (2,2,320,240).
+The returned triptych was 836x1881; panels were isolated at (62,65,713,590),
+(62,655,713,604), (62,1259,713,622), sampled to 256x210 and placed at (32,30).
+Production source palettes were preserved, not inferred from the generated image.
+Revision 3 adds UI graphics from the repository's native 3x5 font and integer
+pixel rectangles. Editable SVG sources are included per theme. No new imagegen
+output was used for these code-native controls. Existing raster frames remain
+pixel-identical; atlas packing adds one row, plus exact PR #4 state metadata.
+
+Exact built-in imagegen edit prompt for revision 2:
+
+Edit these three approved game background plates for production pixel art. Return one image with THREE equal 320x240 logical panels vertically stacked in this exact order: Polar Signal, Desert Expedition, Neon Orbit. Output 1280x2880 (each logical pixel exactly 4x4) or exact integer enlargement. Keep each source scene composition, distinctive mountain silhouettes and colours, neon ringed planet. CLEANUP: remove tiny noisy single pixel texture and irregular speckled/dithered shading; simplify into deliberate connected flat pixel clusters with single logical pixel stair steps. No blur, gradients, glow, antialiasing, dithering, text, labels, sprites, vehicles, holes, icons or arrows. Native 320x240 each: side gutters x0..31 and x288..319 solid darkest palette shade; top HUD band y0..29 same darkest shade, empty. Quiet flat horizontal walkable strip across x32..287 at y168..184 with ground contact y175, no rocks or visual obstacles there. Foreground rocks only y199..239. All terrain inside x32..287. Light from upper left. Retain approved source identity, no new creative objects. Palette panel1 ONLY #173B3A #285552 #3F7068 #5E8D7A #83A792 #ABC3A6 #D1DCC0 #F0EED5 #FFFAE8 #233A46 #426573 #6C929A #9BB8B7 #C8493B #E67B59 #F1B683. Match warm desert and deep neon source palettes in panels2/3. Important: single native pixel scale, sharp intentional silhouettes, minimal texture for handheld readability. Three panels have no gaps or borders between them.
+
+REVISION 2 — readability review 01a1925a-3ac7-7719-9bdc-6e5d7e268eae
+Character edit input: Astra's 16 original Polar poses in a 4x4 reference grid.
+The built-in tool returned a 1254x1254 transparent sheet. The 16 silhouettes
+were isolated, sampled to native 12-18px widths and 16-20px heights, given a
+continuous dark contour, and registered in common 20x22 cells at (10,22).
+The shared six-colour character design was mapped into each existing palette.
+HUD helmets derive from the revised idle character. Background corridor,
+idle-button panels and Polar curtain were retouched on the native pixel grid.
+All shipped colours remain in the same 16-colour theme palettes.
+
+Exact built-in imagegen edit prompt:
+Edit this 4x4 cosmonaut animation sheet for a tiny pixel-art game. Preserve exact row-major pose meanings and right-facing orientation: row1 emerge0 narrow, emerge1 walking, emerge2, crouch; row2 takeoff stretched upright, rising airborne legs back, apex tucked, descending legs forward; row3 landing squash, landing recovery, falling arms up, tumbling sideways; row4 falling tucked, boarding step0, boarding step1, idle. ONE astronaut per cell. Keep recognizable ivory helmet, dark visor, backpack and tiny coral equipment patch. CRITICAL improve visibility: make clean stocky compact silhouettes, much larger solid IVORY body areas, continuous ONE logical pixel dark pine outline around entire silhouette. Aim logical actor 12-16px wide by18-20px tall, shorter16px squash. Logical cells24x24, each enlarged about10x, same centre and foot baseline. Output square1024x1024, strict4x4 equal256x256cells with generous transparent separation. Genuine transparent background, no checkerboard, no black background, no text or grid. Only six flat colours: outline/visor #173B3A, shadow #5E8D7A, suit #FFFAE8, midtone #D1DCC0, accent #C8493B, glass reflection #9BB8B7. One uniform pixel grid; no gradients, no blur, no soft edges, no scattered pixels. Helmet and body must read at native20px height. Keep every pose separated and centred within its cell; do not merge frames or add scenery.
