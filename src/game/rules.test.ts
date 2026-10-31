@@ -5,7 +5,7 @@ import { ROCKET_SLOT } from '../config/layout';
 import { STEP_SECONDS } from '../platform/loop';
 import { bestScore, canLeaveGameOver, musicTempo, step } from './rules';
 import { defaultSave } from './save';
-import { instantBotOptions } from './bot';
+import { createBot, instantBotOptions } from './bot';
 import { move, playBot, press, run, runUntil, startGame, titleState, types } from './testing';
 import { NO_INPUT, type GameState } from './types';
 
@@ -96,6 +96,24 @@ describe('spawning and jumping', () => {
     expect(jumped.cosmonauts[0]?.slot).toBe(ROCKET_SLOT);
   });
 
+  it('rolls a fresh tumble from the seeded RNG at every take-off', () => {
+    let s = runUntil(startGame(titleState()), 'footstep').state;
+    expect(s.cosmonauts[0]?.spin).toBe(0);
+    const bot = createBot(instantBotOptions());
+    const spins: number[] = [];
+    for (let i = 0; i < 60 * 30 && spins.length < 6; i++) {
+      const r = step(s, bot.input(s), STEP_SECONDS);
+      s = r.state;
+      if (r.events.some((e) => e.type === 'jump')) spins.push(...s.cosmonauts.filter((c) => c.state === 'air').map((c) => c.spin));
+      for (const c of s.cosmonauts) if (c.state !== 'air') expect(c.spin).toBe(0);
+    }
+    expect(spins.length).toBeGreaterThanOrEqual(6);
+    for (const spin of spins) expect(Math.abs(spin)).toBeGreaterThanOrEqual(0.5);
+    for (const spin of spins) expect(Math.abs(spin)).toBeLessThanOrEqual(1.5);
+    expect(new Set(spins).size).toBeGreaterThan(1);
+    expect(spins.some((v) => v > 0) && spins.some((v) => v < 0)).toBe(true);
+  });
+
   it('never has more cosmonauts than the mode allows', () => {
     let s = startGame(titleState(), 'B');
     for (let i = 0; i < 60 * 20; i++) {
@@ -138,7 +156,7 @@ describe('plate', () => {
 describe('bounce and fall', () => {
   it('bounces when the plate is under the landing and scores', () => {
     const s = startGame(titleState());
-    const { state, events } = followCosmonauts(s, 4);
+    const { state, events } = followCosmonauts(s, 8);
     expect(events).toContain('bounce');
     expect(events).not.toContain('fall');
     expect(state.lives).toBe(DIFFICULTY.lives);
@@ -147,7 +165,7 @@ describe('bounce and fall', () => {
 
   it('carries a cosmonaut all the way into the rover for rescue points', () => {
     const s = startGame(titleState());
-    const { state, events } = followCosmonauts(s, 8);
+    const { state, events } = followCosmonauts(s, 20);
     expect(events).toContain('save');
     const bounces = events.filter((e) => e === 'bounce').length;
     const saves = events.filter((e) => e === 'save').length;

@@ -22,12 +22,22 @@ export interface ModeConfig {
   bouncePoints: number;
   /** Points for boarding the rover. */
   rescuePoints: number;
-  /** Max cosmonauts on the road at the same time. */
+  /**
+   * Max cosmonauts on the road at the same time. A safety cap: the landing
+   * scheduler, not this number, sets the pace. Three is the usual count with
+   * the current hops, four happens around a spawn.
+   */
   maxOnScreen: number;
   /**
    * Shortest wait after a spawn before the next one may leave the rocket.
    * One value is picked at random per spawn. The landing scheduler can delay
    * the spawn further; it never shortens it.
+   *
+   * Tuned together with `timing.jump`: a follower one crater behind lands
+   * `gap - (squash + jump)` after its leader. The values sit inside the window
+   * where the scheduler accepts the spawn at once, so the landings are not
+   * pushed onto the exact limits of the plate-travel guarantee, and a good
+   * player in real time still survives the top of the Game B curve.
    */
   spawnGap: readonly number[];
   /** Playback speed of the theme music during a round. 1 is the song's own tempo. */
@@ -39,7 +49,11 @@ export interface TimingConfig {
   emerge: number;
   /** Squash on the plate between a landing and the next take-off. */
   squash: number;
-  /** Time in the air between two slots. */
+  /**
+   * Time in the air between two slots. Long on purpose: the IM-09 keeps three
+   * or four cosmonauts in tall arcs at once, and the landings only spread out
+   * when every hop is long.
+   */
   jump: number;
   /** Fall animation into a crater. Not scaled. */
   fall: number;
@@ -86,7 +100,7 @@ export const DIFFICULTY: DifficultyConfig = {
   timing: {
     emerge: 0.74,
     squash: 0.12,
-    jump: 0.7,
+    jump: 3.0,
     fall: 0.6,
     board: 0.5,
     lifeLostPause: 1.2,
@@ -108,8 +122,8 @@ export const DIFFICULTY: DifficultyConfig = {
       ],
       bouncePoints: 1,
       rescuePoints: 5,
-      maxOnScreen: 3,
-      spawnGap: [3.4, 4.0, 4.8],
+      maxOnScreen: 4,
+      spawnGap: [3.8, 4.1, 4.4],
       musicTempo: 1,
     },
     B: {
@@ -123,7 +137,7 @@ export const DIFFICULTY: DifficultyConfig = {
       bouncePoints: 2,
       rescuePoints: 10,
       maxOnScreen: 4,
-      spawnGap: [3.4, 3.8, 4.4],
+      spawnGap: [3.8, 4.1, 4.4],
       musicTempo: 1.15,
     },
   },

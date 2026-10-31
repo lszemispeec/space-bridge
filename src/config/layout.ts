@@ -110,7 +110,11 @@ export function hitRect(r: Rect, minSize: number): Rect {
   return { x: r.x - (w - r.w) / 2, y: r.y - (h - r.h) / 2, w, h };
 }
 
-/** Arc height of a jump between two neighbouring slots. */
-export const JUMP_HEIGHT = 26;
+/**
+ * Arc height of a jump between two neighbouring slots. The IM-09 throws its
+ * cosmonauts high: the feet reach y 85 at the apex, the sprite top y 63, so
+ * the arcs are tall and narrow and three or four are in the air at once.
+ */
+export const JUMP_HEIGHT = 90;
 /** How far below the ground a fallen cosmonaut sinks. */
 export const FALL_DEPTH = 18;

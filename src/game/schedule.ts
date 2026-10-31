@@ -49,7 +49,7 @@ export function landingsOf(c: Cosmonaut, timing: TimingConfig): Landing[] {
 
 /** The landings of a cosmonaut that leaves the rocket now. */
 export function landingsOfNewSpawn(timing: TimingConfig): Landing[] {
-  return landingsOf({ id: 0, state: 'crouch', slot: 0, t: 0, duration: timing.emerge }, timing);
+  return landingsOf({ id: 0, state: 'crouch', slot: 0, t: 0, duration: timing.emerge, spin: 0 }, timing);
 }
 
 export function allLandings(cosmonauts: readonly Cosmonaut[], timing: TimingConfig): Landing[] {
