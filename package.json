@@ -8,21 +8,25 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p scripts/tsconfig.json",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "measure": "vitest run src/game/measure.test.ts --mode measure --silent=false",
     "shots": "node scripts/screenshot.mjs http://localhost:4173/ shots",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "audio:render": "tsx scripts/render-audio.ts"
   },
   "engines": {
     "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
     "eslint": "^10.14.0",
     "globals": "^17.13.0",
+    "node-web-audio-api": "^2.2.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5",

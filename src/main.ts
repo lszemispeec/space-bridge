@@ -1,4 +1,5 @@
 import { createApp, type App } from './app';
+import { audio } from './audio/index';
 
 declare global {
   interface Window {
@@ -10,4 +11,4 @@ declare global {
 const canvas = document.getElementById('game');
 if (!(canvas instanceof HTMLCanvasElement)) throw new Error('Missing #game canvas');
 
-window.spaceBridge = createApp({ canvas });
+window.spaceBridge = createApp({ canvas, audio });
