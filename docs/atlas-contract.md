@@ -235,6 +235,18 @@ score, lives and vehicle poses; only the room and its controls change.
 contract with the current engine's MENU and full mode text included.
 `operator-{landscape,portrait}-{1,4}x.png` shows this contract.
 
+Engine notes on this section (`src/render/room.ts`, `src/render/lever.ts`,
+`src/config/layout.ts`): the room geometry lives in `layout.ts` and the art
+test checks that every atlas's `operatorRoom` table, including `background`,
+`levers`, `leverTapZones`, `hud`, `menu` and `recesses`, matches it. The
+renderer draws `operatorRoom.background` through the glass and never the
+legacy plate. A full lever pull or return is compressed to at most 80 ms and
+the pulled hold after a tap is 60 ms, so a good player's press every 220 ms
+reads as separate pulls; a press during the return pulls again from the
+current pose. The lever poses are picked by travel, not by frame duration:
+the pull shows `.0` then `.1`, the release shows `.0` then idle, so the
+idle frame's terminal hold never swallows the intermediate pose.
+
 Eyes keep their existing names, cells, anchors and durations. Their whites are
 round stepped circles with moving pupils; the blink compresses that circle,
 and the hidden terminal frame stays transparent. Polar suits become dark teal

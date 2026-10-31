@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { LEVER_HOLD_MS, LEVER_IDLE, leverPull, pullLever, settleLever, type Lever } from './lever';
 
-const PULL_MS = 120;
+const PULL_MS = 80;
 
 /** Runs the lever on a clock: presses at the given times, held between `holdFrom` and `holdTo`. */
 function run(presses: number[], until: number, held: (t: number) => boolean = () => false): { t: number; pull: number }[] {
@@ -26,11 +26,11 @@ describe('lever', () => {
   it('pulls over the pull time, holds, then returns over the same time', () => {
     const trace = run([100], 600);
     expect(at(trace, 100)).toBe(0);
-    expect(at(trace, 160)).toBeCloseTo(0.5);
-    expect(at(trace, 220)).toBe(1);
-    expect(at(trace, 220 + LEVER_HOLD_MS - 10)).toBe(1);
-    expect(at(trace, 220 + LEVER_HOLD_MS + 60)).toBeCloseTo(0.5);
-    expect(at(trace, 220 + LEVER_HOLD_MS + 120)).toBe(0);
+    expect(at(trace, 140)).toBeCloseTo(0.5);
+    expect(at(trace, 180)).toBe(1);
+    expect(at(trace, 180 + LEVER_HOLD_MS - 10)).toBe(1);
+    expect(at(trace, 180 + LEVER_HOLD_MS + 40)).toBeCloseTo(0.5);
+    expect(at(trace, 180 + LEVER_HOLD_MS + 80)).toBe(0);
     expect(at(trace, 600)).toBe(0);
   });
 
@@ -38,16 +38,26 @@ describe('lever', () => {
     const trace = run([100], 1000, (t) => t >= 100 && t < 700);
     expect(at(trace, 400)).toBe(1);
     expect(at(trace, 690)).toBe(1);
-    expect(at(trace, 760)).toBeCloseTo(0.5);
-    expect(at(trace, 820)).toBe(0);
+    expect(at(trace, 740)).toBeCloseTo(0.5);
+    expect(at(trace, 780)).toBe(0);
   });
 
   it('pulls again from where the handle is when a press lands during the return', () => {
-    const release = 220 + LEVER_HOLD_MS;
-    const trace = run([100, release + 60], 1000);
-    expect(at(trace, release + 60)).toBeCloseTo(0.5);
-    expect(at(trace, release + 90)).toBeCloseTo(0.75);
-    expect(at(trace, release + 120)).toBe(1);
+    const release = 180 + LEVER_HOLD_MS;
+    const trace = run([100, release + 40], 1000);
+    expect(at(trace, release + 40)).toBeCloseTo(0.5);
+    expect(at(trace, release + 60)).toBeCloseTo(0.75);
+    expect(at(trace, release + 80)).toBe(1);
+  });
+
+  it('reads every press of a good player at the top of Game B as its own pull', () => {
+    const period = 220;
+    const presses = [0, 1, 2, 3].map((i) => 100 + i * period);
+    const trace = run(presses, 1200);
+    for (const t of presses) {
+      expect(at(trace, t + PULL_MS)).toBe(1);
+      expect(at(trace, t + period - 10)).toBeLessThan(0.5);
+    }
   });
 
   it('starts a pull from a held button that never pressed', () => {
