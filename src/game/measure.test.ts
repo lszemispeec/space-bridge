@@ -3,8 +3,10 @@
  * Prints how far bots of different skill get in Game A and Game B.
  */
 import { describe, it } from 'vitest';
+import { STEP_SECONDS } from '../platform/loop';
 import { curveEnd, DIFFICULTY, type GameMode } from '../config/difficulty';
 import { createBot, goodHumanOptions, limitBotOptions, type BotOptions } from './bot';
+import { step } from './rules';
 import { defaultSave } from './save';
 import { playWithBot, startGame, titleState } from './testing';
 
@@ -52,5 +54,28 @@ describe.skipIf(import.meta.env.MODE !== 'measure')('balance measurement', () =>
       lines.push(`  ${name}: ${checkpoints} | ${ends}`);
     }
     console.log(lines.join('\n'));
+  });
+
+  /** How crowded the road is along the density ramp, for the good human. */
+  it.each<GameMode>(['A', 'B'])('Game %s density', (mode) => {
+    const edges = [...DIFFICULTY.modes[mode].density.map((p) => p.score), Infinity];
+    const bands = edges.slice(1).map((end, i) => ({ from: edges[i] ?? 0, to: end, onScreen: [] as number[], inAir: [] as number[] }));
+    for (const seed of SEEDS) {
+      let s = startGame(titleState(defaultSave(), seed), mode);
+      const bot = createBot(goodHumanOptions());
+      const target = curveEnd(DIFFICULTY.modes[mode].curve) + 200;
+      for (let i = 0; i < 60 * 900 && s.score < target && s.phase !== 'game_over'; i++) {
+        s = step(s, bot.input(s), STEP_SECONDS).state;
+        if (s.phase !== 'playing') continue;
+        const band = bands.find((b) => s.score >= b.from && s.score < b.to);
+        band?.onScreen.push(s.cosmonauts.length);
+        band?.inAir.push(s.cosmonauts.filter((c) => c.state === 'air').length);
+      }
+    }
+    const mean = (xs: number[]) => (xs.length ? (xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2) : '-');
+    const share = (xs: number[]) =>
+      [0, 1, 2, 3, 4, 5].map((n) => `${n}:${xs.length ? Math.round((100 * xs.filter((x) => x === n).length) / xs.length) : 0}%`).join(' ');
+    const lines = bands.map((b) => `  ${b.from}-${b.to === Infinity ? 'end' : b.to}: on screen ${mean(b.onScreen)} [${share(b.onScreen)}] | in air ${mean(b.inAir)} [${share(b.inAir)}]`);
+    console.log([`Game ${mode} density (good human):`, ...lines].join('\n'));
   });
 });

@@ -233,6 +233,8 @@ The renderer draws every `ambient.*` animation that has a placement, so you can 
 | HUD | y 8–25 |
 | Ground line | y 175 |
 | Slot x (rocket door, 4 craters, rover door) | 82, 106, 146, 186, 226, 252 |
-| Jump apex | 26 px above the ground |
+| Ledge (feet of the cosmonaut before the first drop) | (82,110), from the `rocketLedge` socket |
+| Jump apex | 90 px above the ground (feet at y 85) |
+| Drop from the ledge to crater 1 | rises to about y 99, then falls to the ground |
 
 The slot positions come from `src/config/layout.ts`. If art needs them moved, say so on the issue and we change the config, not the art.

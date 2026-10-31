@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import polar from '../../public/atlas/polar-signal.json';
 import type { Atlas, AtlasFrame } from './atlas';
-import { cosmonautFrame, soundState } from './draw';
+import { cosmonautFrame, craterFrame, craterFrontFrame, hatchFrame, ledgePoint, soundState } from './draw';
+import { ROCKET, ROCKET_LEDGE } from '../config/layout';
 import { drawFrame, frameAt, frameByProgress, frameOf, type Art } from './sprites';
 
 function frame(x: number, duration: number): AtlasFrame {
@@ -67,9 +68,9 @@ describe('cosmonautFrame with the production atlas', () => {
   const named = (name: string) => real.frames[name];
 
   it('plays the one-shots by progress and the poses by time', () => {
-    expect(at('emerge', 0)).toBe(named('cosmonaut.emerge.0'));
-    expect(at('emerge', 0.49)).toBe(named('cosmonaut.emerge.2'));
-    expect(at('crouch', 0.7)).toBe(named('cosmonaut.crouch.0'));
+    expect(at('emerge', 0)).toBe(named('cosmonaut.ledge.stand.0'));
+    expect(at('emerge', 0.49)).toBe(named('cosmonaut.ledge.stand.0'));
+    expect(at('crouch', 0.7)).toBe(named('cosmonaut.ledge.crouch.0'));
     expect(at('rise', 0.02)).toBe(named('cosmonaut.takeoff.0'));
     expect(at('rise', 0.2)).toBe(named('cosmonaut.air.spin.1'));
     expect(at('descend', 0.8)).toBe(named('cosmonaut.air.spin.6'));
@@ -111,6 +112,45 @@ describe('cosmonautFrame with the production atlas', () => {
     expect(at(0.5, 200)).toBe(named('cosmonaut.crater_fall.0'));
     expect(at(0.7, 0)).toBe(named('cosmonaut.crater_fall.1'));
     expect(at(0.99, 0)).toBe(named('cosmonaut.crater_fall.2'));
+  });
+});
+
+describe('hatch, ledge and crater art', () => {
+  const real = polar as Atlas;
+  const named = (name: string) => real.frames[name];
+  const view = (pose: 'emerge' | 'crouch', progress: number) => ({ pos: { x: 0, y: 0 }, pose, progress, spin: 0, flail: false });
+
+  it('stands, then crouches on the ledge', () => {
+    expect(cosmonautFrame(real, view('emerge', 0.2), 0)).toBe(named('cosmonaut.ledge.stand.0'));
+    expect(cosmonautFrame(real, view('crouch', 0.7), 0)).toBe(named('cosmonaut.ledge.crouch.0'));
+  });
+
+  it('opens the hatch over the first half of the wait, holds it open, then closes it on the clock', () => {
+    expect(hatchFrame(real, 0, 0, 0)).toBe(named('rocket.hatch.opening.0'));
+    expect(hatchFrame(real, 0.2, 0, 0)).toBe(named('rocket.hatch.opening.1'));
+    expect(hatchFrame(real, 0.4, 0, 0)).toBe(named('rocket.hatch.opening.2'));
+    expect(hatchFrame(real, 0.5, 0, 0)).toBe(named('rocket.hatch.open.0'));
+    expect(hatchFrame(real, 0.99, 0, 500)).toBe(named('rocket.hatch.open.0'));
+    expect(hatchFrame(real, null, 0, 0)).toBe(named('rocket.hatch.closing.0'));
+    expect(hatchFrame(real, null, 100, 0)).toBe(named('rocket.hatch.closing.1'));
+    expect(hatchFrame(real, null, 200, 0)).toBe(named('rocket.hatch.closing.2'));
+    expect(hatchFrame(real, null, 270, 0)).toBe(named('rocket.hatch.closed.0'));
+    expect(hatchFrame(real, null, Infinity, 0)).toBe(named('rocket.hatch.closed.0'));
+  });
+
+  it('reads the ledge from the rocketLedge socket and lands on the layout default', () => {
+    expect(ledgePoint(real)).toEqual(ROCKET_LEDGE);
+    expect(ledgePoint({ ...real, sockets: {} })).toEqual(ROCKET_LEDGE);
+    const moved: Atlas = { ...real, sockets: { rocketLedge: { frame: 'rocket.hatch.open.0', x: 41, y: 28 } } };
+    expect(ledgePoint(moved)).toEqual({ x: ROCKET.x + 41, y: ROCKET.y + 28 });
+  });
+
+  it('gives every crater its own rim and lip', () => {
+    for (const i of [0, 1, 2, 3]) {
+      expect(craterFrame(real, i)).toBe(named(`crater.${i}`));
+      expect(craterFrontFrame(real, i)).toBe(named(`crater.front.${i}`));
+    }
+    expect(new Set([0, 1, 2, 3].map((i) => craterFrame(real, i))).size).toBe(4);
   });
 });
 

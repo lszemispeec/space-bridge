@@ -3,7 +3,7 @@ import { DIFFICULTY, type SchedulerConfig, type TimingConfig } from '../config/d
 import { landingsFit, landingsOf, landingsOfNewSpawn, nextLanding, spawnFits, travelTime } from './schedule';
 import type { Cosmonaut } from './types';
 
-const timing: TimingConfig = { ...DIFFICULTY.timing, emerge: 0.5, squash: 0.1, jump: 1 };
+const timing: TimingConfig = { ...DIFFICULTY.timing, emerge: 0.5, drop: 0.8, squash: 0.1, jump: 1 };
 const cfg: SchedulerConfig = { minSeparation: 0.5, pressTime: 0.1, reactionMargin: 0.2 };
 
 function cosmonaut(partial: Partial<Cosmonaut>): Cosmonaut {
@@ -11,10 +11,15 @@ function cosmonaut(partial: Partial<Cosmonaut>): Cosmonaut {
 }
 
 describe('landingsOf', () => {
-  it('lists the four crater landings of a cosmonaut at the rocket door', () => {
+  it('lists the four crater landings of a cosmonaut on the ledge, the first one after the drop', () => {
     const landings = landingsOf(cosmonaut({}), timing);
     expect(landings.map((l) => l.slot)).toEqual([1, 2, 3, 4]);
-    expect(landings.map((l) => l.at)).toEqual([1.5, 2.6, 3.7, 4.8].map((at) => expect.closeTo(at) as number));
+    expect(landings.map((l) => l.at)).toEqual([1.3, 2.4, 3.5, 4.6].map((at) => expect.closeTo(at) as number));
+  });
+
+  it('uses the hop time, not the drop, for a cosmonaut that stands on a crater', () => {
+    const c = cosmonaut({ slot: 1, t: 0, duration: timing.squash });
+    expect(landingsOf(c, timing).map((l) => l.at)).toEqual([0, 1.1, 2.2, 3.3].map((at) => expect.closeTo(at) as number));
   });
 
   it('starts from the remaining air time', () => {
