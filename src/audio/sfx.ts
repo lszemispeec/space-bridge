@@ -79,6 +79,15 @@ export const SFX: Readonly<Record<AudioEvent, SfxDef>> = {
     part('noise', 0.42, 0.18, 0.15, { vol: 0.45, decay: 0.06 }),
   ]),
 
+  // The crater creature: a wet slurp on the noise channel and a low, wobbling
+  // pulse that dives as the tentacle pulls. Placeholder shape for the composer.
+  grab: sfx('grab', [
+    part('pulse2', 0, 0.3, n('G3'), { vol: 0.26, duty: 0, glideTo: 0.5, decay: 0.35, sustain: 0.6, vib: { depth: 90, rate: 9, delay: 0 } }),
+    part('tri', 0.05, 0.25, n('E2'), { vol: 0.5, decay: 0.2, glideTo: 0.6 }),
+    part('noise', 0, 0.12, 0.08, { vol: 0.35, decay: 0.05, noise: 'long' }),
+    part('noise', 0.16, 0.08, 0.04, { vol: 0.3, decay: 0.04, noise: 'long' }),
+  ]),
+
   life_lost: sfx('life_lost', [
     part('pulse1', 0, 0.22, n('E4'), { vol: 0.3, duty: 2, decay: 0.4, sustain: 0.8, vib: { depth: 20, rate: 5, delay: 0.08 } }),
     part('pulse1', 0.22, 0.42, n('Eb4'), { vol: 0.3, duty: 2, decay: 0.45, sustain: 0.6, vib: { depth: 35, rate: 5, delay: 0.1 } }),

@@ -12,6 +12,7 @@ export const AUDIO_EVENTS = [
   'plate_move',
   'save',
   'fall',
+  'grab',
   'life_lost',
   'unlock',
   'game_over',

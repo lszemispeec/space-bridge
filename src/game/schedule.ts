@@ -5,7 +5,7 @@
  * relative to now; negative means the landing already happened.
  */
 import type { SchedulerConfig, TimingConfig } from '../config/difficulty';
-import { CRATER_SLOTS, ROVER_SLOT } from '../config/layout';
+import { CRATER_SLOTS, ROCKET_SLOT, ROVER_SLOT } from '../config/layout';
 import type { Cosmonaut } from './types';
 
 export interface Landing {
@@ -30,7 +30,7 @@ export function landingsOf(c: Cosmonaut, timing: TimingConfig): Landing[] {
   switch (c.state) {
     case 'crouch':
       if (isCrater(slot)) out.push({ slot, at: -c.t });
-      landingAt = c.duration - c.t + timing.jump;
+      landingAt = c.duration - c.t + (slot === ROCKET_SLOT ? timing.drop : timing.jump);
       break;
     case 'air':
       landingAt = c.duration - c.t;
@@ -47,9 +47,9 @@ export function landingsOf(c: Cosmonaut, timing: TimingConfig): Landing[] {
   }
 }
 
-/** The landings of a cosmonaut that leaves the rocket now. */
+/** The landings of a cosmonaut that comes out of the hatch now. */
 export function landingsOfNewSpawn(timing: TimingConfig): Landing[] {
-  return landingsOf({ id: 0, state: 'crouch', slot: 0, t: 0, duration: timing.emerge, spin: 0, flail: false }, timing);
+  return landingsOf({ id: 0, state: 'crouch', slot: ROCKET_SLOT, t: 0, duration: timing.emerge, spin: 0, flail: false }, timing);
 }
 
 export function allLandings(cosmonauts: readonly Cosmonaut[], timing: TimingConfig): Landing[] {
