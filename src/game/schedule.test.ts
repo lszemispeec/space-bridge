@@ -7,7 +7,7 @@ const timing: TimingConfig = { ...DIFFICULTY.timing, emerge: 0.5, squash: 0.1, j
 const cfg: SchedulerConfig = { minSeparation: 0.5, pressTime: 0.1, reactionMargin: 0.2 };
 
 function cosmonaut(partial: Partial<Cosmonaut>): Cosmonaut {
-  return { id: 1, state: 'crouch', slot: 0, t: 0, duration: timing.emerge, ...partial };
+  return { id: 1, state: 'crouch', slot: 0, t: 0, duration: timing.emerge, spin: 0, ...partial };
 }
 
 describe('landingsOf', () => {
