@@ -32,8 +32,8 @@ export const SLOT_X: readonly number[] = [82, 106, 146, 186, 226, 252];
 export const ROCKET = { x: 43, y: 80, w: 33, h: 89 } as const;
 /**
  * Feet position of a cosmonaut on the ledge outside the hatch, about two
- * thirds of the way up the rocket. The atlas may move it with a
- * `rocket.ledge` placement; this is the default when it has none.
+ * thirds of the way up the rocket. The atlas's `rocketLedge` socket gives the
+ * same point from the art; this is the default when it has none.
  */
 export const ROCKET_LEDGE = { x: 82, y: 110 } as const;
 export const ROVER = { x: 248, y: 142, w: 33, h: 38 } as const;
@@ -42,8 +42,8 @@ export const ROVER = { x: 248, y: 142, w: 33, h: 38 } as const;
 export const CRATER_Y = 177;
 /** Bottom of the plate frame; its top surface meets the ground line. */
 export const PLATE_Y = 181;
-/** Nothing of a fallen cosmonaut shows below this line. */
-export const CRATER_BOTTOM_Y = 181;
+/** Nothing of a grabbed cosmonaut shows below this line; the crater's front lip covers the rest. */
+export const CRATER_BOTTOM_Y = 180;
 
 /** Top-left corners of the on-screen plate buttons inside the gutters. */
 export const SIDE_BUTTONS = {

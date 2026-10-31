@@ -93,60 +93,6 @@ simulation position denotes feet, the renderer must place the body centre
 grounded anchors or the plate squash. All three themes share these names,
 geometry, timing and order. Flight/scheduler integration belongs to the engine.
 
-### Hatch and ledge (contract draft, DEIM-430)
-
-Cosmonauts no longer leave by the ground door. They come out of a hatch about
-two thirds of the way up the rocket, stand on a small ledge outside it, crouch,
-and drop from there to crater 1. The game reads these names when they exist in
-all three atlases; until then the hull stays closed and the door poses play on
-the ledge. Once the art lands they become required.
-
-| Name | Loop | Anchor | When |
-|---|---|---|---|
-| `rocket.hatch.open` | no | see below | Plays while a cosmonaut is on the ledge; holds its last frame. |
-| `rocket.hatch.close` | no | see below | Plays on the clock after the take-off; holds its last frame (the closed hatch) until the next spawn. |
-| `cosmonaut.ledge.stand` | no | feet (10,22) | First half of the wait on the ledge, as the hatch opens. |
-| `cosmonaut.ledge.crouch` | yes | feet (10,22) | Second half of the wait, right before the drop. |
-
-The hatch frames are drawn with their anchor at the `rocket.hatch` placement,
-or at the rocket's own anchor (43,169) when the atlas has no such placement.
-So a full 33×89 hull with the hatch open works with anchor (0,89) and no
-placement; a small overlay works with its own anchor and a placement at the
-hatch's screen position.
-
-The ledge is where the feet of the standing cosmonaut go. Put it in
-`placements` as `rocket.ledge`; the game's default is **(82,110)**, the start
-of the drop arc:
-
-```json
-"placements": { "rocket.ledge": { "x": 82, "y": 110 }, "rocket.hatch": { "x": 76, "y": 118 } }
-```
-
-### Craters and their creatures (contract draft, DEIM-430)
-
-Each crater gets its own rim, and something lives inside. The crater frames
-keep the centre anchor (12,4) at the crater position (slot x, y 177). The
-creature frames sit inside the crater mouth: anchor them so that placing the
-anchor at the same crater position puts the eyes in the mouth and the
-tentacle above it. The game draws them in this order: rim, eyes or tentacle,
-plate, cosmonauts; the grab is drawn over the falling cosmonaut and under the
-front lip, clipped at y 181 like the cosmonaut.
-
-| Name | Loop | When |
-|---|---|---|
-| `crater.0` … `crater.3` | yes | The rim of each crater, left to right. Falls back to `crater.idle`. |
-| `crater.front.0` … `crater.front.3` | single frames | Optional front lip per crater that covers a fallen cosmonaut. Falls back to `crater.front.0`. |
-| `crater.eyes.peek` | no | The eyes rise out of the dark. The last frame is held while the creature watches. |
-| `crater.eyes.blink` | no | One blink, about 0.18 s. |
-| `crater.eyes.look.l`, `crater.eyes.look.r` | no | The eyes turn to one side, 0.6–1.2 s. |
-| `crater.eyes.hide` | no | The eyes sink back. |
-| `crater.tentacle.reach` | no | 3–4 frames, a tentacle reaches up and back, 1.2 s. Never plays on the crater under the plate or the one the plate must go to next. |
-| `crater.tentacle.grab` | no | 4–6 frames, played over the 0.6 s crater fall: it wraps the cosmonaut and pulls them down. |
-
-The one-shots are played by progress, so their total duration is a reference;
-the game compresses or stretches them to the act. The acts are cosmetic, from
-the renderer's own seeded RNG, and never change the game rules.
-
 ### Bridge plate (anchor: bottom centre, about 26×4)
 
 | Name | Loop |
@@ -279,8 +225,6 @@ Name them `ambient.<name>`, loop `true`. Add an `ambient` entry per animation wi
 
 The renderer draws every `ambient.*` animation that has a placement, so you can add them freely. All of them are drawn over the background and behind the vehicles, except `ambient.signal`, which is drawn over the vehicles (rocket beacon, rover lights). Keep them out of the jump path (y 130–180 between the rocket and the rover) and out of the HUD (y 0–30).
 
-Polar's aurora (`ambient.sky`) is retired: the game lists it in the theme's `hiddenAmbient` and never draws it. The frames may stay in the sheet until the art drops them; the background plate must not carry the aurora either.
-
 ## Playfield reference
 
 | Item | Position |
@@ -289,7 +233,7 @@ Polar's aurora (`ambient.sky`) is retired: the game lists it in the theme's `hid
 | HUD | y 8–25 |
 | Ground line | y 175 |
 | Slot x (rocket door, 4 craters, rover door) | 82, 106, 146, 186, 226, 252 |
-| Ledge (feet of the cosmonaut before the first drop) | (82,110), or the `rocket.ledge` placement |
+| Ledge (feet of the cosmonaut before the first drop) | (82,110), from the `rocketLedge` socket |
 | Jump apex | 90 px above the ground (feet at y 85) |
 | Drop from the ledge to crater 1 | rises to about y 99, then falls to the ground |
 

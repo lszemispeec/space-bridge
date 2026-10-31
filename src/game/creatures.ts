@@ -36,16 +36,19 @@ export interface CreatureScene {
   falls: readonly { slot: number; progress: number }[];
 }
 
-/** Real seconds of each timed act, as a range the RNG picks from. */
+/**
+ * Real seconds of each timed act, as a range the RNG picks from. The
+ * one-shots match the art's reference frame durations; the holds vary.
+ */
 export const ACT_SECONDS: Record<Exclude<CreatureAct, 'grab'>, readonly [number, number]> = {
   hidden: [1.5, 5],
-  peek: [0.35, 0.35],
+  peek: [0.54, 0.54],
   watch: [0.8, 2.5],
-  blink: [0.18, 0.18],
+  blink: [0.32, 0.32],
   look_l: [0.6, 1.2],
   look_r: [0.6, 1.2],
-  hide: [0.35, 0.35],
-  reach: [1.2, 1.2],
+  hide: [0.36, 0.36],
+  reach: [0.68, 0.68],
 };
 
 /** What follows a watch, with the share of each choice. The reach is rare on purpose. */

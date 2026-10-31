@@ -78,7 +78,7 @@ export interface TimingConfig {
    * when every hop is long.
    */
   jump: number;
-  /** Fall animation into a crater. Not scaled. */
+  /** The grab into the crater: the art's 660 ms reference sequence. Not scaled. */
   fall: number;
   /** Walking into the rover. */
   board: number;
@@ -125,7 +125,7 @@ export const DIFFICULTY: DifficultyConfig = {
     drop: 2.4,
     squash: 0.12,
     jump: 3.0,
-    fall: 0.6,
+    fall: 0.66,
     board: 0.5,
     lifeLostPause: 1.2,
     gameOverLock: 1.5,
