@@ -1,5 +1,16 @@
 Accepted source: concept art package space-bridge-art-v1.zip.
 
+Revision 5: native hatch/ledge and creature shapes are authored in
+assets/tools/export-environment.mjs, using the existing hull and suit designs.
+Tentacle paths use integer raster strokes, palette inks and a 1px dark contour.
+Polar's ambient.sky frames are retired as transparent compatibility no-ops.
+For its separate green sky mark, a built-in imagegen deletion was sampled and
+quantized only within a 24x28 patch at (210,40). The patch resolves entirely to
+the existing #FFFAE8 sky ink. All other background pixels are preserved.
+
+Exact revision-5 imagegen edit prompt:
+Edit this exact pixel-art background plate: remove ONLY the small green circular sky mark near logical x222,y54. Fill that small area with the existing flat ivory sky colour #FFFAE8. Preserve every other pixel and the 320x240 logical composition exactly: dark top and side gutters, mountains, quiet sage middle band, foreground rocks. Do not add anything. No aurora, moon, stars, clouds or atmospheric effects. One native pixel grid, no antialiasing or blur. Output 320x240 if possible, otherwise an exact nearest-neighbour integer enlargement. This is a surgical deletion, not a redraw.
+
 Revision 4: ten new airborne poses per theme, independently hand-drawn as
 20x22 native ink maps in assets/airborne-pixels.json. The exporter adds a 1px
 dark contour and maps palette inks. No image generation, bitmap rotation,
