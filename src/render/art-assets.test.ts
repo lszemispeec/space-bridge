@@ -5,7 +5,7 @@ import neon from '../../assets/neon-orbit/neon-orbit.json';
 import publishedPolar from '../../public/atlas/polar-signal.json';
 import publishedDesert from '../../public/atlas/desert-expedition.json';
 import publishedNeon from '../../public/atlas/neon-orbit.json';
-import { CONSOLE_HUD, ROOM_BACKGROUND, roomLayout } from '../config/layout';
+import { CONSOLE_HUD, ROCKET, ROCKET_HATCH, ROOM_BACKGROUND, ROVER, ROVER_HATCH, roomLayout } from '../config/layout';
 import { validateAtlas } from './atlas';
 
 const atlases = [polar, desert, neon];
@@ -70,6 +70,22 @@ describe('production art handoff', () => {
       expect(atlas.sockets.rocketTopHatch).toEqual({ frame: 'rocket.tophatch.open.0', x: 20, y: 32 });
       expect(atlas.sockets.roverHatch).toEqual({ frame: 'rover.hatch.open.0', x: 8, y: 30 });
       expect(atlas.vehicleModels.gantry).toBe('retired');
+      // The hatch mouths the engine spawns from and boards into must be where the code expects them.
+      const top = atlas.frames['rocket.tophatch.open.0'];
+      expect([top.w, top.h, top.ax, top.ay]).toEqual([ROCKET.w, ROCKET.h, 0, ROCKET.h]);
+      expect(atlas.vehicleModels.rocket.anchor).toEqual({ x: ROCKET.x, y: ROCKET.y + ROCKET.h });
+      expect({ x: ROCKET.x + atlas.sockets.rocketTopHatch.x, y: ROCKET.y + atlas.sockets.rocketTopHatch.y }).toEqual(ROCKET_HATCH);
+      const mouth = atlas.vehicleModels.rocket.hatch;
+      expect(ROCKET_HATCH.x).toBeGreaterThanOrEqual(ROCKET.x + mouth.x);
+      expect(ROCKET_HATCH.x).toBeLessThanOrEqual(ROCKET.x + mouth.x + mouth.w);
+      expect(ROCKET_HATCH.y).toBe(ROCKET.y + mouth.y + mouth.h);
+      const side = atlas.frames['rover.hatch.open.0'];
+      expect([side.w, side.h, side.ax, side.ay]).toEqual([ROVER.w, ROVER.h, 0, ROVER.h]);
+      expect(atlas.vehicleModels.rover.anchor).toEqual({ x: ROVER.x, y: ROVER.y + ROVER.h });
+      expect({ x: ROVER.x + atlas.sockets.roverHatch.x, y: ROVER.y + atlas.sockets.roverHatch.y }).toEqual(ROVER_HATCH);
+      for (const prefix of ['rocket.tophatch', 'rover.hatch']) {
+        for (const state of ['closed', 'opening', 'open', 'closing']) expect(`${prefix}.${state}` in atlas.animations, `${prefix}.${state}`).toBe(true);
+      }
       for (const [name, frame] of Object.entries(atlas.frames)) {
         if (name.startsWith('crater.eyes.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 16, 12, 12]);
         if (name.startsWith('crater.tentacle.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 32, 12, 28]);

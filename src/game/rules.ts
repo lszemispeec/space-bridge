@@ -152,13 +152,20 @@ function advanceCosmonaut(s: GameState, c: Cosmonaut, beat: number, events: Game
 
   switch (c.state) {
     case 'crouch': {
-      const hop = rollHop(s.rng);
-      s.rng = hop.rng;
       c.state = 'air';
       c.t = carry;
-      c.duration = c.slot === ROCKET_SLOT ? DIFFICULTY.timing.drop : DIFFICULTY.timing.jump;
-      c.spin = hop.value.spin;
-      c.flail = hop.value.flail;
+      if (c.slot === LAST_CRATER) {
+        // The short leap home: no tumble, no flail, nothing for the player to catch.
+        c.duration = DIFFICULTY.timing.hop;
+        c.spin = 0;
+        c.flail = false;
+      } else {
+        const hop = rollHop(s.rng);
+        s.rng = hop.rng;
+        c.duration = c.slot === ROCKET_SLOT ? DIFFICULTY.timing.drop : DIFFICULTY.timing.jump;
+        c.spin = hop.value.spin;
+        c.flail = hop.value.flail;
+      }
       events.push({ type: 'jump' });
       return;
     }

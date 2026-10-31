@@ -104,6 +104,7 @@ describe('spawning and jumping', () => {
     const bot = createBot(instantBotOptions());
     const hops: { spin: number; flail: boolean }[] = [];
     const seen = new Set<string>();
+    const lastHops: { spin: number; flail: boolean; duration: number }[] = [];
     for (let i = 0; i < 60 * 120 && hops.length < 40; i++) {
       const r = step(s, bot.input(s), STEP_SECONDS);
       s = r.state;
@@ -111,7 +112,8 @@ describe('spawning and jumping', () => {
         const key = `${c.id}:${c.slot}`;
         if (c.state === 'air' && !seen.has(key)) {
           seen.add(key);
-          hops.push({ spin: c.spin, flail: c.flail });
+          if (c.slot === 4) lastHops.push({ spin: c.spin, flail: c.flail, duration: c.duration });
+          else hops.push({ spin: c.spin, flail: c.flail });
         }
         if (c.state !== 'air') {
           expect(c.spin).toBe(0);
@@ -129,6 +131,9 @@ describe('spawning and jumping', () => {
     for (const h of tumbles) expect(Math.abs(h.spin)).toBeLessThanOrEqual(1.5);
     expect(new Set(tumbles.map((h) => h.spin)).size).toBeGreaterThan(1);
     expect(tumbles.some((h) => h.spin > 0) && tumbles.some((h) => h.spin < 0)).toBe(true);
+    // The leap into the rover is short, plain and never a flail.
+    expect(lastHops.length).toBeGreaterThanOrEqual(3);
+    for (const h of lastHops) expect(h).toEqual({ spin: 0, flail: false, duration: DIFFICULTY.timing.hop });
   });
 
   it('never has more cosmonauts than the density ramp allows at the score', () => {
@@ -136,7 +141,7 @@ describe('spawning and jumping', () => {
       let s = startGame(titleState(), mode);
       const bot = createBot(instantBotOptions());
       let most = 0;
-      for (let i = 0; i < 60 * 120; i++) {
+      for (let i = 0; i < 60 * 240; i++) {
         s = step(s, bot.input(s), STEP_SECONDS).state;
         expect(s.cosmonauts.length).toBeLessThanOrEqual(currentDensity(s).maxOnScreen);
         most = Math.max(most, s.cosmonauts.length);
@@ -156,7 +161,7 @@ describe('spawning and jumping', () => {
     expect(s.score).toBeGreaterThanOrEqual(100);
   });
 
-  it('drops from the ledge to crater 1 in the drop time, then hops in the jump time', () => {
+  it('drops from the hatch to crater 1 in the drop time, then hops in the jump time', () => {
     const jumped = runUntil(startGame(titleState()), 'jump').state;
     expect(jumped.cosmonauts[0]?.duration).toBe(DIFFICULTY.timing.drop);
     const bounced = runUntil(jumped, 'bounce').state;
