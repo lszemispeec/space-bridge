@@ -148,6 +148,72 @@ states; renderer/input integration remains with Forge.
 
 - `background`: the full 320×240 scene without sprites, craters, plate or HUD text. The 32 px gutters on both sides are part of it.
 - `hud.digit.0` … `hud.digit.9`: all the same size, about 8×10.
+- `crater.0` … `crater.3` and `crater.front.0` … `.3`: see the creature contract below.
+
+## Elevated hatch and crater creatures
+
+All additions below share names, geometry and timing across themes. This is an
+art contract; the engine owns spawn timing, creature RNG and plate safety.
+
+### Rocket hatch and ledge
+
+Replace the old rocket hull with one `rocket.hatch.*` full-hull frame, drawn at
+bottom-left **(43,169)**. New cells are **44×89**, anchor **(0,89)**; the extra
+width contains the right-hand gantry. The ledge foot point is local **(39,30)**,
+world **(82,110)**. It is about two thirds of the rocket height above the base.
+Every atlas supplies `sockets.rocketLedge = {frame: "rocket.hatch.open.0",
+x:39, y:30}`. The socket is measured from the frame's top-left, not its anchor.
+
+| Animation | Frames | Duration per frame | Loop |
+|---|---|---|---|
+| `rocket.hatch.closed` | `.0` | 1000ms | yes |
+| `rocket.hatch.opening` | `.0`, `.1`, `.2` | 90ms | no |
+| `rocket.hatch.open` | `.0` | 1000ms | yes |
+| `rocket.hatch.closing` | `.0`, `.1`, `.2` | 90ms | no |
+| `cosmonaut.ledge.stand` | `.0` | 1000ms | yes |
+| `cosmonaut.ledge.crouch` | `.0` | 1000ms | yes |
+
+Cosmonaut ledge poses retain **20×22, feet anchor (10,22)**. Place their feet
+at (82,110); the first flight starts there. Draw the hatch hull, then the actor.
+Do not also draw the old `rocket.door_*` hull. Its frames remain for compatibility.
+
+### Four crater rims and their occupants
+
+The four single frames **`crater.0`…`crater.3`** are **24×8**, anchor **(12,4)**.
+Draw them at (106/146/186/226,177). Their matching foreground lips are
+`crater.front.0`…`.3`, with identical geometry. All four shapes share a usable
+mouth at local x5…18 / y3…5. Draw rim, creature, foreground lip, then plate.
+
+| Animation | Frames | Cell / anchor | Durations | Loop |
+|---|---|---|---|---|
+| `crater.eyes.peek` | `.0`…`.2` | 24×16 / (12,12) | 120,120,300ms | no |
+| `crater.eyes.blink` | `.0`…`.2` | 24×16 / (12,12) | 80,80,160ms | no |
+| `crater.eyes.look.l` | `.0` | 24×16 / (12,12) | 400ms | yes |
+| `crater.eyes.look.r` | `.0` | 24×16 / (12,12) | 400ms | yes |
+| `crater.eyes.hide` | `.0`…`.2` | 24×16 / (12,12) | 100,100,160ms | no |
+| `crater.tentacle.reach` | `.0`…`.3` | 24×32 / (12,28) | 120,160,240,160ms | no |
+| `crater.tentacle.grab` | `.0`…`.4` | 24×32 / (12,28) | 100,120,140,140,160ms | no |
+
+All creature anchors use the same crater centre (slot x,177). Eyes rise inside
+the shared mouth; the final hide frame is intentionally transparent. Reaches
+are decorative: suppress them on a crater occupied by the plate and draw the
+plate last. They do not change collision geometry.
+
+Grab frames **include the captured cosmonaut**. Hide the separate victim sprite
+while this sequence plays, or it will appear twice. The first frame registers
+the victim's feet at y175. The coil wraps the suit and pulls it beneath the
+front lip; the final frame contains only a retreating tentacle. Clip at y180
+and draw the matching foreground lip above the grab. Continue the life-lost
+sequence after the 660ms reference sequence; do not replay a visible fall from
+above the rim. Keep the existing fall sprites for other engine transitions.
+
+### Polar aurora retirement
+
+Polar's background no longer includes the aurora. Its four `ambient.sky.*`
+frames become transparent compatibility no-ops, and `retiredAnimations`
+contains `ambient.sky`. The frame names and rectangles remain identical across
+themes. The other two themes keep their sky loops. Polar drift and signal
+remain active. A renderer may skip animations listed in `retiredAnimations`.
 
 ## Ambient animations (optional)
 

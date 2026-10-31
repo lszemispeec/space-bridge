@@ -45,8 +45,21 @@ describe('production art handoff', () => {
           'cosmonaut.emerge', 'cosmonaut.takeoff', 'cosmonaut.land',
           'cosmonaut.crater_fall', 'cosmonaut.board', 'plate.move',
           'plate.move_right', 'plate.dip', 'rocket.door_open', 'rover.door_open',
+          'rocket.hatch.opening', 'rocket.hatch.closing', 'crater.eyes.peek',
+          'crater.eyes.blink', 'crater.eyes.hide', 'crater.tentacle.reach', 'crater.tentacle.grab',
         ]);
         expect(animation.loop, name).toBe(!oneShot.has(name));
+      }
+      expect(atlas.sockets.rocketLedge).toEqual({ frame: 'rocket.hatch.open.0', x: 39, y: 30 });
+      const hatch = atlas.frames['rocket.hatch.open.0'];
+      expect([hatch.w, hatch.h, hatch.ax, hatch.ay]).toEqual([44, 89, 0, 89]);
+      expect([43 + atlas.sockets.rocketLedge.x, 169 - hatch.ay + atlas.sockets.rocketLedge.y]).toEqual([82, 110]);
+      expect(atlas.animations['crater.tentacle.grab'].frames).toHaveLength(5);
+      expect(atlas.animations['crater.tentacle.reach'].frames).toHaveLength(4);
+      expect(atlas.retiredAnimations).toEqual(atlas.meta.theme === 'polar-signal' ? ['ambient.sky'] : []);
+      for (const [name, frame] of Object.entries(atlas.frames)) {
+        if (name.startsWith('crater.eyes.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 16, 12, 12]);
+        if (name.startsWith('crater.tentacle.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 32, 12, 28]);
       }
     });
   }
@@ -60,6 +73,7 @@ describe('production art handoff', () => {
       expect(atlas.frames).toEqual(polar.frames);
       expect(atlas.animations).toEqual(polar.animations);
       expect(atlas.placements).toEqual(polar.placements);
+      expect(atlas.sockets).toEqual(polar.sockets);
     }
   });
 });

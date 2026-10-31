@@ -1,0 +1,56 @@
+{
+  "addedFrames": [
+    "rocket.hatch.closed.0",
+    "rocket.hatch.opening.0",
+    "rocket.hatch.opening.1",
+    "rocket.hatch.opening.2",
+    "rocket.hatch.open.0",
+    "rocket.hatch.closing.0",
+    "rocket.hatch.closing.1",
+    "rocket.hatch.closing.2",
+    "cosmonaut.ledge.stand.0",
+    "cosmonaut.ledge.crouch.0",
+    "crater.0",
+    "crater.1",
+    "crater.front.1",
+    "crater.2",
+    "crater.front.2",
+    "crater.3",
+    "crater.front.3",
+    "crater.eyes.peek.0",
+    "crater.eyes.peek.1",
+    "crater.eyes.peek.2",
+    "crater.eyes.blink.0",
+    "crater.eyes.blink.1",
+    "crater.eyes.blink.2",
+    "crater.eyes.look.l.0",
+    "crater.eyes.look.r.0",
+    "crater.eyes.hide.0",
+    "crater.eyes.hide.1",
+    "crater.eyes.hide.2",
+    "crater.tentacle.reach.0",
+    "crater.tentacle.reach.1",
+    "crater.tentacle.reach.2",
+    "crater.tentacle.reach.3",
+    "crater.tentacle.grab.0",
+    "crater.tentacle.grab.1",
+    "crater.tentacle.grab.2",
+    "crater.tentacle.grab.3",
+    "crater.tentacle.grab.4"
+  ],
+  "changedFrames": [
+    "crater.front.0"
+  ],
+  "sheetSize": {
+    "w": 1024,
+    "h": 1619
+  },
+  "sockets": {
+    "rocketLedge": {
+      "frame": "rocket.hatch.open.0",
+      "x": 39,
+      "y": 30
+    }
+  },
+  "retiredAnimations": []
+}
