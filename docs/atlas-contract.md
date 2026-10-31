@@ -19,7 +19,7 @@ All three atlases must use the **same frame names, frame sizes and anchors**. Th
 - Internal resolution is 320×240. One sheet pixel is one screen pixel. No scaling inside the sheet.
 - Max 16 colours per theme, from the approved palette. Transparent pixels are allowed and do not count.
 - Every frame is a rectangle on the sheet with integer position and size.
-- The anchor is the point of the frame that the game places at the world position. For cosmonauts and the plate, it is the bottom centre (the feet). For vehicles, it is the bottom-left corner. For HUD items and buttons, it is the top-left corner.
+- The anchor is the point of the frame that the game places at the world position. Grounded cosmonaut poses and the plate use the bottom centre (the feet). The `cosmonaut.air.*` poses use the body centre (10,11) in a 20×22 cell. Vehicles use the bottom-left corner. HUD items and buttons use the top-left corner.
 - Animations list frame names in play order. `loop` is `true` for idle and ambient loops and `false` for one-shot actions.
 - `duration` is per frame, in milliseconds. The game may compress a one-shot animation to fit the gameplay timing (for example a shorter jump at high speed), so design poses that read well at any speed.
 
@@ -49,7 +49,7 @@ Frame names for animation frames follow the pattern `<animation>.<index>`. The g
 
 The game plays these by name. Each must exist in every theme.
 
-### Cosmonaut (anchor: bottom centre, about 12×16)
+### Cosmonaut (20×22 cells; existing poses anchor at bottom centre)
 
 | Name | Loop | When |
 |---|---|---|
@@ -61,6 +61,37 @@ The game plays these by name. Each must exist in every theme.
 | `cosmonaut.land` | no | Squash on the plate. About 0.12 s at speed 1; the take-off follows at once, so there is no crouch on a crater. |
 | `cosmonaut.crater_fall` | no | Falls into the crater. The game sinks the sprite about 18 px. |
 | `cosmonaut.board` | no | Walks into the rover. |
+
+### Airborne tumble and flail (20×22, body-centre anchor 10,11)
+
+`cosmonaut.air.spin` contains exactly `cosmonaut.air.spin.0` through
+`cosmonaut.air.spin.7`, ordered clockwise in screen coordinates:
+
+| Index | Head direction | Angle from upright |
+|---|---|---|
+| 0 | Up | 0° |
+| 1 | Upper right | 45° |
+| 2 | Right | 90° |
+| 3 | Lower right | 135° |
+| 4 | Down | 180° |
+| 5 | Lower left | 225° |
+| 6 | Left | 270° |
+| 7 | Upper left | 315° |
+
+The 7→0 seam completes 360°. Every frame is hand-drawn on the native grid;
+do not rotate, interpolate or resample the bitmap in the renderer.
+`cosmonaut.air.flail` contains exactly `cosmonaut.air.flail.0` and
+`cosmonaut.air.flail.1`, two spread-limb poses with the same cell and anchor.
+Both animations loop; each frame has an **80ms reference duration**. Spin is
+selected from arc progress and the seeded per-hop direction/turn count, not
+the global animation clock. Reverse index order for counter-clockwise turns.
+
+Place the body-centre anchor on the airborne body trajectory. Existing ground,
+takeoff, landing and fall poses retain their foot anchor (10,22). If the
+simulation position denotes feet, the renderer must place the body centre
+11 pixels above that position when selecting an `air.*` frame. Do not change
+grounded anchors or the plate squash. All three themes share these names,
+geometry, timing and order. Flight/scheduler integration belongs to the engine.
 
 ### Bridge plate (anchor: bottom centre, about 26×4)
 
