@@ -1,5 +1,6 @@
 /**
- * Screenshots of every theme, title and play, at 4x, from a built preview.
+ * Screenshots of every theme, title and play, at 4x, from a built preview,
+ * plus the title and play on a portrait and a landscape phone.
  *
  *   npm run build && npm run preview -- --port 4173 &
  *   npm run shots        # or: node scripts/screenshot.mjs http://localhost:4173/ shots
@@ -21,6 +22,12 @@ const CHROME =
 const PORT = 9333;
 const WIDTH = 1280;
 const HEIGHT = 960;
+const DESKTOP = { width: WIDTH, height: HEIGHT, deviceScaleFactor: 1, mobile: false };
+/** A 390x844 phone at 3x: 4x in both orientations since the portrait layout. */
+const PHONES = {
+  'phone-portrait': { width: 390, height: 844, deviceScaleFactor: 3, mobile: true },
+  'phone-landscape': { width: 844, height: 390, deviceScaleFactor: 3, mobile: true },
+};
 
 const chrome = spawn(
   CHROME,
@@ -114,20 +121,21 @@ async function capture(cdp, file, note = '') {
   console.log(note ? `${file} (${note})` : file);
 }
 
-async function shoot(theme) {
+async function shoot(theme, device = DESKTOP, name = `${theme}-{shot}-4x`) {
   const target = await (await fetch(`http://127.0.0.1:${PORT}/json/new?about:blank`, { method: 'PUT' })).json();
   const cdp = connect(target.webSocketDebuggerUrl);
   await cdp.open;
   await cdp.send('Page.enable');
   await cdp.send('Runtime.enable');
-  await cdp.send('Emulation.setDeviceMetricsOverride', { width: WIDTH, height: HEIGHT, deviceScaleFactor: 1, mobile: false });
+  await cdp.send('Emulation.setDeviceMetricsOverride', device);
+  if (device.mobile) await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true });
   await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: bootstrap(theme) });
   await cdp.send('Page.navigate', { url });
   await new Promise((r) => setTimeout(r, 2000));
-  await capture(cdp, join(outDir, `${theme}-title-4x.png`));
+  await capture(cdp, join(outDir, `${name.replace('{shot}', 'title')}.png`));
   const score = await cdp.send('Runtime.evaluate', { expression: PLAY, awaitPromise: true, returnByValue: true });
   if (score.exceptionDetails) throw new Error(score.exceptionDetails.text + ' ' + JSON.stringify(score.exceptionDetails.exception));
-  await capture(cdp, join(outDir, `${theme}-play-4x.png`), `score ${score.result.value}`);
+  await capture(cdp, join(outDir, `${name.replace('{shot}', 'play')}.png`), `score ${score.result.value}`);
   cdp.close();
   await fetch(`http://127.0.0.1:${PORT}/json/close/${target.id}`);
 }
@@ -142,6 +150,7 @@ try {
   await mkdir(outDir, { recursive: true });
   await waitForChrome();
   for (const theme of THEMES) await shoot(theme);
+  for (const [name, device] of Object.entries(PHONES)) await shoot(THEMES[0], device, `${name}-{shot}`);
 } finally {
   clearTimeout(watchdog);
   chrome.kill();

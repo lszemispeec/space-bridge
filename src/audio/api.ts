@@ -27,6 +27,11 @@ export interface AudioSink {
   setMuted(muted: boolean): void;
   /** Call from the first user gesture so the browser allows playback. */
   unlock(): void;
+  /**
+   * Music speed as a multiplier of the song's own tempo, for example 1.15 in
+   * Game B. Optional: an engine without it plays every song as written.
+   */
+  setTempo?(multiplier: number): void;
 }
 
 export function isAudioEvent(name: string): name is AudioEvent {

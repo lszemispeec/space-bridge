@@ -30,6 +30,8 @@ export interface ModeConfig {
    * the spawn further; it never shortens it.
    */
   spawnGap: readonly number[];
+  /** Playback speed of the theme music during a round. 1 is the song's own tempo. */
+  musicTempo: number;
 }
 
 export interface TimingConfig {
@@ -108,6 +110,7 @@ export const DIFFICULTY: DifficultyConfig = {
       rescuePoints: 5,
       maxOnScreen: 3,
       spawnGap: [3.4, 4.0, 4.8],
+      musicTempo: 1,
     },
     B: {
       curve: [
@@ -121,6 +124,7 @@ export const DIFFICULTY: DifficultyConfig = {
       rescuePoints: 10,
       maxOnScreen: 4,
       spawnGap: [3.4, 3.8, 4.4],
+      musicTempo: 1.15,
     },
   },
 };

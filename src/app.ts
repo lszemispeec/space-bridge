@@ -3,9 +3,9 @@
  */
 import { isAudioEvent, nullAudio, type AudioSink } from './audio/api';
 import { getTheme, type ThemeId } from './config/themes';
-import { createState, step } from './game/rules';
+import { createState, musicTempo, step } from './game/rules';
 import type { GameEvent, GameState } from './game/types';
-import { setupCanvas } from './platform/canvas';
+import { setupScreen } from './platform/canvas';
 import { createInput } from './platform/input';
 import { startLoop } from './platform/loop';
 import { browserStore, loadSave, writeSave, type KeyValueStore } from './platform/storage';
@@ -32,7 +32,7 @@ export interface AppOptions {
 
 export function createApp(options: AppOptions): App {
   const store = options.store ?? browserStore();
-  const ctx = setupCanvas(options.canvas);
+  const screen = setupScreen(options.canvas);
   let audio = options.audio ?? nullAudio;
   let state = createState(loadSave(store), options.seed ?? (Date.now() >>> 0));
   const listeners = new Set<EventListener>();
@@ -62,6 +62,7 @@ export function createApp(options: AppOptions): App {
 
   const input = createInput({
     canvas: options.canvas,
+    getViewport: () => screen.viewport(),
     getPhase: () => state.phase,
     onFirstGesture: () => {
       audio.unlock();
@@ -82,15 +83,26 @@ export function createApp(options: AppOptions): App {
     if (event.type === 'unlock') ensureArt(event.theme);
   });
 
+  // The music follows the screen: the mode's tempo in a round, the song's own on the title.
+  let tempo = 1;
+  const followTempo = (): void => {
+    const next = musicTempo(state);
+    if (next === tempo) return;
+    tempo = next;
+    audio.setTempo?.(tempo);
+  };
+
   const stopLoop = startLoop({
     update(dt) {
       const result = step(state, input.consume(), dt);
       state = result.state;
       for (const event of result.events) emit(event);
+      followTempo();
     },
     render() {
       const theme = state.save.settings.theme;
-      renderer.render(ctx, state, input.held(), art.get(theme) ?? null, performance.now());
+      renderer.render(screen.ctx, state, input.held(), art.get(theme) ?? null, performance.now());
+      screen.present();
     },
   });
 
@@ -103,10 +115,12 @@ export function createApp(options: AppOptions): App {
     setAudio(next) {
       audio = next;
       audio.setMuted(state.save.settings.muted);
+      audio.setTempo?.(tempo);
     },
     stop() {
       stopLoop();
       input.dispose();
+      screen.dispose();
     },
   };
 }
