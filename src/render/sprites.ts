@@ -31,6 +31,11 @@ function totalDuration(atlas: Atlas, animation: AtlasAnimation): number {
   return animation.frames.reduce((sum, name) => sum + frameOf(atlas, name).duration, 0);
 }
 
+/** The length of an animation in ms: the sum of its frame durations. */
+export function animationMs(atlas: Atlas, name: string): number {
+  return totalDuration(atlas, animationOf(atlas, name));
+}
+
 /**
  * The frame of an animation `elapsedMs` after it started. A loop wraps
  * around; a one-shot holds its last frame.

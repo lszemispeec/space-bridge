@@ -1,18 +1,20 @@
 /**
- * The screen: a fixed 320x240 frame the renderer draws into, shown on the
- * page canvas through the current viewport (see viewport.ts). The page
- * canvas keeps a whole number of game pixels; CSS scales it by a whole
- * number of device pixels, so every game pixel is one crisp block.
+ * The screen: a fixed 320x240 scene the renderer draws into, and the page
+ * canvas, which is the operator room around it (see viewport.ts). The page
+ * canvas keeps a whole number of room pixels; CSS scales it by a whole
+ * number of device pixels, so every pixel is one crisp block.
  */
 import { SCREEN_H, SCREEN_W } from '../config/layout';
 import { chooseViewport, composition, type Viewport } from './viewport';
 
 export interface Screen {
-  /** Draw target: the 320x240 frame. */
-  ctx: CanvasRenderingContext2D;
+  /** Draw target for the scene: the 320x240 frame. */
+  scene: CanvasRenderingContext2D;
+  /** Draw target for the room: the page canvas, in room pixels. */
+  room: CanvasRenderingContext2D;
   /** The viewport in use, for mapping taps. */
   viewport(): Viewport;
-  /** Copies the frame to the page canvas. Call once per rendered frame. */
+  /** Copies the scene into the room's window. Call once per rendered frame, before the room is drawn. */
   present(): void;
   dispose(): void;
 }
@@ -28,15 +30,15 @@ export function setupScreen(canvas: HTMLCanvasElement): Screen {
   const frame = document.createElement('canvas');
   frame.width = SCREEN_W;
   frame.height = SCREEN_H;
-  const ctx = context2d(frame);
-  const out = context2d(canvas);
+  const scene = context2d(frame);
+  const room = context2d(canvas);
   let viewport = chooseViewport(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1);
 
   const resize = (): void => {
     viewport = chooseViewport(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1);
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    out.imageSmoothingEnabled = false;
+    room.imageSmoothingEnabled = false;
     canvas.style.width = `${viewport.cssW}px`;
     canvas.style.height = `${viewport.cssH}px`;
   };
@@ -45,10 +47,12 @@ export function setupScreen(canvas: HTMLCanvasElement): Screen {
   resize();
 
   return {
-    ctx,
+    scene,
+    room,
     viewport: () => viewport,
     present() {
-      for (const b of composition(viewport.orientation)) out.drawImage(frame, b.sx, b.sy, b.w, b.h, b.dx, b.dy, b.w, b.h);
+      const b = composition(viewport.orientation);
+      room.drawImage(frame, b.sx, b.sy, b.w, b.h, b.dx, b.dy, b.w, b.h);
     },
     dispose() {
       window.removeEventListener('resize', resize);
