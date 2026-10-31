@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { arcPosition, isRising, rollSpin, SPIN_TURNS, tumbleFrame } from './jump';
+import { arcPosition, FLAIL_SHARE, isRising, rollHop, rollSpin, SPIN_TURNS, tumbleFrame } from './jump';
 
 describe('arcPosition', () => {
   const from = { x: 0, y: 100 };
@@ -69,5 +69,26 @@ describe('rollSpin', () => {
     expect(spins.some((s) => s > 0)).toBe(true);
     expect(spins.some((s) => s < 0)).toBe(true);
     expect(rollSpin({ seed: 42 })).toEqual(rollSpin({ seed: 42 }));
+  });
+});
+
+describe('rollHop', () => {
+  it('flails about one hop in four, without a spin, and tumbles the rest', () => {
+    let rng = { seed: 7 };
+    const hops = [];
+    for (let i = 0; i < 400; i++) {
+      const r = rollHop(rng);
+      rng = r.rng;
+      hops.push(r.value);
+    }
+    const flails = hops.filter((h) => h.flail);
+    expect(flails.length / hops.length).toBeGreaterThan(FLAIL_SHARE - 0.08);
+    expect(flails.length / hops.length).toBeLessThan(FLAIL_SHARE + 0.08);
+    for (const h of flails) expect(h.spin).toBe(0);
+    for (const h of hops.filter((h) => !h.flail)) {
+      expect(Math.abs(h.spin)).toBeGreaterThanOrEqual(SPIN_TURNS.min);
+      expect(Math.abs(h.spin)).toBeLessThanOrEqual(SPIN_TURNS.max);
+    }
+    expect(rollHop({ seed: 42 })).toEqual(rollHop({ seed: 42 }));
   });
 });

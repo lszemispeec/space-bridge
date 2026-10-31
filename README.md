@@ -11,7 +11,7 @@ Cosmonauts jump from the rocket to the rover across a road with four craters. Yo
 - **T**: cycle unlocked themes (title screen). **M**: mute. On touch, tap the THEME and SOUND buttons on the title screen, or the SND / MUTE box in the HUD.
 - Game A is slower. Game B starts faster and climbs higher. Each mode keeps its own high score.
 - Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (a reaction margin, then one press interval per extra crater) is in `src/config/difficulty.ts`. It shrinks with the speed curve, and the curve is tuned so a good player (0.22 s reaction, 0.15 s per press) can follow the longest trip, from crater 4 back to crater 1, at the top speed of both modes.
-- Themes unlock with your best score: Desert Expedition at 500, Neon Orbit at 1000.
+- Themes unlock with your best score: Desert Expedition at 350, Neon Orbit at 700.
 
 ## Run
 

@@ -63,7 +63,7 @@ describe('drawFrame', () => {
 describe('cosmonautFrame with the production atlas', () => {
   const real = polar as Atlas;
   const at = (pose: Parameters<typeof cosmonautFrame>[1]['pose'], progress: number) =>
-    cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 1 }, 0);
+    cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 1, flail: false }, 0);
   const named = (name: string) => real.frames[name];
 
   it('plays the one-shots by progress and the poses by time', () => {
@@ -75,13 +75,14 @@ describe('cosmonautFrame with the production atlas', () => {
     expect(at('descend', 0.8)).toBe(named('cosmonaut.air.spin.6'));
     expect(at('land', 0.1)).toBe(named('cosmonaut.land.0'));
     expect(at('land', 0.9)).toBe(named('cosmonaut.land.1'));
+    expect(at('crater_fall', 0.5)).toBe(named('cosmonaut.crater_fall.0'));
     expect(at('crater_fall', 0.99)).toBe(named('cosmonaut.crater_fall.2'));
     expect(at('board', 0.6)).toBe(named('cosmonaut.board.1'));
   });
 
   it('tumbles through cosmonaut.air.spin.* with the arc progress and the hop\'s spin', () => {
     const at = (pose: 'rise' | 'descend', progress: number, spin: number) =>
-      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin }, 0);
+      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin, flail: false }, 0);
     expect(at('rise', 0.02, 1)).toBe(named('cosmonaut.takeoff.0'));
     expect(at('rise', 0.1, 1)).toBe(named('cosmonaut.air.spin.0'));
     expect(at('rise', 0.3, 1)).toBe(named('cosmonaut.air.spin.2'));
@@ -89,6 +90,27 @@ describe('cosmonautFrame with the production atlas', () => {
     expect(at('descend', 0.99, 1)).toBe(named('cosmonaut.air.spin.7'));
     expect(at('rise', 0.3, -1)).toBe(named('cosmonaut.air.spin.6'));
     expect(at('descend', 0.75, 1.5)).toBe(named('cosmonaut.air.spin.1'));
+  });
+
+  it('flails on the clock for the whole arc of a flail hop, after the take-off', () => {
+    const at = (pose: 'rise' | 'descend', progress: number, nowMs: number) =>
+      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 0, flail: true }, nowMs);
+    expect(at('rise', 0.02, 0)).toBe(named('cosmonaut.takeoff.0'));
+    expect(at('rise', 0.1, 0)).toBe(named('cosmonaut.air.flail.0'));
+    expect(at('rise', 0.1, 159)).toBe(named('cosmonaut.air.flail.0'));
+    expect(at('rise', 0.1, 160)).toBe(named('cosmonaut.air.flail.1'));
+    expect(at('descend', 0.9, 320)).toBe(named('cosmonaut.air.flail.0'));
+    expect(at('descend', 0.9, 480)).toBe(named('cosmonaut.air.flail.1'));
+  });
+
+  it('flails into the crater until the fall pose takes over', () => {
+    const at = (progress: number, nowMs: number) =>
+      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose: 'crater_fall', progress, spin: 0, flail: false }, nowMs);
+    expect(at(0, 0)).toBe(named('cosmonaut.air.flail.0'));
+    expect(at(0.49, 200)).toBe(named('cosmonaut.air.flail.1'));
+    expect(at(0.5, 200)).toBe(named('cosmonaut.crater_fall.0'));
+    expect(at(0.7, 0)).toBe(named('cosmonaut.crater_fall.1'));
+    expect(at(0.99, 0)).toBe(named('cosmonaut.crater_fall.2'));
   });
 });
 
