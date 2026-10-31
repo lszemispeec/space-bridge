@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Space Bridge — audio demo</title>
+    <style>
+      :root { color-scheme: dark; }
+      body { margin: 0; padding: 16px; background: #0b1020; color: #e6f0ff; font: 14px/1.4 ui-monospace, Menlo, monospace; }
+      h1 { font-size: 18px; margin: 0 0 4px; color: #6ff3e3; }
+      h2 { font-size: 13px; margin: 20px 0 8px; color: #ffb347; text-transform: uppercase; letter-spacing: .08em; }
+      p { margin: 0 0 8px; color: #9fb0c8; }
+      .row { display: flex; flex-wrap: wrap; gap: 8px; }
+      button { background: #182446; color: #e6f0ff; border: 2px solid #2d3f74; border-radius: 4px; padding: 10px 14px; font: inherit; cursor: pointer; min-width: 110px; }
+      button:hover { border-color: #6ff3e3; }
+      button.on { background: #6ff3e3; color: #0b1020; border-color: #6ff3e3; }
+      label { display: flex; align-items: center; gap: 8px; min-width: 220px; }
+      input[type="range"] { flex: 1; }
+      #log { margin-top: 16px; padding: 8px; background: #060a14; border: 1px solid #2d3f74; height: 140px; overflow: auto; white-space: pre; color: #9fb0c8; }
+      #state { color: #ffb347; }
+      kbd { background: #182446; border: 1px solid #2d3f74; border-radius: 3px; padding: 0 5px; }
+    </style>
+  </head>
+  <body>
+    <h1>SPACE BRIDGE — audio demo</h1>
+    <p>Context: <span id="state">locked — press any key or tap</span>. Keys: <kbd>1</kbd>–<kbd>9</kbd> SFX, <kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> themes, <kbd>G</kbd> jingle, <kbd>M</kbd> mute, <kbd>S</kbd> stop.</p>
+
+    <h2>Sound effects</h2>
+    <div class="row" id="sfx"></div>
+
+    <h2>Music</h2>
+    <div class="row" id="music"></div>
+
+    <h2>Mixer</h2>
+    <div class="row" id="mixer"></div>
+
+    <h2>Render</h2>
+    <p>Renders with an OfflineAudioContext in this browser and downloads a WAV.</p>
+    <div class="row" id="render"></div>
+
+    <div id="log"></div>
+    <script type="module" src="/src/audio/demo.ts"></script>
+  </body>
+</html>

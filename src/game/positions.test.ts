@@ -8,18 +8,16 @@ function c(partial: Partial<Cosmonaut>): Cosmonaut {
 }
 
 describe('cosmonautView', () => {
-  it('stands on the slot while crouching', () => {
+  it('squashes on the plate for the whole stand on a crater', () => {
     const v = cosmonautView(c({ slot: 2, t: 0.9 }));
     expect(v.pos).toEqual({ x: SLOT_X[2], y: GROUND_Y });
-    expect(v.pose).toBe('crouch');
-  });
-
-  it('squashes right after landing', () => {
+    expect(v.pose).toBe('land');
     expect(cosmonautView(c({ slot: 2, t: 0.1 })).pose).toBe('land');
   });
 
-  it('emerges from the rocket on slot 0', () => {
-    expect(cosmonautView(c({ slot: 0 })).pose).toBe('emerge');
+  it('emerges from the rocket on slot 0, then crouches for the first jump', () => {
+    expect(cosmonautView(c({ slot: 0, t: 0.2 })).pose).toBe('emerge');
+    expect(cosmonautView(c({ slot: 0, t: 0.7 })).pose).toBe('crouch');
   });
 
   it('follows the arc between slots in the air', () => {

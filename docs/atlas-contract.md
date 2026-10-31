@@ -54,11 +54,11 @@ The game plays these by name. Each must exist in every theme.
 | Name | Loop | When |
 |---|---|---|
 | `cosmonaut.emerge` | no | Comes out of the rocket door. |
-| `cosmonaut.crouch` | yes | Waits on a slot before the next jump. |
+| `cosmonaut.crouch` | yes | Waits at the rocket door before the first jump. |
 | `cosmonaut.takeoff` | no | Leaves the ground. Very short. |
 | `cosmonaut.rise` | yes | First half of the arc. |
 | `cosmonaut.descend` | yes | Second half of the arc. |
-| `cosmonaut.land` | no | Squash on the plate. |
+| `cosmonaut.land` | no | Squash on the plate. About 0.12 s at speed 1; the take-off follows at once, so there is no crouch on a crater. |
 | `cosmonaut.crater_fall` | no | Falls into the crater. The game sinks the sprite about 18 px. |
 | `cosmonaut.board` | no | Walks into the rover. |
 
@@ -126,7 +126,7 @@ Name them `ambient.<name>`, loop `true`. Add an `ambient` entry per animation wi
 "placements": { "ambient.beacon": { "x": 60, "y": 84 } }
 ```
 
-The game ignores unknown ambient animations until the renderer learns them, so you can add them freely. Keep them out of the jump path (y 130–180 between the rocket and the rover) and out of the HUD (y 0–30).
+The renderer draws every `ambient.*` animation that has a placement, so you can add them freely. All of them are drawn over the background and behind the vehicles, except `ambient.signal`, which is drawn over the vehicles (rocket beacon, rover lights). Keep them out of the jump path (y 130–180 between the rocket and the rover) and out of the HUD (y 0–30).
 
 ## Playfield reference
 

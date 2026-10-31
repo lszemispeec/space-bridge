@@ -1,8 +1,12 @@
 /** Derives on-screen positions from game state. Pure, used by the renderer. */
-import { FALL_DEPTH, GROUND_Y, JUMP_HEIGHT, ROVER, SLOT_X } from '../config/layout';
+import { FALL_DEPTH, GROUND_Y, JUMP_HEIGHT, ROCKET_SLOT, ROVER, SLOT_X } from '../config/layout';
 import { arcPosition, isRising, type Point } from './jump';
 import type { Cosmonaut } from './types';
 
+/**
+ * `emerge` then `crouch` play at the rocket door. `land` is the squash on the
+ * plate; the take-off follows it at once, so there is no crouch on a crater.
+ */
 export type Pose = 'emerge' | 'crouch' | 'rise' | 'descend' | 'land' | 'crater_fall' | 'board';
 
 export interface CosmonautView {
@@ -27,7 +31,8 @@ export function cosmonautView(c: Cosmonaut): CosmonautView {
   const p = progressOf(c);
   switch (c.state) {
     case 'crouch':
-      return { pos: slotPoint(c.slot), pose: c.slot === 0 ? 'emerge' : p < 0.4 ? 'land' : 'crouch', progress: p };
+      if (c.slot === ROCKET_SLOT) return { pos: slotPoint(c.slot), pose: p < 0.5 ? 'emerge' : 'crouch', progress: p };
+      return { pos: slotPoint(c.slot), pose: 'land', progress: p };
     case 'air':
       return {
         pos: arcPosition(slotPoint(c.slot), slotPoint(c.slot + 1), p, JUMP_HEIGHT),

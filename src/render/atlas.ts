@@ -36,10 +36,18 @@ export interface AtlasMeta {
   contract: 1;
 }
 
+/** Screen position of an ambient loop's anchor. */
+export interface Placement {
+  x: number;
+  y: number;
+}
+
 export interface Atlas {
   meta: AtlasMeta;
   frames: Record<string, AtlasFrame>;
   animations: Record<string, AtlasAnimation>;
+  /** Where the game draws optional ambient animations, by animation name. */
+  placements?: Record<string, Placement>;
 }
 
 /** Animations the game plays by name. Every theme atlas must define these. */

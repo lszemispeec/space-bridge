@@ -4,6 +4,10 @@ import type { Rng } from './rng';
 
 export type Phase = 'title' | 'playing' | 'life_lost' | 'game_over';
 
+/**
+ * `crouch` is every stand on a slot: the emerge wait at the rocket door and
+ * the squash on the plate. The slot tells which one it is.
+ */
 export type CosmonautState = 'crouch' | 'air' | 'fall' | 'board';
 
 export interface Cosmonaut {
@@ -11,9 +15,9 @@ export interface Cosmonaut {
   state: CosmonautState;
   /** Slot the cosmonaut stands on, or jumped from while in the air. */
   slot: number;
-  /** Seconds spent in the current state. */
+  /** Beat seconds spent in the current state. Real seconds while falling. */
   t: number;
-  /** Length of the current state in seconds. */
+  /** Length of the current state, in the same unit as `t`. */
   duration: number;
 }
 
@@ -43,11 +47,11 @@ export interface GameState {
   plateSlot: number;
   cosmonauts: Cosmonaut[];
   nextId: number;
-  /** Seconds until the next cosmonaut may leave the rocket. */
+  /** Beat seconds until the next cosmonaut may leave the rocket. */
   spawnTimer: number;
-  /** Seconds left in a timed phase (life_lost freeze, game over lock). */
+  /** Real seconds left in a timed phase (life_lost freeze, game over lock). */
   phaseTimer: number;
-  /** Total simulated seconds in the current round. */
+  /** Total simulated real seconds in the current round. */
   time: number;
   rng: Rng;
   save: SaveData;
@@ -55,22 +59,30 @@ export interface GameState {
   newUnlocks: ThemeId[];
 }
 
-/** One simulation step of player input. All flags are edge-triggered. */
+export type PlateMove = 'left' | 'right';
+
+/** Buttons that flip a setting on every press. */
+export type Toggle = 'theme' | 'mute';
+
+/**
+ * One simulation step of player input. `moves` lists every plate press
+ * since the last step in press order; each one moves the plate one crater.
+ * `theme` and `mute` count presses, so two presses in one step are two
+ * toggles. `start` is edge-triggered.
+ */
 export interface InputFrame {
-  left: boolean;
-  right: boolean;
-  /** Enter / space / tap in the middle. */
+  moves: readonly PlateMove[];
+  /** Enter / space. */
   start: boolean;
-  theme: boolean;
-  mute: boolean;
+  theme: number;
+  mute: number;
 }
 
 export const NO_INPUT: InputFrame = {
-  left: false,
-  right: false,
+  moves: [],
   start: false,
-  theme: false,
-  mute: false,
+  theme: 0,
+  mute: 0,
 };
 
 /** Events emitted by one step. Sound events share names with the audio API. */
