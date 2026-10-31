@@ -1,9 +1,10 @@
 /**
  * Screenshots of every theme, title and play, at 4x, from a built preview,
- * plus the title and play on a portrait and a landscape phone.
+ * plus the title and play on a portrait and a landscape phone, plus Polar
+ * through every display preset and with the pause menu open.
  *
  *   npm run build && npm run preview -- --port 4173 &
- *   npm run shots        # or: node scripts/screenshot.mjs http://localhost:4173/ shots
+ *   npm run shots        # or: node scripts/screenshot.mjs http://localhost:4173/ shots [all|themes|display]
  *
  * Needs Google Chrome. Drives it over the DevTools protocol with Node's
  * built-in WebSocket, so there is nothing to install. A tiny in-page bot
@@ -14,8 +15,9 @@ import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const [url = 'http://localhost:4173/', outDir = 'shots'] = process.argv.slice(2);
+const [url = 'http://localhost:4173/', outDir = 'shots', set = 'all'] = process.argv.slice(2);
 const THEMES = ['polar-signal', 'desert-expedition', 'neon-orbit'];
+const PRESETS = ['off', 'crt', 'crt-glow', 'full'];
 const CHROME =
   process.env.CHROME ??
   (process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : 'google-chrome');
@@ -77,15 +79,27 @@ function connect(wsUrl) {
 
 const SAVE_KEY = 'space-bridge.save.v1';
 
-function bootstrap(theme) {
+function bootstrap(theme, shader = 'off') {
   const save = {
     version: 1,
     highScores: { A: 0, B: 0 },
     unlocked: THEMES,
-    settings: { theme, muted: false, mode: 'A' },
+    settings: { theme, muted: false, mode: 'A', music: 0.6, sfx: 1, shader },
   };
   return `localStorage.setItem(${JSON.stringify(SAVE_KEY)}, ${JSON.stringify(JSON.stringify(save))});`;
 }
+
+/** Opens the pause menu with Esc and moves the cursor down twice, so the shot shows a setting row selected. */
+const PAUSE = `(() => {
+  const key = (code) => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { code, bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent('keyup', { code, bubbles: true }));
+  };
+  key('Escape');
+  key('ArrowDown');
+  key('ArrowDown');
+  return new Promise((resolve) => setTimeout(() => resolve(window.spaceBridge.getState().paused), 200));
+})()`;
 
 /** Starts Game A, follows the cosmonauts, resolves near the apex of a jump over a crater. */
 const PLAY = `new Promise((resolve, reject) => {
@@ -122,7 +136,7 @@ async function capture(cdp, file, note = '') {
   console.log(note ? `${file} (${note})` : file);
 }
 
-async function shoot(theme, device = DESKTOP, name = `${theme}-{shot}-4x`) {
+async function openTab(theme, device, shader = 'off') {
   const target = await (await fetch(`http://127.0.0.1:${PORT}/json/new?about:blank`, { method: 'PUT' })).json();
   const cdp = connect(target.webSocketDebuggerUrl);
   await cdp.open;
@@ -130,15 +144,42 @@ async function shoot(theme, device = DESKTOP, name = `${theme}-{shot}-4x`) {
   await cdp.send('Runtime.enable');
   await cdp.send('Emulation.setDeviceMetricsOverride', device);
   if (device.mobile) await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true });
-  await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: bootstrap(theme) });
+  await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: bootstrap(theme, shader) });
   await cdp.send('Page.navigate', { url });
   await new Promise((r) => setTimeout(r, 2000));
-  await capture(cdp, join(outDir, `${name.replace('{shot}', 'title')}.png`));
-  const score = await cdp.send('Runtime.evaluate', { expression: PLAY, awaitPromise: true, returnByValue: true });
-  if (score.exceptionDetails) throw new Error(score.exceptionDetails.text + ' ' + JSON.stringify(score.exceptionDetails.exception));
-  await capture(cdp, join(outDir, `${name.replace('{shot}', 'play')}.png`), `score ${score.result.value}`);
-  cdp.close();
-  await fetch(`http://127.0.0.1:${PORT}/json/close/${target.id}`);
+  return {
+    cdp,
+    async evaluate(expression) {
+      const r = await cdp.send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true });
+      if (r.exceptionDetails) throw new Error(r.exceptionDetails.text + ' ' + JSON.stringify(r.exceptionDetails.exception));
+      return r.result.value;
+    },
+    async close() {
+      cdp.close();
+      await fetch(`http://127.0.0.1:${PORT}/json/close/${target.id}`);
+    },
+  };
+}
+
+async function shoot(theme, device = DESKTOP, name = `${theme}-{shot}-4x`) {
+  const tab = await openTab(theme, device);
+  await capture(tab.cdp, join(outDir, `${name.replace('{shot}', 'title')}.png`));
+  const score = await tab.evaluate(PLAY);
+  await capture(tab.cdp, join(outDir, `${name.replace('{shot}', 'play')}.png`), `score ${score}`);
+  await tab.close();
+}
+
+/** Polar in play through one display preset; with the pause menu open too for the first one. */
+async function shootDisplay(shader, withMenu) {
+  const tab = await openTab(THEMES[0], DESKTOP, shader);
+  const caps = await tab.evaluate('window.spaceBridge.getCaps().shaders');
+  const score = await tab.evaluate(PLAY);
+  await capture(tab.cdp, join(outDir, `${THEMES[0]}-display-${shader}-4x.png`), `score ${score}, webgl2 ${caps}`);
+  if (withMenu) {
+    const paused = await tab.evaluate(PAUSE);
+    await capture(tab.cdp, join(outDir, `${THEMES[0]}-pause-menu-4x.png`), `paused ${paused}`);
+  }
+  await tab.close();
 }
 
 const watchdog = setTimeout(() => {
@@ -150,8 +191,13 @@ const watchdog = setTimeout(() => {
 try {
   await mkdir(outDir, { recursive: true });
   await waitForChrome();
-  for (const theme of THEMES) await shoot(theme);
-  for (const [name, device] of Object.entries(PHONES)) await shoot(THEMES[0], device, `${name}-{shot}`);
+  if (set !== 'display') {
+    for (const theme of THEMES) await shoot(theme);
+    for (const [name, device] of Object.entries(PHONES)) await shoot(THEMES[0], device, `${name}-{shot}`);
+  }
+  if (set !== 'themes') {
+    for (const shader of PRESETS) await shootDisplay(shader, shader === 'off');
+  }
 } finally {
   clearTimeout(watchdog);
   chrome.kill();

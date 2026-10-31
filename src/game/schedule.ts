@@ -21,7 +21,8 @@ function isCrater(slot: number): boolean {
 /**
  * Every crater landing of one cosmonaut, from the current state to the rover.
  * The landing it stands on right now is included with a negative time, because
- * the plate is still committed to it until the take-off.
+ * the plate is still committed to it until the take-off. The leap into the
+ * rover is not a landing: it needs no plate, so its timing never enters.
  */
 export function landingsOf(c: Cosmonaut, timing: TimingConfig): Landing[] {
   const out: Landing[] = [];

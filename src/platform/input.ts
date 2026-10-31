@@ -11,9 +11,15 @@
  * a plate press: the left half of the viewport is left, the right half is
  * right. The drawn levers are the visual hint; the hit area is the whole
  * side so thumbs never miss on a phone, and the letterbox counts too.
+ *
+ * While the pause menu is open the same keys and taps drive the menu
+ * instead: arrows and W/S/A/D move and adjust, Enter confirms, Esc and the
+ * console's MENU button close it, and a tap lands on a menu row. Nothing
+ * reaches the plate.
  */
 import {
   CONSOLE_HUD,
+  CONSOLE_MENU_BUTTON,
   frameToRoom,
   hitRect,
   inRect,
@@ -26,8 +32,9 @@ import {
   type TapTargetId,
 } from '../config/layout';
 import type { Point } from '../game/jump';
+import type { MenuKey } from '../game/menu';
 import { NO_INPUT, type InputFrame, type Phase, type PlateMove, type Toggle } from '../game/types';
-import type { Viewport } from './viewport';
+import { canvasToFrame, type Viewport } from './viewport';
 
 /** Buttons currently held, for drawing their pressed states. */
 export interface HeldButtons {
@@ -35,11 +42,15 @@ export interface HeldButtons {
   right: boolean;
   theme: boolean;
   mute: boolean;
+  menu: boolean;
 }
+
+/** A key for the open menu, or a tap at a scene point the shell maps to a row. */
+export type MenuInput = MenuKey | { tap: Point };
 
 export interface InputSource {
   /** Returns the presses since the last call and clears them. */
-  consume(): InputFrame;
+  consume(): { frame: InputFrame; menu: MenuInput[] };
   /** Buttons currently held, for drawing pressed states. */
   held(): HeldButtons;
   dispose(): void;
@@ -50,14 +61,16 @@ export interface InputOptions {
   onFirstGesture: () => void;
   /** The screen that is showing, to resolve taps on its buttons. */
   getPhase: () => Phase;
-  /** The game canvas, to map taps to room pixels. */
-  canvas: HTMLCanvasElement;
+  /** True while the pause menu is open, so keys and taps drive the menu. */
+  getPaused: () => boolean;
+  /** Where the visible canvas sits on the page, to map taps to room pixels. */
+  getBox: () => CanvasBox;
   /** How the canvas shows the room, to map taps to room pixels. */
   getViewport: () => Viewport;
 }
 
 /** `none` is a tap that is swallowed: inside the title's button row but on no button. */
-type Action = 'start' | Toggle | PlateMove | 'none';
+type Action = 'start' | 'pause' | Toggle | PlateMove | 'none';
 
 const KEY_BINDINGS: Record<string, Action> = {
   ArrowLeft: 'left',
@@ -68,6 +81,23 @@ const KEY_BINDINGS: Record<string, Action> = {
   Space: 'start',
   KeyT: 'theme',
   KeyM: 'mute',
+  Escape: 'pause',
+  KeyP: 'pause',
+};
+
+const MENU_KEY_BINDINGS: Record<string, MenuKey> = {
+  ArrowUp: 'up',
+  KeyW: 'up',
+  ArrowDown: 'down',
+  KeyS: 'down',
+  ArrowLeft: 'left',
+  KeyA: 'left',
+  ArrowRight: 'right',
+  KeyD: 'right',
+  Enter: 'confirm',
+  Space: 'confirm',
+  Escape: 'back',
+  KeyP: 'back',
 };
 
 export function sideForPointer(clientX: number, viewportW: number): PlateMove {
@@ -94,12 +124,16 @@ const TARGET_ACTIONS: Record<TapTargetId, Action> = {
   titleTheme: 'theme',
   titleMute: 'mute',
   hudMute: 'mute',
+  hudMenu: 'pause',
 };
 
 /** The buttons a tap can hit on a screen, with their rectangles in room pixels. */
 export function tapTargets(phase: Phase, orientation: Orientation): { id: TapTargetId; rect: Rect }[] {
   const room = roomLayout(orientation);
-  const targets: { id: TapTargetId; rect: Rect }[] = [{ id: 'hudMute', rect: CONSOLE_HUD.sound }];
+  const targets: { id: TapTargetId; rect: Rect }[] = [
+    { id: 'hudMute', rect: CONSOLE_HUD.sound },
+    { id: 'hudMenu', rect: CONSOLE_MENU_BUTTON },
+  ];
   if (phase === 'title') {
     targets.push({ id: 'titleTheme', rect: frameToRoom(TAP_TARGETS.titleTheme, room) });
     targets.push({ id: 'titleMute', rect: frameToRoom(TAP_TARGETS.titleMute, room) });
@@ -141,6 +175,18 @@ export function tapAction(phase: Phase, point: Point | null, orientation: Orient
   return side;
 }
 
+/**
+ * What a tap at a room point means while the menu is open: the MENU button
+ * closes it, a point in the window is handed to the menu, anything else
+ * is swallowed.
+ */
+export function menuTapAction(point: Point | null, viewport: Viewport, minHit = 0): MenuInput | null {
+  if (!point) return null;
+  if (inRect(hitRect(CONSOLE_MENU_BUTTON, minHit), point.x, point.y)) return 'back';
+  const scene = canvasToFrame(point.x, point.y, viewport);
+  return scene ? { tap: scene } : null;
+}
+
 function isMove(action: Action): action is PlateMove {
   return action === 'left' || action === 'right';
 }
@@ -148,9 +194,11 @@ function isMove(action: Action): action is PlateMove {
 export function createInput(options: InputOptions): InputSource {
   let moves: PlateMove[] = [];
   let start = false;
+  let pause = false;
   let toggles = { theme: 0, mute: 0 };
+  let menu: MenuInput[] = [];
   const heldKeys = new Set<string>();
-  const pointers = new Map<number, Action>();
+  const pointers = new Map<number, Action | 'menu'>();
   let gestureSeen = false;
 
   const gesture = (): void => {
@@ -162,17 +210,21 @@ export function createInput(options: InputOptions): InputSource {
   const queue = (action: Action): void => {
     if (isMove(action)) moves.push(action);
     else if (action === 'start') start = true;
+    else if (action === 'pause') pause = true;
     else if (action !== 'none') toggles = { ...toggles, [action]: toggles[action] + 1 };
   };
 
   const onKeyDown = (e: KeyboardEvent): void => {
+    const paused = options.getPaused();
+    const menuKey = paused ? MENU_KEY_BINDINGS[e.code] : undefined;
     const action = KEY_BINDINGS[e.code];
-    if (!action) return;
+    if (!menuKey && !action) return;
     e.preventDefault();
     gesture();
     if (e.repeat) return;
     heldKeys.add(e.code);
-    queue(action);
+    if (menuKey) menu.push(menuKey);
+    else if (action && (!paused || action === 'mute')) queue(action);
   };
 
   const onKeyUp = (e: KeyboardEvent): void => {
@@ -183,11 +235,18 @@ export function createInput(options: InputOptions): InputSource {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
     e.preventDefault();
     gesture();
-    const box = options.canvas.getBoundingClientRect();
+    const box = options.getBox();
     const viewport = options.getViewport();
     const point = toRoomPoint(e.clientX, e.clientY, box, viewport);
+    const minHit = minHitSize(box.width, viewport.width);
+    if (options.getPaused()) {
+      const input = menuTapAction(point, viewport, minHit);
+      if (input) menu.push(input);
+      pointers.set(e.pointerId, input === 'back' ? 'pause' : 'menu');
+      return;
+    }
     const side = sideForPointer(e.clientX, window.innerWidth);
-    const action = tapAction(options.getPhase(), point, viewport.orientation, side, minHitSize(box.width, viewport.width));
+    const action = tapAction(options.getPhase(), point, viewport.orientation, side, minHit);
     pointers.set(e.pointerId, action);
     queue(action);
   };
@@ -219,14 +278,17 @@ export function createInput(options: InputOptions): InputSource {
 
   return {
     consume() {
-      const frame: InputFrame = { ...NO_INPUT, ...toggles, start, moves };
+      const frame: InputFrame = { ...NO_INPUT, ...toggles, start, pause, moves };
+      const menuInputs = menu;
       moves = [];
       start = false;
+      pause = false;
       toggles = { theme: 0, mute: 0 };
-      return frame;
+      menu = [];
+      return { frame, menu: menuInputs };
     },
     held() {
-      return { left: isHeld('left'), right: isHeld('right'), theme: isHeld('theme'), mute: isHeld('mute') };
+      return { left: isHeld('left'), right: isHeld('right'), theme: isHeld('theme'), mute: isHeld('mute'), menu: isHeld('pause') };
     },
     dispose() {
       window.removeEventListener('keydown', onKeyDown);

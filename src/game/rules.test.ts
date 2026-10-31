@@ -104,6 +104,7 @@ describe('spawning and jumping', () => {
     const bot = createBot(instantBotOptions());
     const hops: { spin: number; flail: boolean }[] = [];
     const seen = new Set<string>();
+    const lastHops: { spin: number; flail: boolean; duration: number }[] = [];
     for (let i = 0; i < 60 * 120 && hops.length < 40; i++) {
       const r = step(s, bot.input(s), STEP_SECONDS);
       s = r.state;
@@ -111,7 +112,8 @@ describe('spawning and jumping', () => {
         const key = `${c.id}:${c.slot}`;
         if (c.state === 'air' && !seen.has(key)) {
           seen.add(key);
-          hops.push({ spin: c.spin, flail: c.flail });
+          if (c.slot === 4) lastHops.push({ spin: c.spin, flail: c.flail, duration: c.duration });
+          else hops.push({ spin: c.spin, flail: c.flail });
         }
         if (c.state !== 'air') {
           expect(c.spin).toBe(0);
@@ -129,6 +131,9 @@ describe('spawning and jumping', () => {
     for (const h of tumbles) expect(Math.abs(h.spin)).toBeLessThanOrEqual(1.5);
     expect(new Set(tumbles.map((h) => h.spin)).size).toBeGreaterThan(1);
     expect(tumbles.some((h) => h.spin > 0) && tumbles.some((h) => h.spin < 0)).toBe(true);
+    // The leap into the rover is short, plain and never a flail.
+    expect(lastHops.length).toBeGreaterThanOrEqual(3);
+    for (const h of lastHops) expect(h).toEqual({ spin: 0, flail: false, duration: DIFFICULTY.timing.hop });
   });
 
   it('never has more cosmonauts than the density ramp allows at the score', () => {
@@ -136,7 +141,7 @@ describe('spawning and jumping', () => {
       let s = startGame(titleState(), mode);
       const bot = createBot(instantBotOptions());
       let most = 0;
-      for (let i = 0; i < 60 * 120; i++) {
+      for (let i = 0; i < 60 * 240; i++) {
         s = step(s, bot.input(s), STEP_SECONDS).state;
         expect(s.cosmonauts.length).toBeLessThanOrEqual(currentDensity(s).maxOnScreen);
         most = Math.max(most, s.cosmonauts.length);
@@ -156,7 +161,7 @@ describe('spawning and jumping', () => {
     expect(s.score).toBeGreaterThanOrEqual(100);
   });
 
-  it('drops from the ledge to crater 1 in the drop time, then hops in the jump time', () => {
+  it('drops from the hatch to crater 1 in the drop time, then hops in the jump time', () => {
     const jumped = runUntil(startGame(titleState()), 'jump').state;
     expect(jumped.cosmonauts[0]?.duration).toBe(DIFFICULTY.timing.drop);
     const bounced = runUntil(jumped, 'bounce').state;
@@ -344,5 +349,95 @@ describe('purity', () => {
   it('only emits sound events that the audio API knows', () => {
     const soundLike = ['footstep', 'jump', 'bounce', 'plate_move', 'save', 'fall', 'grab', 'life_lost', 'unlock', 'game_over'];
     for (const name of soundLike) expect(AUDIO_EVENTS).toContain(name);
+  });
+});
+
+describe('pause menu', () => {
+  const paused = () => step(startGame(titleState()), press({ pause: true }), STEP_SECONDS).state;
+
+  it('toggles with the pause key and reports it', () => {
+    const r = step(startGame(titleState()), press({ pause: true }), STEP_SECONDS);
+    expect(r.state.paused).toBe(true);
+    expect(types(r.events)).toEqual(['pause_changed']);
+    const back = step(r.state, press({ pause: true }), STEP_SECONDS);
+    expect(back.state.paused).toBe(false);
+    expect(types(back.events)).toEqual(['pause_changed']);
+  });
+
+  it('freezes the round: no time, no spawns, no plate moves, no start', () => {
+    const s = paused();
+    const later = run(s, 5, move('right')).state;
+    expect(later.time).toBe(s.time);
+    expect(later.cosmonauts).toEqual(s.cosmonauts);
+    expect(later.plateSlot).toBe(s.plateSlot);
+    expect(later.spawnTimer).toBe(s.spawnTimer);
+    const title = step({ ...titleState(), paused: true }, press({ start: true }), STEP_SECONDS).state;
+    expect(title.phase).toBe('title');
+  });
+
+  it('resumes where it stopped', () => {
+    const before = run(startGame(titleState()), 2).state;
+    const stopped = step(before, press({ pause: true }), STEP_SECONDS).state;
+    const resumed = step(stopped, press({ commands: [{ type: 'resume' }] }), STEP_SECONDS).state;
+    expect(resumed.paused).toBe(false);
+    // The resuming step is the first one that runs again.
+    expect(resumed.time).toBeCloseTo(before.time + STEP_SECONDS);
+    expect(resumed.cosmonauts.length).toBe(before.cosmonauts.length);
+  });
+
+  it('only pauses, and only inside a round, on the hidden-tab command', () => {
+    const pause = press({ commands: [{ type: 'pause' }] });
+    expect(step(titleState(), pause, STEP_SECONDS).state.paused).toBe(false);
+    const inRound = step(startGame(titleState()), pause, STEP_SECONDS);
+    expect(inRound.state.paused).toBe(true);
+    expect(types(inRound.events)).toEqual(['pause_changed']);
+    const again = step(inRound.state, pause, STEP_SECONDS);
+    expect(again.state.paused).toBe(true);
+    expect(again.events).toEqual([]);
+  });
+
+  it('restarts the round in the same mode from the menu', () => {
+    const before = run(startGame(titleState(), 'B'), 20).state;
+    const s = step(before, press({ pause: true }), STEP_SECONDS).state;
+    const r = step(s, press({ commands: [{ type: 'restart' }] }), STEP_SECONDS);
+    expect(r.state).toMatchObject({ paused: false, phase: 'playing', mode: 'B', score: 0, cosmonauts: [] });
+    expect(types(r.events)).toEqual(['round_start', 'pause_changed']);
+    expect(step(titleState(), press({ commands: [{ type: 'restart' }] }), STEP_SECONDS).state.phase).toBe('title');
+  });
+
+  it('quits to the title from the menu and keeps the save', () => {
+    const before = run(startGame(titleState()), 20).state;
+    const s = step(before, press({ pause: true }), STEP_SECONDS).state;
+    const r = step(s, press({ commands: [{ type: 'quit' }] }), STEP_SECONDS);
+    expect(r.state).toMatchObject({ paused: false, phase: 'title', cosmonauts: [] });
+    expect(r.state.save).toEqual(before.save);
+  });
+
+  it('changes the theme from the menu, only to an unlocked one', () => {
+    const save = defaultSave();
+    save.unlocked = ['polar-signal', 'neon-orbit'];
+    const s = step(startGame(titleState(save)), press({ pause: true }), STEP_SECONDS).state;
+    const r = step(s, press({ commands: [{ type: 'theme', theme: 'neon-orbit' }] }), STEP_SECONDS);
+    expect(r.state.save.settings.theme).toBe('neon-orbit');
+    expect(types(r.events)).toEqual(['theme_changed', 'save_changed']);
+    const locked = step(s, press({ commands: [{ type: 'theme', theme: 'desert-expedition' }] }), STEP_SECONDS);
+    expect(locked.state.save.settings.theme).toBe('polar-signal');
+    expect(locked.events).toEqual([]);
+  });
+
+  it('sets the volumes and the display preset, persists them, and ignores no-ops', () => {
+    const s = paused();
+    const r = step(s, press({ commands: [{ type: 'volume', bus: 'music', value: 0.3 }, { type: 'shader', preset: 'crt' }] }), STEP_SECONDS);
+    expect(r.state.save.settings).toMatchObject({ music: 0.3, shader: 'crt' });
+    expect(types(r.events)).toEqual(['volume_changed', 'save_changed', 'shader_changed', 'save_changed']);
+    const same = step(r.state, press({ commands: [{ type: 'volume', bus: 'music', value: 0.3 }, { type: 'shader', preset: 'crt' }] }), STEP_SECONDS);
+    expect(same.events).toEqual([]);
+    expect(step(s, press({ commands: [{ type: 'volume', bus: 'sfx', value: 7 }] }), STEP_SECONDS).state.save.settings.sfx).toBe(1);
+  });
+
+  it('still toggles mute while paused', () => {
+    const r = step(paused(), press({ mute: 1 }), STEP_SECONDS);
+    expect(r.state.save.settings.muted).toBe(true);
+    expect(r.state.paused).toBe(true);
   });
 });

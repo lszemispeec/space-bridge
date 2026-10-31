@@ -63,11 +63,11 @@ export interface ModeConfig {
 }
 
 export interface TimingConfig {
-  /** Hatch opening and the crouch on the ledge before the first jump. */
+  /** Hatch opening and the scale-in in the hatch mouth before the first jump. */
   emerge: number;
   /**
-   * Time in the air for the first arc, from the ledge down to crater 1.
-   * Shorter than a hop between craters, because it starts high.
+   * Time in the air for the first arc, from the rocket's hatch down to
+   * crater 1. Shorter than a hop between craters, because it starts high.
    */
   drop: number;
   /** Squash on the plate between a landing and the next take-off. */
@@ -78,9 +78,15 @@ export interface TimingConfig {
    * when every hop is long.
    */
   jump: number;
+  /**
+   * Time in the air for the last leap, from crater 4 into the rover's hatch.
+   * Short and low: it needs no plate, and a full arc would look like one more
+   * landing to catch.
+   */
+  hop: number;
   /** The grab into the crater: the art's 660 ms reference sequence. Not scaled. */
   fall: number;
-  /** Walking into the rover. */
+  /** The scale-out into the rover's hatch. */
   board: number;
   /** Freeze after a life is lost. Not scaled. */
   lifeLostPause: number;
@@ -122,9 +128,10 @@ export const DIFFICULTY: DifficultyConfig = {
   lives: 3,
   timing: {
     emerge: 0.74,
-    drop: 2.4,
+    drop: 2.6,
     squash: 0.12,
     jump: 3.0,
+    hop: 1.0,
     fall: 0.66,
     board: 0.5,
     lifeLostPause: 1.2,

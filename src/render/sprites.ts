@@ -82,6 +82,21 @@ export function drawFrame(ctx: CanvasRenderingContext2D, art: Art, frame: AtlasF
   );
 }
 
+/**
+ * Draws a frame scaled by `scale` with its anchor at (x, y), on whole pixels.
+ * Nearest-neighbour: the context keeps image smoothing off, and the
+ * destination size is rounded to whole pixels, so the pixels stay crisp.
+ */
+export function drawFrameScaled(ctx: CanvasRenderingContext2D, art: Art, frame: AtlasFrame, x: number, y: number, scale: number): void {
+  if (scale === 1) {
+    drawFrame(ctx, art, frame, x, y);
+    return;
+  }
+  const w = Math.max(1, Math.round(frame.w * scale));
+  const h = Math.max(1, Math.round(frame.h * scale));
+  ctx.drawImage(art.image, frame.x, frame.y, frame.w, frame.h, Math.round(x - frame.ax * scale), Math.round(y - frame.ay * scale), w, h);
+}
+
 /** Fetches and checks a theme's atlas, then decodes its sheet. */
 export async function loadArt(theme: Theme): Promise<Art> {
   const url = new URL(theme.atlas, document.baseURI);

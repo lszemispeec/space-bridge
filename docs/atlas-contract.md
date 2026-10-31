@@ -291,6 +291,21 @@ Production actor cells stay 20×22 and unchanged. The renderer owns reveal,
 clipping, animation timing, and the new path. Each animation has native and 4×
 strip previews. Full operator screens are exported in both orientations.
 
+Engine notes on this section (`src/render/draw.ts`, `src/game/positions.ts`,
+`src/config/layout.ts`): the hatch mouths are `ROCKET_HATCH` (63,112) and
+`ROVER_HATCH` (256,172) in `layout.ts`, read from the `rocketTopHatch` and
+`roverHatch` sockets at run time; the art test checks that the two agree, and
+that both hulls are full models at the vehicle anchors. The cosmonaut stands
+in the rocket's mouth at 50 %, 75 % and 100 % of its 20×22 cell over the
+emerge and the crouch (whole-pixel nearest-neighbour steps: 10×11, 15×17,
+20×22), drawn over the hull, and the first arc starts at the mouth floor. The
+last hop from crater 4 is a one-beat, 24 px arc into the rover's mouth in the
+plain take-off pose; the boarder then shrinks 100 → 75 → 50 % in the mouth. The
+rocket's hatch opens over the first half of the wait and closes 180 ms after
+the take-off; the rover's opens over the first 30 % of the last hop and closes
+180 ms after the boarder is gone. `rover.idle` is no longer drawn: the closed
+model is `rover.hatch.closed`. Nothing in `retiredAnimations` is drawn.
+
 ### Four crater rims and their occupants
 
 The four single frames **`crater.0`…`crater.3`** are **24×8**, anchor **(12,4)**.

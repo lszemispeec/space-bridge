@@ -49,6 +49,13 @@ export interface AtlasSocket {
   y: number;
 }
 
+/** A vehicle model: its draw anchor, the hatch mouth inside the hull and the socket that names the mouth floor. */
+export interface VehicleModel {
+  anchor: Placement;
+  mouth: string;
+  hatch: Placement & { w: number; h: number };
+}
+
 /** Art layout in native output pixels; the simulation remains 320×240. */
 export interface OperatorLayout {
   size: { w: number; h: number };
@@ -83,8 +90,12 @@ export interface Atlas {
   /** Where the game draws optional ambient animations, by animation name. */
   placements?: Record<string, Placement>;
   sockets?: Record<string, AtlasSocket>;
+  /** Sockets kept for old readers that no longer mark anything visible. */
+  retiredSockets?: string[];
   /** Compatibility animations with intentionally blank frames in this theme. */
   retiredAnimations?: string[];
+  /** The complete vehicle models with built-in hatches, and the retired gantry. */
+  vehicleModels?: Record<string, VehicleModel | 'retired'>;
   /** Expanded surround and console coordinates. See docs/atlas-contract.md. */
   operatorRoom?: OperatorRoom;
 }

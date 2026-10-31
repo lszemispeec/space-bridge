@@ -2,17 +2,19 @@
  * The operator room around the scene: the windshield frame, the levers on
  * the console deck, the HUD readouts, and the blinking console lights. Drawn
  * on the page canvas after the scene is in the window, in the contract's
- * order: room plate, levers, readouts, lights. The scene itself is drawn with
+ * order: room plate, levers, readouts, lights. The MENU button beside the
+ * sound readout is the engine's own, drawn with the bitmap font. The scene itself is drawn with
  * the atlas's `operatorRoom.background` plate, which fills the glass edge to
  * edge; the old `background` plate would show its HUD band and gutters.
  */
 import { DIFFICULTY } from '../config/difficulty';
-import { CONSOLE_HUD, type PlateSide, type Rect, type RoomLayout } from '../config/layout';
+import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, type PlateSide, type Rect, type RoomLayout } from '../config/layout';
 import { getTheme, type ThemePalette } from '../config/themes';
 import type { GameState } from '../game/types';
 import type { HeldButtons } from '../platform/input';
 import type { Atlas, AtlasFrame } from './atlas';
 import { drawText } from './font';
+import { drawConsoleButton } from './menu';
 import { animationMs, drawFrame, frameAt, frameByProgress, frameOf, hasAnimation, type Art } from './sprites';
 
 /** The full-room plate per orientation, with the window left transparent. */
@@ -77,6 +79,7 @@ function drawReadouts(ctx: CanvasRenderingContext2D, s: GameState, held: HeldBut
   }
   const sound = frameAt(atlas, `ui.hud_sound.${soundState(s.save.settings.muted, held.mute)}`, nowMs);
   drawFrame(ctx, art, sound, hud.sound.x, hud.sound.y);
+  drawConsoleButton(ctx, CONSOLE_MENU_BUTTON, 'MENU', p, held.menu || s.paused);
 }
 
 /** Draws the room over the page canvas, after the scene is in the window. */

@@ -11,6 +11,8 @@ interface AudioSink {
   setMuted(muted: boolean): void;
   unlock(): void;                          // called from the first user gesture
   setTempo?(multiplier: number): void;     // optional: theme loop speed, 1 = as written
+  setPaused?(paused: boolean): void;       // optional: freeze the music under the pause menu
+  setVolume?(bus: 'music' | 'sfx', value: number): void; // optional: bus volume 0..1 from the save
 }
 ```
 
@@ -40,10 +42,12 @@ The engine is `audio` in `src/audio/index.ts`. `src/main.ts` installs it with `c
 - `setMuted` is called on start-up with the saved value and whenever the player toggles mute (key `M`). Persisting the flag is the game's job; the engine only applies it.
 - `setTempo` is optional. The game calls it when the music speed for the screen changes: the mode's `musicTempo` from `src/config/difficulty.ts` during a round (Game B is faster), 1 on the title screen. It applies to theme loops only; the game-over jingle keeps its own tempo. An engine without `setTempo` plays every song as written.
 - A switch between tracks (`music`, the jingle, the loop's return) cuts the old track at once; the new one starts after a short silent gap.
+- `setPaused(true)` is called when the pause menu opens and when the tab is hidden during a round; `setPaused(false)` when the round resumes. The engine cuts the voices, stops scheduling, and continues from the same step at resume. A theme chosen in the menu while paused starts at resume. No game events fire while paused, so no effects play.
+- `setVolume` is called on start-up with the saved music and SFX volumes and whenever the player changes them in the menu. The game save owns the values; the engine applies them to its buses.
 
 ## Other game events
 
-The game emits more events than the sound list: `round_start`, `theme_changed`, `mute_changed`, `save_changed`. Subscribe to everything with `app.onEvent((event, state) => ...)`. `window.spaceBridge` exposes the app in the browser for debugging and playtests.
+The game emits more events than the sound list: `round_start`, `theme_changed`, `mute_changed`, `volume_changed`, `shader_changed`, `pause_changed`, `save_changed`. Subscribe to everything with `app.onEvent((event, state) => ...)`. `window.spaceBridge` exposes the app in the browser for debugging and playtests.
 
 ## Timing
 
