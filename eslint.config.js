@@ -22,7 +22,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['eslint.config.js', 'vite.config.ts', 'scripts/**/*.mjs'],
+    files: ['eslint.config.js', 'vite.config.ts', 'scripts/**/*.mjs', 'assets/tools/*.mjs'],
     ...tseslint.configs.disableTypeChecked,
   },
 );

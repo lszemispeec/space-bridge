@@ -1,4 +1,11 @@
 Accepted source: concept art package space-bridge-art-v1.zip.
+
+Revision 4: ten new airborne poses per theme, independently hand-drawn as
+20x22 native ink maps in assets/airborne-pixels.json. The exporter adds a 1px
+dark contour and maps palette inks. No image generation, bitmap rotation,
+mirroring or interpolation was used for these poses. The full clockwise
+cycle has eight 45-degree keys; the two flails use spread limbs. The common
+body-centre anchor is (10,11). Existing source-derived poses remain intact.
 Original sheet art: built-in imagegen; Astra's original packaging: ImageMagick.
 Production adaptation: Pixel. Background cleanup and revision-2 cosmonaut edit:
 built-in imagegen, not API/CLI.

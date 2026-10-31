@@ -34,10 +34,25 @@ def audit(theme):
         crops[name] = crop
         check(crop.getbbox() is not None or name == "ambient.drift.3", f"empty: {name}")
         if name.startswith("cosmonaut."):
-            check(crop.getbbox()[3] == h, f"feet registration: {name}")
-            check((w, h, frame['ax'], frame['ay']) == (20, 22, 10, 22), f"actor cell: {name}")
-            visible_height = crop.getbbox()[3] - crop.getbbox()[1]
-            check(16 <= visible_height <= 20, f"visible actor height: {name}")
+            if name.startswith('cosmonaut.air.'):
+                check((w, h, frame['ax'], frame['ay']) == (20, 22, 10, 11), f'air body centre: {name}')
+                check(crop.getpixel((10, 11))[3] == 255, f'body at pivot: {name}')
+                # A single connected silhouette, including outlined hands/feet.
+                opaque = {(x, y) for y in range(h) for x in range(w) if crop.getpixel((x, y))[3]}
+                pending = [next(iter(opaque))]
+                visited = set(pending)
+                while pending:
+                    px, py = pending.pop()
+                    for point in ((px-1,py),(px+1,py),(px,py-1),(px,py+1)):
+                        if point in opaque and point not in visited:
+                            visited.add(point)
+                            pending.append(point)
+                check(visited == opaque, f'detached air pixels: {name}')
+            else:
+                check(crop.getbbox()[3] == h, f"feet registration: {name}")
+                check((w, h, frame['ax'], frame['ay']) == (20, 22, 10, 22), f"actor cell: {name}")
+                visible_height = crop.getbbox()[3] - crop.getbbox()[1]
+                check(16 <= visible_height <= 20, f"visible actor height: {name}")
             outline = tuple(bytes.fromhex(atlas['meta']['palette'][0][1:]))
             for yy in range(h):
                 for xx in range(w):
@@ -88,7 +103,7 @@ def audit(theme):
     check(native.size == (320, 240), "native screen size")
     check(large.size == (1280, 960), "4x screen size")
     check(native.resize(large.size, Image.Resampling.NEAREST).tobytes() == large.tobytes(), "4x nearest-neighbour")
-    for prefix in ('ui-states', 'title-controls'):
+    for prefix in ('ui-states', 'title-controls', 'airborne-contrast'):
         small = Image.open(directory / f'previews/{prefix}-1x.png').convert('RGBA')
         big = Image.open(directory / f'previews/{prefix}-4x.png').convert('RGBA')
         check(big.size == (small.width * 4, small.height * 4), f'{prefix} size')
@@ -110,6 +125,17 @@ def audit(theme):
             check(strip.crop((x, 0, x+frame.width, frame.height)).tobytes() == frame.tobytes(), f"strip source pixels: {name}")
             x += frame.width
         check(strip.width == x, "strip width")
+        if entry['animation'].startswith('cosmonaut.air.'):
+            large_strip = Image.open(directory / 'previews' / entry['file'].replace('.png', '-4x.png')).convert('RGBA')
+            check(strip.resize((strip.width * 4, strip.height * 4), Image.Resampling.NEAREST).tobytes() == large_strip.tobytes(), 'air strip exact 4x')
+            loop = Image.open(directory / 'previews' / f"{entry['animation']}-4x.gif")
+            check(loop.n_frames == len(entry['durations']) and loop.info.get('loop') == 0, 'air loop frames')
+            for index, gif_frame in enumerate(ImageSequence.Iterator(loop)):
+                expected = crops[atlas['animations'][entry['animation']]['frames'][index]].resize((80,88), Image.Resampling.NEAREST)
+                actual = gif_frame.convert('RGBA')
+                check(actual.size == expected.size and gif_frame.info['duration'] == 80, 'air loop size/timing')
+                for a, b in zip(actual.getdata(), expected.getdata()):
+                    check(a[3] == b[3] and (not a[3] or a[:3] == b[:3]), 'air loop pixel fidelity')
 
     gif = Image.open(directory / "previews/jump-bounce.gif")
     total = 0

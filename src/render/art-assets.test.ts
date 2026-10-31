@@ -17,7 +17,9 @@ describe('production art handoff', () => {
       expect(new Set(atlas.meta.palette).size).toBe(16);
       for (const [name, frame] of Object.entries(atlas.frames)) {
         expect(frame.duration, name).toBeGreaterThan(0);
-        if (name.startsWith('cosmonaut.') || name.startsWith('plate.')) {
+        if (name.startsWith('cosmonaut.air.')) {
+          expect([frame.w, frame.h, frame.ax, frame.ay, frame.duration], name).toEqual([20, 22, 10, 11, 80]);
+        } else if (name.startsWith('cosmonaut.') || name.startsWith('plate.')) {
           expect([frame.ax, frame.ay], name).toEqual([frame.w / 2, frame.h]);
           if (name.startsWith('cosmonaut.')) {
             expect([frame.w, frame.h, frame.ax, frame.ay], name).toEqual([20, 22, 10, 22]);
@@ -31,6 +33,12 @@ describe('production art handoff', () => {
         if (name.startsWith('ui.')) {
           expect([frame.w, frame.h], name).toEqual([name.startsWith('ui.hud_sound.') ? 36 : 56, 16]);
         }
+      }
+      for (const [kind, count] of [['spin', 8], ['flail', 2]] as const) {
+        expect(atlas.animations[`cosmonaut.air.${kind}`]).toEqual({
+          frames: Array.from({ length: count }, (_, i) => `cosmonaut.air.${kind}.${i}`),
+          loop: true,
+        });
       }
       for (const [name, animation] of Object.entries(atlas.animations)) {
         const oneShot = new Set([

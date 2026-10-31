@@ -3,11 +3,11 @@
   "contractCommit": "ba9d78d6791f0a2827cf9c34169a2d5eacdc30f9",
   "themes": {
     "polar-signal": {
-      "frames": 71,
-      "animations": 39,
+      "frames": 81,
+      "animations": 41,
       "size": [
         1024,
-        1470
+        1494
       ],
       "palette": 16,
       "backgroundSpecklePixelsConsolidated": 1142,
@@ -31,14 +31,22 @@
         0,
         0
       ],
-      "uiFrames": 10
+      "uiFrames": 10,
+      "airCell": [
+        20,
+        22
+      ],
+      "airAnchor": [
+        10,
+        11
+      ]
     },
     "desert-expedition": {
-      "frames": 71,
-      "animations": 39,
+      "frames": 81,
+      "animations": 41,
       "size": [
         1024,
-        1470
+        1494
       ],
       "palette": 16,
       "backgroundSpecklePixelsConsolidated": 2026,
@@ -62,14 +70,22 @@
         0,
         0
       ],
-      "uiFrames": 10
+      "uiFrames": 10,
+      "airCell": [
+        20,
+        22
+      ],
+      "airAnchor": [
+        10,
+        11
+      ]
     },
     "neon-orbit": {
-      "frames": 71,
-      "animations": 39,
+      "frames": 81,
+      "animations": 41,
       "size": [
         1024,
-        1470
+        1494
       ],
       "palette": 16,
       "backgroundSpecklePixelsConsolidated": 2423,
@@ -93,9 +109,17 @@
         0,
         0
       ],
-      "uiFrames": 10
+      "uiFrames": 10,
+      "airCell": [
+        20,
+        22
+      ],
+      "airAnchor": [
+        10,
+        11
+      ]
     }
   },
-  "revision": 3,
+  "revision": 4,
   "uiLayoutCommit": "3621b0d94b113a1021b7ee43591789ce3c525e17"
 }

@@ -428,72 +428,142 @@
   },
   {
     "name": "ui.title_theme.idle.0",
-    "x": 1,
-    "y": 3267,
+    "x": 326,
+    "y": 3023,
     "w": 56,
     "h": 16
   },
   {
     "name": "ui.title_theme.pressed.0",
-    "x": 59,
-    "y": 3267,
+    "x": 386,
+    "y": 3023,
     "w": 56,
     "h": 16
   },
   {
     "name": "ui.title_sound.idle.0",
-    "x": 117,
-    "y": 3267,
+    "x": 446,
+    "y": 3023,
     "w": 56,
     "h": 16
   },
   {
     "name": "ui.title_sound.pressed.0",
-    "x": 175,
-    "y": 3267,
+    "x": 506,
+    "y": 3023,
     "w": 56,
     "h": 16
   },
   {
     "name": "ui.title_sound.muted.0",
-    "x": 233,
-    "y": 3267,
+    "x": 566,
+    "y": 3023,
     "w": 56,
     "h": 16
   },
   {
     "name": "ui.title_sound.muted_pressed.0",
-    "x": 291,
+    "x": 2,
     "y": 3267,
     "w": 56,
     "h": 16
   },
   {
     "name": "ui.hud_sound.idle.0",
-    "x": 349,
+    "x": 62,
     "y": 3267,
     "w": 36,
     "h": 16
   },
   {
     "name": "ui.hud_sound.pressed.0",
-    "x": 387,
+    "x": 102,
     "y": 3267,
     "w": 36,
     "h": 16
   },
   {
     "name": "ui.hud_sound.muted.0",
-    "x": 425,
+    "x": 142,
     "y": 3267,
     "w": 36,
     "h": 16
   },
   {
     "name": "ui.hud_sound.muted_pressed.0",
-    "x": 463,
+    "x": 182,
     "y": 3267,
     "w": 36,
     "h": 16
+  },
+  {
+    "name": "cosmonaut.air.spin.0",
+    "x": 222,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.1",
+    "x": 246,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.2",
+    "x": 270,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.3",
+    "x": 294,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.4",
+    "x": 318,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.5",
+    "x": 342,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.6",
+    "x": 366,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.7",
+    "x": 390,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.flail.0",
+    "x": 414,
+    "y": 3267,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.flail.1",
+    "x": 438,
+    "y": 3267,
+    "w": 20,
+    "h": 22
   }
 ]
