@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { AUDIO_EVENTS } from '../audio/api';
 import { DIFFICULTY } from '../config/difficulty';
 import { ROCKET_SLOT } from '../config/layout';
+import { getTheme } from '../config/themes';
 import { STEP_SECONDS } from '../platform/loop';
 import { bestScore, canLeaveGameOver, currentDensity, musicTempo, step } from './rules';
 import { defaultSave } from './save';
@@ -301,12 +302,15 @@ describe('game over and restart', () => {
 });
 
 describe('unlocks', () => {
+  const desertAt = getTheme('desert-expedition').unlockAt;
+  const neonAt = getTheme('neon-orbit').unlockAt;
+
   it('unlocks a theme the moment the score passes its target', () => {
-    const s = { ...startGame(titleState()), score: 499 };
+    const s = { ...startGame(titleState()), score: desertAt - 1 };
     const frame = step(s, NO_INPUT, STEP_SECONDS).state;
-    const next = { ...frame, score: 499 };
+    const next = { ...frame, score: desertAt - 1 };
     const { state, events } = followCosmonauts(next, 3);
-    expect(state.score).toBeGreaterThanOrEqual(500);
+    expect(state.score).toBeGreaterThanOrEqual(desertAt);
     expect(events).toContain('unlock');
     expect(state.save.unlocked).toContain('desert-expedition');
     expect(state.newUnlocks).toEqual(['desert-expedition']);
@@ -315,8 +319,9 @@ describe('unlocks', () => {
   it('does not unlock twice', () => {
     const save = defaultSave();
     save.unlocked = ['polar-signal', 'desert-expedition'];
-    const s = { ...startGame(titleState(save)), score: 600 };
-    const { events } = followCosmonauts(s, 3);
+    const s = { ...startGame(titleState(save)), score: desertAt + 1 };
+    const { state, events } = followCosmonauts(s, 3);
+    expect(state.score).toBeLessThan(neonAt);
     expect(events).not.toContain('unlock');
   });
 });

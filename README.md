@@ -13,7 +13,7 @@ Cosmonauts climb out of a hatch high on the rocket, drop from its ledge to the f
 - Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (a reaction margin, then one press interval per extra crater) is in `src/config/difficulty.ts`. It shrinks with the speed curve, and the curve is tuned so a good player (0.22 s reaction, 0.15 s per press) can follow the longest trip, from crater 4 back to crater 1, at the top speed of both modes, and still has the reaction margin at the top of Game B.
 - A round starts calm, with one or two cosmonauts, and fills up with the score: the density ramp in `src/config/difficulty.ts` raises the cap and shortens the spawn gaps until four or five are on screen at the top of the curve. The scheduler promise holds all the way up.
 - The crater creatures (eyes, blinks, looks, a rare tentacle) are cosmetic: `src/game/creatures.ts`, stepped by the renderer with its own seeded RNG.
-- Themes unlock with your best score: Desert Expedition at 350, Neon Orbit at 700.
+- Themes unlock with your best score: Desert Expedition at 250, Neon Orbit at 575.
 
 ## Run
 
