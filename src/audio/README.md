@@ -28,8 +28,8 @@ SFX calls before the first user gesture are dropped; a `music()` call is remembe
 
 ## Listen
 
-- `npm run dev`, then open `/audio-demo.html`. Buttons or keys `1`–`9` (SFX), `Q` `W` `E` (themes), `G` (jingle), `M` (mute), `S` (stop). The page can also render WAVs in the browser.
-- `npm run audio:render` writes every track and effect to `renders/` as WAV and, when `ffmpeg` is on the PATH, MP3. It runs the same engine on an offline context in Node.
+- `npm run dev`, then open `/audio-demo.html`. Buttons or keys `1`–`9`, `0` (SFX), `F` (the miss: fall, grab and life_lost as one step), `Q` `W` `E` (themes), `G` (jingle), `M` (mute), `S` (stop). The page can also render WAVs in the browser.
+- `npm run audio:render` writes every track and effect, plus `sfx-fall-step` (the miss as heard in the game), to `renders/` as WAV and, when `ffmpeg` is on the PATH, MP3. It runs the same engine on an offline context in Node.
 
 ## How it is built
 
@@ -39,7 +39,7 @@ SFX calls before the first user gesture are dropped; a `music()` call is remembe
 | `song.ts` | Typed song format and the pattern compiler. Patterns are text: `C4` note, `-` hold, `.` rest, `@name` instrument switch, drum tokens by instrument name. |
 | `sequencer.ts` | Look-ahead step sequencer with loop points and a tempo multiplier. |
 | `mixer.ts`, `settings.ts` | Master, music and SFX buses; volumes persisted under `spaceBridge.audio`. Mute is applied, not stored: the game save owns it. |
-| `sfx.ts` | The nine effects as data. |
+| `sfx.ts` | The ten effects as data. An effect's `offset` orders the ones the game fires in one step: `life_lost` waits for the grab. |
 | `songs/` | Three themes and the jingle. `motif.ts` holds the shared four-bar motif ("A A E, D C, D E A"); each theme transposes and re-dresses it. |
 | `engine.ts` | Ties voices, sequencer and mixer together on any `BaseAudioContext`. |
 | `render.ts` | Offline rendering and a WAV encoder, used by the demo page and the render script. |
