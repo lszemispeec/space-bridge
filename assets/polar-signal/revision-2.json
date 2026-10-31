@@ -1,0 +1,1129 @@
+{
+  "review": "01a1925a-3ac7-7719-9bdc-6e5d7e268eae",
+  "baseCommit": "4b0d120",
+  "frameChanges": [
+    {
+      "name": "cosmonaut.emerge.0",
+      "before": {
+        "x": 323,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 80
+      },
+      "after": {
+        "x": 323,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 80
+      }
+    },
+    {
+      "name": "cosmonaut.emerge.1",
+      "before": {
+        "x": 337,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 80
+      },
+      "after": {
+        "x": 345,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 80
+      }
+    },
+    {
+      "name": "cosmonaut.emerge.2",
+      "before": {
+        "x": 351,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 80
+      },
+      "after": {
+        "x": 367,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 80
+      }
+    },
+    {
+      "name": "cosmonaut.crouch.0",
+      "before": {
+        "x": 365,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 80
+      },
+      "after": {
+        "x": 389,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 80
+      }
+    },
+    {
+      "name": "cosmonaut.takeoff.0",
+      "before": {
+        "x": 379,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 60
+      },
+      "after": {
+        "x": 411,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 60
+      }
+    },
+    {
+      "name": "cosmonaut.rise.0",
+      "before": {
+        "x": 393,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 100
+      },
+      "after": {
+        "x": 433,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 100
+      }
+    },
+    {
+      "name": "cosmonaut.apex.0",
+      "before": {
+        "x": 407,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 80
+      },
+      "after": {
+        "x": 455,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 80
+      }
+    },
+    {
+      "name": "cosmonaut.descend.0",
+      "before": {
+        "x": 421,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 100
+      },
+      "after": {
+        "x": 477,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 100
+      }
+    },
+    {
+      "name": "cosmonaut.land.0",
+      "before": {
+        "x": 435,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 80
+      },
+      "after": {
+        "x": 499,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 80
+      }
+    },
+    {
+      "name": "cosmonaut.land.1",
+      "before": {
+        "x": 449,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 80
+      },
+      "after": {
+        "x": 521,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 80
+      }
+    },
+    {
+      "name": "cosmonaut.crater_fall.0",
+      "before": {
+        "x": 463,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 100
+      },
+      "after": {
+        "x": 543,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 100
+      }
+    },
+    {
+      "name": "cosmonaut.crater_fall.1",
+      "before": {
+        "x": 477,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 100
+      },
+      "after": {
+        "x": 565,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 100
+      }
+    },
+    {
+      "name": "cosmonaut.crater_fall.2",
+      "before": {
+        "x": 491,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 140
+      },
+      "after": {
+        "x": 587,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 140
+      }
+    },
+    {
+      "name": "cosmonaut.board.0",
+      "before": {
+        "x": 505,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 100
+      },
+      "after": {
+        "x": 609,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 100
+      }
+    },
+    {
+      "name": "cosmonaut.board.1",
+      "before": {
+        "x": 519,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 100
+      },
+      "after": {
+        "x": 631,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 100
+      }
+    },
+    {
+      "name": "cosmonaut.idle.0",
+      "before": {
+        "x": 533,
+        "y": 1,
+        "w": 12,
+        "h": 16,
+        "ax": 6,
+        "ay": 16,
+        "duration": 1000
+      },
+      "after": {
+        "x": 653,
+        "y": 1,
+        "w": 20,
+        "h": 22,
+        "ax": 10,
+        "ay": 22,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "rocket.door_closed.0",
+      "before": {
+        "x": 547,
+        "y": 1,
+        "w": 33,
+        "h": 89,
+        "ax": 0,
+        "ay": 89,
+        "duration": 1000
+      },
+      "after": {
+        "x": 675,
+        "y": 1,
+        "w": 33,
+        "h": 89,
+        "ax": 0,
+        "ay": 89,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "rocket.door_open.0",
+      "before": {
+        "x": 582,
+        "y": 1,
+        "w": 33,
+        "h": 89,
+        "ax": 0,
+        "ay": 89,
+        "duration": 1000
+      },
+      "after": {
+        "x": 710,
+        "y": 1,
+        "w": 33,
+        "h": 89,
+        "ax": 0,
+        "ay": 89,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "rover.idle.0",
+      "before": {
+        "x": 617,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      },
+      "after": {
+        "x": 745,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      }
+    },
+    {
+      "name": "rover.door_open.0",
+      "before": {
+        "x": 652,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      },
+      "after": {
+        "x": 780,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      }
+    },
+    {
+      "name": "rover.idle.1",
+      "before": {
+        "x": 687,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      },
+      "after": {
+        "x": 815,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      }
+    },
+    {
+      "name": "rover.door_open.1",
+      "before": {
+        "x": 722,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      },
+      "after": {
+        "x": 850,
+        "y": 1,
+        "w": 33,
+        "h": 38,
+        "ax": 0,
+        "ay": 38,
+        "duration": 420
+      }
+    },
+    {
+      "name": "plate.idle.0",
+      "before": {
+        "x": 757,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 1000
+      },
+      "after": {
+        "x": 885,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "plate.move.0",
+      "before": {
+        "x": 785,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      },
+      "after": {
+        "x": 913,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      }
+    },
+    {
+      "name": "plate.move.1",
+      "before": {
+        "x": 813,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      },
+      "after": {
+        "x": 941,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      }
+    },
+    {
+      "name": "plate.dip.0",
+      "before": {
+        "x": 841,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      },
+      "after": {
+        "x": 969,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      }
+    },
+    {
+      "name": "plate.dip.1",
+      "before": {
+        "x": 869,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      },
+      "after": {
+        "x": 997,
+        "y": 1,
+        "w": 26,
+        "h": 6,
+        "ax": 13,
+        "ay": 6,
+        "duration": 80
+      }
+    },
+    {
+      "name": "crater.idle.0",
+      "before": {
+        "x": 897,
+        "y": 1,
+        "w": 24,
+        "h": 8,
+        "ax": 12,
+        "ay": 4,
+        "duration": 1000
+      },
+      "after": {
+        "x": 1,
+        "y": 243,
+        "w": 24,
+        "h": 8,
+        "ax": 12,
+        "ay": 4,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "crater.front.0",
+      "before": {
+        "x": 923,
+        "y": 1,
+        "w": 24,
+        "h": 8,
+        "ax": 12,
+        "ay": 4,
+        "duration": 1000
+      },
+      "after": {
+        "x": 27,
+        "y": 243,
+        "w": 24,
+        "h": 8,
+        "ax": 12,
+        "ay": 4,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.icon.life.0",
+      "before": {
+        "x": 949,
+        "y": 1,
+        "w": 12,
+        "h": 12,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 53,
+        "y": 243,
+        "w": 14,
+        "h": 16,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.icon.score.0",
+      "before": {
+        "x": 963,
+        "y": 1,
+        "w": 12,
+        "h": 12,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 69,
+        "y": 243,
+        "w": 12,
+        "h": 12,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.icon.life_empty.0",
+      "before": {
+        "x": 977,
+        "y": 1,
+        "w": 12,
+        "h": 12,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 83,
+        "y": 243,
+        "w": 14,
+        "h": 16,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.0",
+      "before": {
+        "x": 991,
+        "y": 1,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 99,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.1",
+      "before": {
+        "x": 1001,
+        "y": 1,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 109,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.2",
+      "before": {
+        "x": 1011,
+        "y": 1,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 119,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.3",
+      "before": {
+        "x": 1,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 129,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.4",
+      "before": {
+        "x": 11,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 139,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.5",
+      "before": {
+        "x": 21,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 149,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.6",
+      "before": {
+        "x": 31,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 159,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.7",
+      "before": {
+        "x": 41,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 169,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.8",
+      "before": {
+        "x": 51,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 179,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.digit.9",
+      "before": {
+        "x": 61,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 189,
+        "y": 243,
+        "w": 8,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "button.left.idle.0",
+      "before": {
+        "x": 71,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 199,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "button.left.pressed.0",
+      "before": {
+        "x": 97,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 225,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "button.right.idle.0",
+      "before": {
+        "x": 123,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 251,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "button.right.pressed.0",
+      "before": {
+        "x": 149,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 277,
+        "y": 243,
+        "w": 24,
+        "h": 48,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.label.score.0",
+      "before": {
+        "x": 175,
+        "y": 243,
+        "w": 36,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 303,
+        "y": 243,
+        "w": 36,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "hud.label.lives.0",
+      "before": {
+        "x": 213,
+        "y": 243,
+        "w": 36,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      },
+      "after": {
+        "x": 341,
+        "y": 243,
+        "w": 36,
+        "h": 10,
+        "ax": 0,
+        "ay": 0,
+        "duration": 1000
+      }
+    },
+    {
+      "name": "ambient.sky.0",
+      "before": {
+        "x": 251,
+        "y": 243,
+        "w": 320,
+        "h": 240,
+        "ax": 0,
+        "ay": 0,
+        "duration": 500
+      },
+      "after": {
+        "x": 379,
+        "y": 243,
+        "w": 320,
+        "h": 240,
+        "ax": 0,
+        "ay": 0,
+        "duration": 500
+      }
+    },
+    {
+      "name": "ambient.sky.1",
+      "before": {
+        "x": 573,
+        "y": 243,
+        "w": 320,
+        "h": 240,
+        "ax": 0,
+        "ay": 0,
+        "duration": 500
+      },
+      "after": {
+        "x": 701,
+        "y": 243,
+        "w": 320,
+        "h": 240,
+        "ax": 0,
+        "ay": 0,
+        "duration": 500
+      }
+    }
+  ],
+  "pixelChanges": [
+    "all cosmonaut poses: regenerated readable body, native resample, continuous 1px dark contour",
+    "full/empty life icons: revised helmet",
+    "background: quiet terrain planes behind enlarged jump arc",
+    "idle buttons: panel colour matches gutter; pressed feedback retained",
+    "ambient.sky.0..3: mint vertical curtain replaces grey horizontal cloud"
+  ],
+  "visibleCosmonautSizes": {
+    "cosmonaut.emerge.0": [
+      12,
+      20
+    ],
+    "cosmonaut.emerge.1": [
+      14,
+      20
+    ],
+    "cosmonaut.emerge.2": [
+      12,
+      20
+    ],
+    "cosmonaut.crouch.0": [
+      16,
+      16
+    ],
+    "cosmonaut.takeoff.0": [
+      12,
+      20
+    ],
+    "cosmonaut.rise.0": [
+      18,
+      18
+    ],
+    "cosmonaut.apex.0": [
+      14,
+      18
+    ],
+    "cosmonaut.descend.0": [
+      18,
+      20
+    ],
+    "cosmonaut.land.0": [
+      18,
+      16
+    ],
+    "cosmonaut.land.1": [
+      16,
+      18
+    ],
+    "cosmonaut.crater_fall.0": [
+      14,
+      20
+    ],
+    "cosmonaut.crater_fall.1": [
+      18,
+      18
+    ],
+    "cosmonaut.crater_fall.2": [
+      18,
+      16
+    ],
+    "cosmonaut.board.0": [
+      16,
+      20
+    ],
+    "cosmonaut.board.1": [
+      14,
+      20
+    ],
+    "cosmonaut.idle.0": [
+      12,
+      20
+    ]
+  }
+}
