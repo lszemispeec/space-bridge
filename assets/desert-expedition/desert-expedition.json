@@ -5,7 +5,7 @@
     "image": "desert-expedition.png",
     "size": {
       "w": 1024,
-      "h": 1619
+      "h": 1965
     },
     "palette": [
       "#251C29",
@@ -1088,6 +1088,150 @@
       "ax": 12,
       "ay": 28,
       "duration": 160
+    },
+    "ui.lever.l.idle.0": {
+      "x": 1,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.l.pull.0": {
+      "x": 27,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.1": {
+      "x": 53,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.2": {
+      "x": 79,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.3": {
+      "x": 105,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.idle.0": {
+      "x": 131,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.r.pull.0": {
+      "x": 157,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.1": {
+      "x": 183,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.2": {
+      "x": 209,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.3": {
+      "x": 235,
+      "y": 1620,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "frame.room.landscape.0": {
+      "x": 261,
+      "y": 1620,
+      "w": 352,
+      "h": 288,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.room.portrait.0": {
+      "x": 615,
+      "y": 1620,
+      "w": 288,
+      "h": 344,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.lights.0": {
+      "x": 905,
+      "y": 1620,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
+    },
+    "frame.lights.1": {
+      "x": 927,
+      "y": 1620,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
+    },
+    "frame.lights.2": {
+      "x": 949,
+      "y": 1620,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
+    },
+    "frame.lights.3": {
+      "x": 971,
+      "y": 1620,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
     }
   },
   "animations": {
@@ -1460,6 +1604,75 @@
         "crater.tentacle.grab.4"
       ],
       "loop": false
+    },
+    "ui.lever.l.idle": {
+      "frames": [
+        "ui.lever.l.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.l.pull": {
+      "frames": [
+        "ui.lever.l.pull.0",
+        "ui.lever.l.pull.1",
+        "ui.lever.l.pull.2",
+        "ui.lever.l.pull.3"
+      ],
+      "loop": false
+    },
+    "ui.lever.l.release": {
+      "frames": [
+        "ui.lever.l.pull.2",
+        "ui.lever.l.pull.1",
+        "ui.lever.l.pull.0",
+        "ui.lever.l.idle.0"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.idle": {
+      "frames": [
+        "ui.lever.r.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.r.pull": {
+      "frames": [
+        "ui.lever.r.pull.0",
+        "ui.lever.r.pull.1",
+        "ui.lever.r.pull.2",
+        "ui.lever.r.pull.3"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.release": {
+      "frames": [
+        "ui.lever.r.pull.2",
+        "ui.lever.r.pull.1",
+        "ui.lever.r.pull.0",
+        "ui.lever.r.idle.0"
+      ],
+      "loop": false
+    },
+    "frame.room.landscape": {
+      "frames": [
+        "frame.room.landscape.0"
+      ],
+      "loop": true
+    },
+    "frame.room.portrait": {
+      "frames": [
+        "frame.room.portrait.0"
+      ],
+      "loop": true
+    },
+    "frame.lights": {
+      "frames": [
+        "frame.lights.0",
+        "frame.lights.1",
+        "frame.lights.2",
+        "frame.lights.3"
+      ],
+      "loop": true
     }
   },
   "placements": {
@@ -1482,6 +1695,107 @@
       "frame": "rocket.hatch.open.0",
       "x": 39,
       "y": 30
+    }
+  },
+  "operatorRoom": {
+    "landscape": {
+      "size": {
+        "w": 352,
+        "h": 288
+      },
+      "frame": "frame.room.landscape.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 352,
+        "h": 36
+      },
+      "levers": {
+        "l": {
+          "x": 20,
+          "y": 164
+        },
+        "r": {
+          "x": 308,
+          "y": 164
+        }
+      }
+    },
+    "portrait": {
+      "size": {
+        "w": 288,
+        "h": 344
+      },
+      "frame": "frame.room.portrait.0",
+      "scene": {
+        "sx": 32,
+        "sy": 0,
+        "w": 256,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 288,
+        "h": 36
+      },
+      "levers": {
+        "l": {
+          "x": 20,
+          "y": 292
+        },
+        "r": {
+          "x": 244,
+          "y": 292
+        }
+      },
+      "controlStrip": {
+        "x": 16,
+        "y": 288,
+        "w": 256,
+        "h": 56
+      }
+    },
+    "hud": {
+      "scoreIcon": {
+        "x": 20,
+        "y": 262
+      },
+      "digits": {
+        "x": 36,
+        "y": 262,
+        "pitch": 8,
+        "count": 4
+      },
+      "modeLabel": {
+        "x": 88,
+        "y": 266
+      },
+      "lives": {
+        "x": 148,
+        "y": 260,
+        "pitch": 20
+      },
+      "sound": {
+        "x": 224,
+        "y": 260,
+        "w": 36,
+        "h": 16
+      },
+      "lights": {
+        "x": 108,
+        "y": 274
+      }
     }
   }
 }

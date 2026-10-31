@@ -1,8 +1,53 @@
 # Space Bridge production art
 
-Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 118 frames, 54 animation entries, one 1024×1619 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
+Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 134 frames, 63 animation entries, one 1024×1965 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
 
-The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Existing flight art is integrated on `main`; the new hatch and creatures await the engine's next integration. This art change does not change game logic or layout config.
+The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Flight, hatch and creatures are integrated on `main`; the operator room and levers await renderer integration. This art change does not change game logic or layout config.
+
+## Revision 6: operator room, levers, round eyes, Polar contrast
+
+The contract draft preceded production art. The new `operatorRoom` metadata
+defines a **352×288 landscape** output around the complete 320×240 source scene.
+Portrait uses **288×344**, preserving the existing 256×240 centre crop and
+placing the side controls below the console. Both windows begin at **(16,12)**.
+Their entire interiors are transparent; bevels, rivets, struts and glass glints
+stay outside. The console starts at **y252**, with readout recesses for score,
+mode, lives and SND. Four 300ms `frame.lights` poses supply a small indicator loop.
+See `docs/atlas-contract.md` for every output position and pointer mapping.
+
+Each `ui.lever.l/r` has a 24×48 idle cell and four 50ms pull key poses, with a
+fixed base and pivot, metal shaft and chunky coloured knob. Release reuses the
+authored reverse poses and ends at idle. No bitmap rotation or resampling is
+used. Source-scene control placement remains (4,152)/(292,152); portrait keeps
+the relocated control strip. Old arrow frames remain compatibility assets.
+
+All eye states now use stepped circular whites and pupils. Full-open whites
+have widths 3/5/5/5/3; peeking reveals the circle and blinking compresses it.
+Cells, anchors, timing and the transparent hide endpoint are unchanged. The
+preview shows only one pair; the global creature director belongs to gameplay.
+
+Polar suits use **#3F7068** teal, **#426573** midtone and **#233A46** shadow,
+with **#FFFAE8 / #9BB8B7** visor inks and the **#173B3A** contour. Ground pose
+highlights also use **#D1DCC0**. All cosmonaut frames, the active life icon
+and captured victims match. Empty life icons remain dim. No silhouettes,
+anchors, cell sizes or frame durations change. Desert and Neon suits stay as
+they were. All three original 16-colour palettes below remain unchanged.
+
+Each atlas gains 16 frames and nine animation entries. Old rectangles stay
+fixed. `revision-6.json` lists the affected frame names, new layouts and sheet
+size. Native editable sources are `polar-suit-pixels.json`,
+`airborne-pixels.json` and the explicit shapes in `tools/export-operator.mjs`.
+Run **`node assets/tools/export-operator.mjs`** to rebuild the current revision.
+Older exporters below document historical revisions; do not run them over the
+current masters, because they do not preserve later additions.
+
+Current offline studies are `operator-landscape-1x/4x.png` and
+`operator-portrait-1x/4x.png`; `operator-room.gif` previews the lights and levers.
+`levers-*`, `creatures-*` and `suits-*` are native/4× review boards. Every
+animation has a native PNG strip; lever, eye, tentacle and air cycles also have
+4× GIFs. `screen-*`, `title-controls-*` and `jump-bounce.gif` remain explicitly
+legacy unframed compositions for comparing older integrations. These are art
+studies, not screenshots of the upcoming renderer.
 
 ## Revision 5: elevated hatch, living craters, clear Polar sky
 
@@ -190,4 +235,4 @@ All ambient overlays have anchor (0,0). Draw sky/drift over the background and b
 
 `python3 assets/tools/verify-art.py` needs Pillow. It audits every pixel for palette and binary alpha, sheet bounds and nonoverlapping rectangles, transparent unused space, actor feet and visible height, continuous dark actor contours, quiet corridors, panel-free gutters, life icon dimensions, ambient exclusions, runtime-copy parity, all animation strips, six-second GIFs, unscaled airborne crops and exact 4× enlargement.
 
-Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 354 frames. It checks silhouette contours, body/foot pivots, the ledge socket, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
+Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 402 frames. It checks silhouette contours, body/foot pivots, the ledge socket, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.

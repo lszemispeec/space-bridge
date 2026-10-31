@@ -150,6 +150,67 @@ states; renderer/input integration remains with Forge.
 - `hud.digit.0` … `hud.digit.9`: all the same size, about 8×10.
 - `crater.0` … `crater.3` and `crater.front.0` … `.3`: see the creature contract below.
 
+## Operator room and lever extension
+
+The simulation and its source scene remain **320×240**. The operator room is
+outside that rectangle. All new frames use top-left anchor **(0,0)** and the
+same geometry in all themes. Do not stretch the scene or draw glass over it.
+The glass highlights are opaque palette pixels on the outside window bevel.
+
+| Frame / animation | Cell | Sequence / timing | Loop |
+|---|---|---|---|
+| `frame.room.landscape.0` / `frame.room.landscape` | 352×288 | one frame, 1000ms | yes |
+| `frame.room.portrait.0` / `frame.room.portrait` | 288×344 | one frame, 1000ms | yes |
+| `frame.lights.0`…`.3` / `frame.lights` | 20×6 | four frames, 300ms each | yes |
+| `ui.lever.l.idle.0`, `ui.lever.r.idle.0` / corresponding idle animations | 24×48 | one frame, 1000ms | yes |
+| `ui.lever.l.pull.0`…`.3`, `ui.lever.r.pull.0`…`.3` / corresponding pull animations | 24×48 | four frames, 50ms each | no |
+| `ui.lever.l.release`, `ui.lever.r.release` (animations only) | 24×48 | pull `.2`, `.1`, `.0`, then idle `.0` | no |
+
+Hold pull `.3` while pressed or queued. Release returns through the authored
+poses; the idle frame's 1000ms is a static terminal hold, not a required delay.
+The engine may compress the 50ms transitions to match plate travel. Left and
+right handles lean in their respective directions. Existing `button.*` frames
+remain available for compatibility; replace them with the levers, not both.
+
+### Layout coordinates (all native pixels)
+
+Every atlas supplies `operatorRoom` metadata with these values. The screen
+coordinates below refer to the **expanded output**, not simulation positions.
+
+| Item | Landscape | Portrait |
+|---|---|---|
+| Output size | 352×288 | 288×344 |
+| Source scene crop | (0,0,320,240) | (32,0,256,240) |
+| Scene destination | (16,12) | (16,12) |
+| Console | (0,252,352,36) | (0,252,288,36) |
+| Left lever top-left | (20,164) | (20,292) |
+| Right lever top-left | (308,164) | (244,292) |
+| Portrait control strip | — | (16,288,256,56) |
+
+Landscape keeps the full 320×240 scene, including both gutters. Portrait keeps
+the existing 256×240 centre crop and relocates the two gutter controls below
+the console. This is the existing phone composition, with an outer frame and
+console added; no scene pixel is obscured by the overlay. The overlay's window
+is completely transparent, including its corners. Keep integer output scaling.
+Convert pointer positions through these offsets/crops before using the existing
+tap rectangles; preserve the 44 CSS pixel minimum touch target. The title theme
+and sound buttons keep their scene positions. The HUD sound target moves with
+the readout below; do not keep a second HUD target in the sky.
+
+Both layouts use the same console readout positions: score icon **(20,262)**,
+four digits **(36,262)** with pitch 8, mode label **(88,266)**, life icons
+**(148,260)** with pitch 20, and the existing 36×16 `ui.hud_sound.*` at
+**(224,260)**. Draw `frame.lights` at **(108,274)**. Room art provides the panel
+recesses; the renderer supplies these readouts and removes the old sky HUD.
+Draw scene, room, levers, readouts, lights. The portrait strip is supplied by
+the room frame; do not copy the old arrow-button raster into it.
+
+Eyes keep their existing names, cells, anchors and durations. Their whites are
+round stepped circles with moving pupils; the blink compresses that circle,
+and the hidden terminal frame stays transparent. Polar suits become dark teal
+with pale visors across every pose, life icon and captured victim. No actor
+silhouette, animation timing or collision geometry changes.
+
 ## Elevated hatch and crater creatures
 
 All additions below share names, geometry and timing across themes. This is an
