@@ -824,5 +824,124 @@
     "y": 3453,
     "w": 24,
     "h": 32
+  },
+  {
+    "name": "ui.lever.l.idle.0",
+    "x": 422,
+    "y": 3453,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.l.pull.0",
+    "x": 466,
+    "y": 3453,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.l.pull.1",
+    "x": 510,
+    "y": 3453,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.l.pull.2",
+    "x": 554,
+    "y": 3453,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.l.pull.3",
+    "x": 598,
+    "y": 3453,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.r.idle.0",
+    "x": 2,
+    "y": 3521,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.r.pull.0",
+    "x": 46,
+    "y": 3521,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.r.pull.1",
+    "x": 90,
+    "y": 3521,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.r.pull.2",
+    "x": 134,
+    "y": 3521,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "ui.lever.r.pull.3",
+    "x": 178,
+    "y": 3521,
+    "w": 40,
+    "h": 64
+  },
+  {
+    "name": "frame.room.landscape.0",
+    "x": 222,
+    "y": 3521,
+    "w": 352,
+    "h": 320
+  },
+  {
+    "name": "frame.room.portrait.0",
+    "x": 2,
+    "y": 3845,
+    "w": 288,
+    "h": 344
+  },
+  {
+    "name": "frame.lights.0",
+    "x": 294,
+    "y": 3845,
+    "w": 20,
+    "h": 6
+  },
+  {
+    "name": "frame.lights.1",
+    "x": 318,
+    "y": 3845,
+    "w": 20,
+    "h": 6
+  },
+  {
+    "name": "frame.lights.2",
+    "x": 342,
+    "y": 3845,
+    "w": 20,
+    "h": 6
+  },
+  {
+    "name": "frame.lights.3",
+    "x": 366,
+    "y": 3845,
+    "w": 20,
+    "h": 6
+  },
+  {
+    "name": "background.window",
+    "x": 2,
+    "y": 4193,
+    "w": 320,
+    "h": 240
   }
 ]

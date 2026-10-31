@@ -5,7 +5,7 @@
     "image": "polar-signal.png",
     "size": {
       "w": 1024,
-      "h": 1619
+      "h": 2287
     },
     "palette": [
       "#173B3A",
@@ -1088,6 +1088,159 @@
       "ax": 12,
       "ay": 28,
       "duration": 160
+    },
+    "ui.lever.l.idle.0": {
+      "x": 1,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.l.pull.0": {
+      "x": 43,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.1": {
+      "x": 85,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.2": {
+      "x": 127,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.3": {
+      "x": 169,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.idle.0": {
+      "x": 211,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.r.pull.0": {
+      "x": 253,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.1": {
+      "x": 295,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.2": {
+      "x": 337,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.3": {
+      "x": 379,
+      "y": 1620,
+      "w": 40,
+      "h": 64,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "frame.room.landscape.0": {
+      "x": 421,
+      "y": 1620,
+      "w": 352,
+      "h": 320,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.room.portrait.0": {
+      "x": 1,
+      "y": 1942,
+      "w": 288,
+      "h": 344,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.lights.0": {
+      "x": 291,
+      "y": 1942,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
+    },
+    "frame.lights.1": {
+      "x": 313,
+      "y": 1942,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
+    },
+    "frame.lights.2": {
+      "x": 335,
+      "y": 1942,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
+    },
+    "frame.lights.3": {
+      "x": 357,
+      "y": 1942,
+      "w": 20,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 300
+    },
+    "background.window": {
+      "x": 379,
+      "y": 1942,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
     }
   },
   "animations": {
@@ -1460,6 +1613,75 @@
         "crater.tentacle.grab.4"
       ],
       "loop": false
+    },
+    "ui.lever.l.idle": {
+      "frames": [
+        "ui.lever.l.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.l.pull": {
+      "frames": [
+        "ui.lever.l.pull.0",
+        "ui.lever.l.pull.1",
+        "ui.lever.l.pull.2",
+        "ui.lever.l.pull.3"
+      ],
+      "loop": false
+    },
+    "ui.lever.l.release": {
+      "frames": [
+        "ui.lever.l.pull.2",
+        "ui.lever.l.pull.1",
+        "ui.lever.l.pull.0",
+        "ui.lever.l.idle.0"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.idle": {
+      "frames": [
+        "ui.lever.r.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.r.pull": {
+      "frames": [
+        "ui.lever.r.pull.0",
+        "ui.lever.r.pull.1",
+        "ui.lever.r.pull.2",
+        "ui.lever.r.pull.3"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.release": {
+      "frames": [
+        "ui.lever.r.pull.2",
+        "ui.lever.r.pull.1",
+        "ui.lever.r.pull.0",
+        "ui.lever.r.idle.0"
+      ],
+      "loop": false
+    },
+    "frame.room.landscape": {
+      "frames": [
+        "frame.room.landscape.0"
+      ],
+      "loop": true
+    },
+    "frame.room.portrait": {
+      "frames": [
+        "frame.room.portrait.0"
+      ],
+      "loop": true
+    },
+    "frame.lights": {
+      "frames": [
+        "frame.lights.0",
+        "frame.lights.1",
+        "frame.lights.2",
+        "frame.lights.3"
+      ],
+      "loop": true
     }
   },
   "placements": {
@@ -1484,6 +1706,138 @@
       "frame": "rocket.hatch.open.0",
       "x": 39,
       "y": 30
+    }
+  },
+  "operatorRoom": {
+    "background": "background.window",
+    "landscape": {
+      "size": {
+        "w": 352,
+        "h": 320
+      },
+      "frame": "frame.room.landscape.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 352,
+        "h": 68
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 240
+        },
+        "r": {
+          "x": 304,
+          "y": 240
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 308,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerCut": 20
+    },
+    "portrait": {
+      "size": {
+        "w": 288,
+        "h": 344
+      },
+      "frame": "frame.room.portrait.0",
+      "scene": {
+        "sx": 32,
+        "sy": 0,
+        "w": 256,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 288,
+        "h": 92
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 240
+        },
+        "r": {
+          "x": 240,
+          "y": 240
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 244,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerCut": 20,
+      "controlStrip": {
+        "x": 16,
+        "y": 288,
+        "w": 256,
+        "h": 56
+      }
+    },
+    "hud": {
+      "scoreIcon": {
+        "x": 56,
+        "y": 262
+      },
+      "digits": {
+        "x": 72,
+        "y": 262,
+        "pitch": 8,
+        "count": 4
+      },
+      "modeLabel": {
+        "x": 112,
+        "y": 266
+      },
+      "lives": {
+        "x": 80,
+        "y": 290,
+        "pitch": 20
+      },
+      "sound": {
+        "x": 188,
+        "y": 260,
+        "w": 36,
+        "h": 16
+      },
+      "lights": {
+        "x": 152,
+        "y": 298
+      }
     }
   }
 }
