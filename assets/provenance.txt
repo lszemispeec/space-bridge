@@ -1,5 +1,4 @@
-Accepted source: Astra Designer, space-bridge-art-v1.zip, Multica attachment
-01a1924b-bbfe-718c-afd5-e7b00317f354, DEIM-430.
+Accepted source: concept art package space-bridge-art-v1.zip.
 Original sheet art: built-in imagegen; Astra's original packaging: ImageMagick.
 Production adaptation: Pixel. Background cleanup and revision-2 cosmonaut edit:
 built-in imagegen, not API/CLI.
@@ -20,7 +19,7 @@ Exact built-in imagegen edit prompt for revision 2:
 
 Edit these three approved game background plates for production pixel art. Return one image with THREE equal 320x240 logical panels vertically stacked in this exact order: Polar Signal, Desert Expedition, Neon Orbit. Output 1280x2880 (each logical pixel exactly 4x4) or exact integer enlargement. Keep each source scene composition, distinctive mountain silhouettes and colours, neon ringed planet. CLEANUP: remove tiny noisy single pixel texture and irregular speckled/dithered shading; simplify into deliberate connected flat pixel clusters with single logical pixel stair steps. No blur, gradients, glow, antialiasing, dithering, text, labels, sprites, vehicles, holes, icons or arrows. Native 320x240 each: side gutters x0..31 and x288..319 solid darkest palette shade; top HUD band y0..29 same darkest shade, empty. Quiet flat horizontal walkable strip across x32..287 at y168..184 with ground contact y175, no rocks or visual obstacles there. Foreground rocks only y199..239. All terrain inside x32..287. Light from upper left. Retain approved source identity, no new creative objects. Palette panel1 ONLY #173B3A #285552 #3F7068 #5E8D7A #83A792 #ABC3A6 #D1DCC0 #F0EED5 #FFFAE8 #233A46 #426573 #6C929A #9BB8B7 #C8493B #E67B59 #F1B683. Match warm desert and deep neon source palettes in panels2/3. Important: single native pixel scale, sharp intentional silhouettes, minimal texture for handheld readability. Three panels have no gaps or borders between them.
 
-REVISION 2 — readability review 01a1925a-3ac7-7719-9bdc-6e5d7e268eae
+REVISION 2 — readability review
 Character edit input: Astra's 16 original Polar poses in a 4x4 reference grid.
 The built-in tool returned a 1254x1254 transparent sheet. The 16 silhouettes
 were isolated, sampled to native 12-18px widths and 16-20px heights, given a
