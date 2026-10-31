@@ -5,7 +5,7 @@
     "image": "desert-expedition.png",
     "size": {
       "w": 1024,
-      "h": 2287
+      "h": 2378
     },
     "palette": [
       "#251C29",
@@ -1241,6 +1241,60 @@
       "ax": 0,
       "ay": 0,
       "duration": 1000
+    },
+    "rocket.tophatch.closed.0": {
+      "x": 1,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.tophatch.opening.0": {
+      "x": 36,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.tophatch.open.0": {
+      "x": 71,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rover.hatch.closed.0": {
+      "x": 106,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 1000
+    },
+    "rover.hatch.opening.0": {
+      "x": 141,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 90
+    },
+    "rover.hatch.open.0": {
+      "x": 176,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 1000
     }
   },
   "animations": {
@@ -1682,6 +1736,54 @@
         "frame.lights.3"
       ],
       "loop": true
+    },
+    "rocket.tophatch.closed": {
+      "frames": [
+        "rocket.tophatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.opening": {
+      "frames": [
+        "rocket.tophatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rocket.tophatch.open": {
+      "frames": [
+        "rocket.tophatch.open.0"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.closing": {
+      "frames": [
+        "rocket.tophatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rover.hatch.closed": {
+      "frames": [
+        "rover.hatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rover.hatch.opening": {
+      "frames": [
+        "rover.hatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rover.hatch.open": {
+      "frames": [
+        "rover.hatch.open.0"
+      ],
+      "loop": true
+    },
+    "rover.hatch.closing": {
+      "frames": [
+        "rover.hatch.opening.0"
+      ],
+      "loop": false
     }
   },
   "placements": {
@@ -1698,11 +1800,29 @@
       "y": 0
     }
   },
-  "retiredAnimations": [],
+  "retiredAnimations": [
+    "rocket.door_closed",
+    "rocket.door_open",
+    "rover.door_open",
+    "rocket.hatch.closed",
+    "rocket.hatch.opening",
+    "rocket.hatch.open",
+    "rocket.hatch.closing"
+  ],
   "sockets": {
     "rocketLedge": {
       "frame": "rocket.hatch.open.0",
       "x": 39,
+      "y": 30
+    },
+    "rocketTopHatch": {
+      "frame": "rocket.tophatch.open.0",
+      "x": 20,
+      "y": 32
+    },
+    "roverHatch": {
+      "frame": "rover.hatch.open.0",
+      "x": 8,
       "y": 30
     }
   },
@@ -1837,5 +1957,37 @@
         "y": 298
       }
     }
+  },
+  "retiredSockets": [
+    "rocketLedge"
+  ],
+  "vehicleModels": {
+    "rocket": {
+      "anchor": {
+        "x": 43,
+        "y": 169
+      },
+      "mouth": "rocketTopHatch",
+      "hatch": {
+        "x": 16,
+        "y": 20,
+        "w": 8,
+        "h": 12
+      }
+    },
+    "rover": {
+      "anchor": {
+        "x": 248,
+        "y": 180
+      },
+      "mouth": "roverHatch",
+      "hatch": {
+        "x": 4,
+        "y": 12,
+        "w": 8,
+        "h": 18
+      }
+    },
+    "gantry": "retired"
   }
 }

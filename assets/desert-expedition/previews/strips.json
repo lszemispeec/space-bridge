@@ -563,5 +563,69 @@
       300,
       300
     ]
+  },
+  {
+    "animation": "rocket.tophatch.closed",
+    "file": "rocket.tophatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.opening",
+    "file": "rocket.tophatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.open",
+    "file": "rocket.tophatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.closing",
+    "file": "rocket.tophatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rover.hatch.closed",
+    "file": "rover.hatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.hatch.opening",
+    "file": "rover.hatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rover.hatch.open",
+    "file": "rover.hatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.hatch.closing",
+    "file": "rover.hatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
   }
 ]

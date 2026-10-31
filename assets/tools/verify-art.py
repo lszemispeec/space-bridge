@@ -78,7 +78,9 @@ def audit(theme):
             check(pixel[:3] in palette, f"off-palette pixel {index}")
             check(index in occupied, f"stray pixel outside frame {index}")
     used = {p[:3] for p in image.getdata() if p[3]}
-    check(used == palette, "sheet must use exactly its 16 declared colours")
+    # Retiring a sprite can remove the final use of a legal ink. The contract
+    # limits colours to the approved palette; it does not require every ink.
+    check(used <= palette, "sheet colours must belong to the declared palette")
     check(set(crops["background"].getchannel("A").getdata()) == {255}, "opaque background")
     corridor = crops['background'].crop((76, 130, 248, 168))
     check(len(set(corridor.getdata())) == 1, 'quiet actor corridor')
@@ -90,7 +92,28 @@ def audit(theme):
 
     check(atlas['sockets']['rocketLedge'] == {'frame': 'rocket.hatch.open.0', 'x': 39, 'y': 30}, 'ledge socket')
     check(crops['rocket.hatch.open.0'].size == (44, 89), 'hatch hull size')
-    check(crops['rocket.hatch.open.0'].getpixel((39, 30))[3] == 255, 'solid ledge under foot socket')
+    check(atlas['retiredSockets'] == ['rocketLedge'], 'old gantry socket retired')
+    for prefix, socket_name, size, mouth in (
+        ('rocket.tophatch', 'rocketTopHatch', (33, 89), (16, 20, 8, 12)),
+        ('rover.hatch', 'roverHatch', (33, 38), (4, 12, 8, 18)),
+    ):
+        states = [crops[f'{prefix}.{state}.0'] for state in ('closed', 'opening', 'open')]
+        check(all(im.size == size for im in states), 'vehicle cell geometry')
+        check(len({im.tobytes() for im in states}) == 3, 'three visible hatch states')
+        check(len({im.getchannel('A').tobytes() for im in states}) == 1, 'stable vehicle silhouette')
+        mx, my, mw, mh = mouth
+        dark_ink = (*tuple(bytes.fromhex(atlas['meta']['palette'][0][1:])), 255)
+        check(set(states[2].crop((mx, my, mx+mw, my+mh)).getdata()) == {dark_ink}, 'open mouth within hull')
+        for yy in range(size[1]):
+            for xx in range(size[0]):
+                if not (mx <= xx < mx+mw and my <= yy < my+mh):
+                    check(len({im.getpixel((xx, yy)) for im in states}) == 1, 'only inset shutter changes')
+        socket = atlas['sockets'][socket_name]
+        check(socket == {'frame': f'{prefix}.open.0', 'x': mx+mw//2, 'y': my+mh}, 'mouth floor socket')
+        check(states[2].getpixel((socket['x'],socket['y']))[3] == 255, 'solid mouth sill')
+    required_retired = {n for n in atlas['animations'] if n.startswith(('rocket.door', 'rocket.hatch.', 'rover.door'))}
+    check(required_retired <= set(atlas['retiredAnimations']), 'all separate door and hatch animations retired')
+    check(crops['rover.idle.0'].tobytes() == crops['rover.hatch.closed.0'].tobytes(), 'legacy idle uses new model')
     check(len({crops[f'crater.{i}'].tobytes() for i in range(4)}) == 4, 'four distinct crater rims')
     dark = tuple(bytes.fromhex(atlas['meta']['palette'][0][1:]))
     for i in range(4):
@@ -100,7 +123,7 @@ def audit(theme):
     for name in retired_frames:
         check(crops[name].getbbox() is None, f'retired animation blank: {name}')
     if theme == 'polar-signal':
-        check(atlas['retiredAnimations'] == ['ambient.sky'], 'Polar aurora retired')
+        check('ambient.sky' in atlas['retiredAnimations'], 'Polar aurora retired')
         sky = tuple(bytes.fromhex(atlas['meta']['palette'][8][1:]))
         check(set(crops['background'].crop((104,35,234,78)).getdata()) == {(*sky,255)}, 'Polar sky clear of curtain and mark')
 
@@ -228,7 +251,18 @@ def audit(theme):
         total += frame.info["duration"]
         check(set(frame.convert("RGB").getdata()) <= palette, "GIF palette")
     check(total == 6000 and gif.info.get("loop") == 0, "six-second looping GIF")
-    print(f"{theme}: {len(crops)} frames, 16 colours, binary alpha, bounds, gutters, anchors, UI states, {len(strips)} strips, 6s GIF, exact 4x: PASS")
+    exit_gif = Image.open(directory / 'previews/tophatch-exit-4x.gif')
+    check(exit_gif.info.get('loop') == 0, 'exit preview loops')
+    exit_frames = []
+    for frame in ImageSequence.Iterator(exit_gif):
+        check(frame.size == (1408, 1280), '4x operator exit preview')
+        pixels = frame.convert('RGBA')
+        check(set(pixels.convert('RGB').getdata()) <= palette, 'exit GIF palette')
+        native_frame = pixels.resize((352, 320), Image.Resampling.NEAREST)
+        check(native_frame.resize(pixels.size, Image.Resampling.NEAREST).tobytes() == pixels.tobytes(), 'exit integer pixel grid')
+        exit_frames.append(pixels.tobytes())
+    check(exit_frames[0] == exit_frames[-1], 'matching exit loop seam')
+    print(f"{theme}: {len(crops)} frames, {len(used)}/16 palette colours, binary alpha, sockets, inset hatches, retired overlays, {len(strips)} strips, exact 4x and exit loop: PASS")
 
 
 for theme in THEMES:

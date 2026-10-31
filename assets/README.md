@@ -1,3 +1,23 @@
+## Revision 8 — in-scale built-in hatches
+
+Current production art is exported by `node assets/tools/export-vehicles.mjs`
+(Node + ImageMagick), after any older exporters. It draws the models from native
+integer shapes, blanks retired overlays, copies sheets/JSON to `public/atlas`,
+and refreshes strips and screen studies. Re-running an older exporter alone can
+restore historical pixels; always run this revision last.
+
+New complete vehicle frames: `rocket.tophatch.closed/opening/open` and
+`rover.hatch.closed/opening/open`. Closing reuses the middle pose. The rocket
+mouth is 8×12; the rover entrance is 8×18. The gantry and all old door/hatch
+frames are retired. Socket and integration details are in
+`docs/atlas-contract.md`. This delivery is art only; the current game renderer
+still needs to select the new frames and align actors to their mouth sockets.
+
+Review `previews/vehicles-{1,4}x.png`, `operator-{landscape,portrait}-{1,4}x.png`
+and `tophatch-exit-4x.gif` in each theme. The GIF is a scale-in mock, not runtime
+capture. Palette hex values below and each `palette.hex` are unchanged. All
+models use upper-left lighting and a dark one-pixel outline.
+
 # Space Bridge production art
 
 Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 135 frames, 63 animation entries, one 1024×2287 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
@@ -276,4 +296,4 @@ All ambient overlays have anchor (0,0). Draw sky/drift over the background and b
 
 `python3 assets/tools/verify-art.py` needs Pillow. It audits every pixel for palette and binary alpha, sheet bounds and nonoverlapping rectangles, transparent unused space, actor feet and visible height, continuous dark actor contours, quiet corridors, panel-free gutters, life icon dimensions, ambient exclusions, runtime-copy parity, all animation strips, six-second GIFs, unscaled airborne crops and exact 4× enlargement.
 
-Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 405 frames. It checks silhouette contours, body/foot pivots, the ledge socket, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
+Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 423 frames. It checks silhouette contours, body/foot pivots, retired overlays, both mouth sockets, stable vehicle silhouettes, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
