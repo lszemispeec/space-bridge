@@ -1,0 +1,115 @@
+{
+  "source": "../airborne-pixels.json",
+  "oldSize": [
+    1024,
+    1470
+  ],
+  "newSize": [
+    1024,
+    1494
+  ],
+  "addedFrames": [
+    {
+      "name": "cosmonaut.air.spin.0",
+      "x": 1,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.spin.1",
+      "x": 23,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.spin.2",
+      "x": 45,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.spin.3",
+      "x": 67,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.spin.4",
+      "x": 89,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.spin.5",
+      "x": 111,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.spin.6",
+      "x": 133,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.spin.7",
+      "x": 155,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.flail.0",
+      "x": 177,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    {
+      "name": "cosmonaut.air.flail.1",
+      "x": 199,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    }
+  ],
+  "preserved": "All prior frame pixels, rectangles, anchors, durations and animation sequences.",
+  "spinOrder": "Clockwise, upright at 0, eight independent 45-degree keys. Reverse for counter-clockwise."
+}

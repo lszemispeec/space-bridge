@@ -1,8 +1,46 @@
 # Space Bridge production art
 
-Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 71 frames, 39 animation entries, one 1024×1470 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
+Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 81 frames, 41 animation entries, one 1024×1494 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
 
-The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs already configured by the engine. Loading and drawing these assets remains the engineer's integration work. No game logic or layout config changed. Revision 3 extends the atlas contract with the requested UI names.
+The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Existing art is integrated on `main`; the new airborne poses await the flight rework. This art change does not change game logic or layout config.
+
+## Revision 4: airborne rotation and flail
+
+Each theme adds `cosmonaut.air.spin.0`…`.7` and `cosmonaut.air.flail.0/1`.
+All ten frames use **20×22 cells and body-centre anchor (10,11)**. Spin starts
+upright and advances clockwise through eight 45° key poses. Flails spread the
+arms and legs, with one upright and one diagonal pose. Both animations loop
+with **80ms reference frames**; the spin strip is a 640ms cycle. Gameplay should
+select a spin index from hop progress, direction and turn count. Reverse the
+order for counter-clockwise flight. The renderer must not rotate the bitmap.
+
+`airborne-pixels.json` holds ten independently hand-drawn 20×22 ink maps.
+The chest equipment pixel stays at (10,11) in every pose. The exporter adds a
+one-native-pixel dark outline, then maps the same ink into each theme palette.
+There is no image generation, bitmap rotation, mirroring or interpolation in
+this revision. Rebuild with `node assets/tools/export-airborne.mjs` (ImageMagick
+required). The three-theme atlas geometry remains identical.
+
+The new body pivot is **11px above the existing foot pivot**. Existing grounded,
+takeoff, landing and fall frames retain (10,22). For a feet-based trajectory,
+place the new anchor at `(worldX, worldY - 11)`; for a body-based trajectory,
+place it directly. This keeps anchor conversion explicit during the engine's
+flight rework and preserves the plate squash. No existing frame is moved or
+redrawn. The sheet grows from 1024×1470 to 1024×1494. `revision-4.json` lists all
+ten added rectangles and their timing.
+
+Suit / outline colours: Polar `#FFFAE8` / `#173B3A`, Desert `#FFF4DA` / `#251C29`,
+Neon `#B7FFF0` / `#080C24`. All other inks also come from the unchanged 16-colour
+palettes below. Large suit clusters and a continuous dark silhouette keep the
+actor readable against both light mountains and dark space.
+
+`previews/cosmonaut.air.spin-strip.png` is the native 160×22 sequence;
+`cosmonaut.air.spin-strip-4x.png` is its exact 640×88 nearest-neighbour enlargement.
+Flail strips are 40×22 / 160×88. Each animation also has a 4× looping GIF.
+`airborne-contrast-1x.png` / `airborne-contrast-4x.png` show four new poses over
+the upper playfield. These are offline contrast studies, not gameplay captures
+or evidence of the new flight/scheduler behavior. Existing movement studies
+retain their earlier poses and short arc.
 
 ## Revision 3: title and sound controls
 
@@ -100,4 +138,4 @@ All ambient overlays have anchor (0,0). Draw sky/drift over the background and b
 
 `python3 assets/tools/verify-art.py` needs Pillow. It audits every pixel for palette and binary alpha, sheet bounds and nonoverlapping rectangles, transparent unused space, actor feet and visible height, continuous dark actor contours, quiet corridors, panel-free gutters, life icon dimensions, ambient exclusions, runtime-copy parity, all animation strips, six-second GIFs, unscaled airborne crops and exact 4× enlargement.
 
-Visual review covers all 213 frames at native resolution and integer enlargement, including the 30 new UI states. Background texture was simplified; intentionally isolated ambient particles are not treated as stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
+Visual review covers all 243 frames at native resolution and integer enlargement, including 30 airborne poses. The audit checks connected airborne silhouettes, the body pivot, dark contours, loop pixels/timing and exact 4× strips. Background texture was simplified; intentionally isolated ambient particles are not treated as stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
