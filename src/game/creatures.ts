@@ -3,8 +3,9 @@
  * a time peeks out of a random crater, blinks and looks around, hides again,
  * and now and then a tentacle reaches up from the crater the eyes are in. A
  * cosmonaut that falls in is grabbed by that crater's tentacle, whoever is
- * out. Pure, with its own seeded RNG and real-second timers; the renderer
- * steps it, the rules never see it.
+ * out. The crater under the bridge plate stays empty: eyes vanish the moment
+ * the plate covers them and never come out there. Pure, with its own seeded
+ * RNG and real-second timers; the renderer steps it, the rules never see it.
  */
 import { CRATER_SLOTS } from '../config/layout';
 import { nextRandom, type Rng } from './rng';
@@ -35,9 +36,9 @@ export interface Creatures {
   rng: Rng;
 }
 
-/** What is going on above the craters, so a tentacle never gets in the player's way. */
+/** What is going on above the craters, so a creature never gets in the player's way. */
 export interface CreatureScene {
-  /** The plate covers this crater: no tentacle reaches out of it. */
+  /** The plate covers this crater: nothing shows in it, and eyes that are out vanish under the plate. */
   plateSlot: number;
   /** The player must bring the plate here next: no tentacle reaches out of it either. */
   nextLandingSlot: number | null;
@@ -92,12 +93,18 @@ function mayReach(slot: number, scene: CreatureScene): boolean {
   return slot !== scene.plateSlot && slot !== scene.nextLandingSlot;
 }
 
-/** A crater other than the last one, from the RNG. */
-function pickSlot(lastSlot: number | null, rng: Rng): { slot: number; rng: Rng } {
-  const choices = CRATER_SLOTS.filter((slot) => slot !== lastSlot);
+/** A crater other than the last one and not under the plate, from the RNG. */
+function pickSlot(lastSlot: number | null, scene: CreatureScene, rng: Rng): { slot: number; rng: Rng } {
+  const choices = CRATER_SLOTS.filter((slot) => slot !== lastSlot && slot !== scene.plateSlot);
   const r = nextRandom(rng);
   const slot = choices[Math.min(choices.length - 1, Math.floor(r.value * choices.length))] ?? CRATER_SLOTS[0];
   return { slot, rng: r.rng };
+}
+
+/** The quiet after the eyes went in, never shorter than the rest already owed. */
+function quietAfter(rest: number, rng: Rng, overrun = 0): { rest: number; rng: Rng } {
+  const quiet = between(rng, ACT_SECONDS.quiet);
+  return { rest: Math.max(quiet.value, rest) - overrun, rng: quiet.rng };
 }
 
 /** The act after `act` ran out, or null when the creature went back in. */
@@ -136,9 +143,17 @@ export function stepCreatures(state: Creatures, dt: number, scene: CreatureScene
   let rest = grabs.length > 0 ? REST_AFTER_GRAB : state.rest;
   let lastSlot = state.lastSlot;
 
-  if (active) {
-    // The eyes dive when a cosmonaut falls in anywhere, and when the plate or
-    // the next landing needs the crater the tentacle is reaching out of.
+  if (active?.slot === scene.plateSlot) {
+    // The plate covers the crater: the eyes are gone at once, with no hide
+    // frames, and the crater is only due again after the usual quiet.
+    lastSlot = active.slot;
+    const quiet = quietAfter(rest, rng);
+    rng = quiet.rng;
+    rest = quiet.rest;
+    active = null;
+  } else if (active) {
+    // The eyes dive when a cosmonaut falls in anywhere, and when the next
+    // landing needs the crater the tentacle is reaching out of.
     const startle = grabs.length > 0 && active.act !== 'hide';
     const cutReach = active.act === 'reach' && !mayReach(active.slot, scene);
     let next: Creature = { ...active, t: active.t + dt };
@@ -155,15 +170,15 @@ export function stepCreatures(state: Creatures, dt: number, scene: CreatureScene
       active = after.creature;
       if (!active) {
         lastSlot = next.slot;
-        const quiet = between(rng, ACT_SECONDS.quiet);
+        const quiet = quietAfter(rest, rng, next.t - next.duration);
         rng = quiet.rng;
-        rest = Math.max(quiet.value, rest) - (next.t - next.duration);
+        rest = quiet.rest;
       }
     }
   } else if (grabs.length === 0) {
     rest -= dt;
     if (rest <= 0) {
-      const pick = pickSlot(lastSlot, rng);
+      const pick = pickSlot(lastSlot, scene, rng);
       const peek = begin(pick.slot, 'peek', pick.rng, -rest);
       rng = peek.rng;
       active = peek.creature;
