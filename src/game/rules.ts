@@ -9,6 +9,7 @@
  */
 import { DIFFICULTY, speedAt, type GameMode, type ModeConfig } from '../config/difficulty';
 import { CRATER_SLOTS, ROCKET_SLOT, ROVER_SLOT } from '../config/layout';
+import { rollHop } from './jump';
 import { pick } from './rng';
 import { spawnFits } from './schedule';
 import { newlyUnlocked, nextUnlockedTheme } from './unlocks';
@@ -112,6 +113,8 @@ function spawn(s: GameState, events: GameEvent[]): void {
     slot: ROCKET_SLOT,
     t: 0,
     duration: DIFFICULTY.timing.emerge,
+    spin: 0,
+    flail: false,
   };
   s.nextId += 1;
   s.cosmonauts.push(cosmonaut);
@@ -142,16 +145,23 @@ function advanceCosmonaut(s: GameState, c: Cosmonaut, beat: number, events: Game
   const cfg = modeConfig(s.mode);
 
   switch (c.state) {
-    case 'crouch':
+    case 'crouch': {
+      const hop = rollHop(s.rng);
+      s.rng = hop.rng;
       c.state = 'air';
       c.t = carry;
       c.duration = DIFFICULTY.timing.jump;
+      c.spin = hop.value.spin;
+      c.flail = hop.value.flail;
       events.push({ type: 'jump' });
       return;
+    }
     case 'air': {
       const landing = c.slot + 1;
       c.slot = landing;
       c.t = carry;
+      c.spin = 0;
+      c.flail = false;
       if (landing === ROVER_SLOT) {
         c.state = 'board';
         c.duration = DIFFICULTY.timing.board;

@@ -19,6 +19,13 @@ export interface Cosmonaut {
   t: number;
   /** Length of the current state, in the same unit as `t`. */
   duration: number;
+  /**
+   * Tumble of the current hop in signed turns: positive spins one way,
+   * negative the other, 0 when not in the air. Rolled at every take-off.
+   */
+  spin: number;
+  /** True while the current hop flails with spread limbs instead of tumbling. */
+  flail: boolean;
 }
 
 export interface HighScores {
