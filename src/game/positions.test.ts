@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FALL_DEPTH, GROUND_Y, JUMP_HEIGHT, ROVER, SLOT_X } from '../config/layout';
+import { FALL_DEPTH, GROUND_Y, JUMP_HEIGHT, ROCKET_LEDGE, ROVER, SLOT_X } from '../config/layout';
 import { cosmonautView, slotPoint } from './positions';
 import type { Cosmonaut } from './types';
 
@@ -15,9 +15,29 @@ describe('cosmonautView', () => {
     expect(cosmonautView(c({ slot: 2, t: 0.1 })).pose).toBe('land');
   });
 
-  it('emerges from the rocket on slot 0, then crouches for the first jump', () => {
-    expect(cosmonautView(c({ slot: 0, t: 0.2 })).pose).toBe('emerge');
+  it('emerges on the ledge outside the hatch, then crouches there for the first jump', () => {
+    const emerging = cosmonautView(c({ slot: 0, t: 0.2 }));
+    expect(emerging.pose).toBe('emerge');
+    expect(emerging.pos).toEqual(ROCKET_LEDGE);
     expect(cosmonautView(c({ slot: 0, t: 0.7 })).pose).toBe('crouch');
+    expect(ROCKET_LEDGE.y).toBeLessThan(GROUND_Y - 40);
+  });
+
+  it('takes the ledge from the caller, so the atlas can move it', () => {
+    const ledge = { x: 90, y: 100 };
+    expect(cosmonautView(c({ slot: 0, t: 0.7 }), ledge).pos).toEqual(ledge);
+    expect(cosmonautView(c({ state: 'air', slot: 0, t: 0 }), ledge).pos).toEqual(ledge);
+  });
+
+  it('drops from the ledge to crater 1 on the first arc, never below the ground', () => {
+    expect(cosmonautView(c({ state: 'air', slot: 0, t: 0 })).pos).toEqual(ROCKET_LEDGE);
+    expect(cosmonautView(c({ state: 'air', slot: 0, t: 1 })).pos).toEqual(slotPoint(1));
+    let lowest = -Infinity;
+    for (let t = 0; t <= 1; t += 0.05) {
+      const y = cosmonautView(c({ state: 'air', slot: 0, t })).pos.y;
+      lowest = Math.max(lowest, y);
+    }
+    expect(lowest).toBeLessThanOrEqual(GROUND_Y);
   });
 
   it('follows the arc between slots in the air', () => {

@@ -26,11 +26,12 @@ The engine is `audio` in `src/audio/index.ts`. `src/main.ts` installs it with `c
 | `plate_move` | The player moves the plate one slot. Not fired at the ends. |
 | `save` | A cosmonaut boards the rover. |
 | `fall` | A cosmonaut misses the plate and falls. |
+| `grab` | The crater creature grabs the falling cosmonaut. Same step as `fall`. |
 | `life_lost` | Right after `fall`, in the same step. |
 | `unlock` | The score passes a theme's unlock target. |
 | `game_over` | The last life is gone. |
 
-`fall` and `life_lost` arrive together. Play one of them, or layer them. The game never fires `game_over` in the same step as `fall`; it waits for the freeze to end.
+`fall`, `grab` and `life_lost` arrive together, in that order. The engine layers them: the fall whistle (pulse 1) and the creature's slurp and gurgle (pulse 2, triangle, noise) start at once, and `life_lost` waits for the grab to finish (its `offset` in `sfx.ts`, 0.66 s like the grab animation). The game never fires `game_over` in the same step as `fall`; it waits for the freeze to end.
 
 ## Music
 

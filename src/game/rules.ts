@@ -7,7 +7,7 @@
  * difficulty curve speeds everything up together and the landing scheduler
  * can reason about gaps without knowing the speed.
  */
-import { DIFFICULTY, speedAt, type GameMode, type ModeConfig } from '../config/difficulty';
+import { densityAt, DIFFICULTY, speedAt, type Density, type GameMode, type ModeConfig } from '../config/difficulty';
 import { CRATER_SLOTS, ROCKET_SLOT, ROVER_SLOT } from '../config/layout';
 import { rollHop } from './jump';
 import { pick } from './rng';
@@ -59,6 +59,11 @@ function modeConfig(mode: GameMode): ModeConfig {
 /** Beat seconds per real second at the current score. */
 export function currentSpeed(s: GameState): number {
   return speedAt(modeConfig(s.mode).curve, s.score);
+}
+
+/** How crowded the road may be at the current score. */
+export function currentDensity(s: GameState): Density {
+  return densityAt(modeConfig(s.mode).density, s.score);
 }
 
 export function bestScore(save: SaveData): number {
@@ -120,19 +125,20 @@ function spawn(s: GameState, events: GameEvent[]): void {
   s.cosmonauts.push(cosmonaut);
   events.push({ type: 'footstep' });
 
-  const gap = pick(s.rng, modeConfig(s.mode).spawnGap);
-  s.rng = gap.rng;
-  s.spawnTimer = gap.value;
+  const jitter = pick(s.rng, modeConfig(s.mode).spawnJitter);
+  s.rng = jitter.rng;
+  s.spawnTimer = currentDensity(s).spawnGap + jitter.value;
 }
 
 /**
- * A cosmonaut leaves the rocket once the spawn clock has run out, the road
- * has room, and the landing scheduler finds a slot for all its landings.
+ * A cosmonaut comes out of the hatch once the spawn clock has run out, the
+ * road has room at the current density, and the landing scheduler finds a
+ * slot for all its landings.
  */
 function trySpawn(s: GameState, events: GameEvent[]): void {
   if (s.spawnTimer > 0) return;
   s.spawnTimer = 0;
-  if (s.cosmonauts.length >= modeConfig(s.mode).maxOnScreen) return;
+  if (s.cosmonauts.length >= currentDensity(s).maxOnScreen) return;
   if (!spawnFits(s.cosmonauts, DIFFICULTY.timing, DIFFICULTY.scheduler)) return;
   spawn(s, events);
 }
@@ -150,7 +156,7 @@ function advanceCosmonaut(s: GameState, c: Cosmonaut, beat: number, events: Game
       s.rng = hop.rng;
       c.state = 'air';
       c.t = carry;
-      c.duration = DIFFICULTY.timing.jump;
+      c.duration = c.slot === ROCKET_SLOT ? DIFFICULTY.timing.drop : DIFFICULTY.timing.jump;
       c.spin = hop.value.spin;
       c.flail = hop.value.flail;
       events.push({ type: 'jump' });
@@ -180,6 +186,7 @@ function advanceCosmonaut(s: GameState, c: Cosmonaut, beat: number, events: Game
         s.phase = 'life_lost';
         s.phaseTimer = DIFFICULTY.timing.lifeLostPause;
         events.push({ type: 'fall' });
+        events.push({ type: 'grab' });
         events.push({ type: 'life_lost' });
       }
       return;

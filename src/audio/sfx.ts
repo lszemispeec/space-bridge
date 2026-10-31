@@ -17,6 +17,11 @@ export interface SfxDef {
   parts: readonly SfxPart[];
   /** Total length in seconds, used by the renderer and the demo page. */
   length: number;
+  /**
+   * Seconds the game-facing player waits after the trigger. The game fires
+   * `fall`, `grab` and `life_lost` in one step; the offset puts them in order.
+   */
+  offset: number;
 }
 
 const n = noteToFreq;
@@ -25,10 +30,10 @@ function part(ch: ChannelId, at: number, dur: number, freq: number, params: Note
   return { ch, at, dur, freq, params };
 }
 
-function sfx(name: AudioEvent, parts: SfxPart[]): SfxDef {
+function sfx(name: AudioEvent, parts: SfxPart[], offset = 0): SfxDef {
   const sorted = [...parts].sort((a, b) => (a.ch === b.ch ? a.at - b.at : a.ch < b.ch ? -1 : 1));
   const length = Math.max(...parts.map((p) => p.at + dur(p)));
-  return { name, parts: sorted, length };
+  return { name, parts: sorted, length, offset };
 }
 
 function dur(p: SfxPart): number {
@@ -36,9 +41,35 @@ function dur(p: SfxPart): number {
 }
 
 /**
+ * The crater creature takes the cosmonaut. A wet slurp sucks upward on the
+ * thin 12.5 % pulse with a fast, deep wobble while dull noise brightens like
+ * breath drawn in. Then the throat gurgles: triangle glugs step down, a
+ * bubbling arpeggio sinks a third, and low noise plops keep it wet. A tiny
+ * gulp ends it. It is 0.66 s, the length of the grab animation.
+ *
+ * Pulse 1 is left free on purpose: `fall` fires in the same step, and its
+ * whistle on pulse 1 is the cosmonaut while the rest is the creature.
+ */
+const GRAB = sfx('grab', [
+  part('pulse2', 0, 0.22, n('D4'), { vol: 0.28, duty: 0, slideFrom: -14, slideTime: 0.2, decay: 0.25, sustain: 0.7, vib: { depth: 140, rate: 16, delay: 0 } }),
+  part('pulse2', 0.24, 0.16, n('Bb3'), { vol: 0.22, duty: 0, arp: [0, 3, -2, 5], arpRate: 28, decay: 0.2, sustain: 0.6 }),
+  part('pulse2', 0.4, 0.16, n('G3'), { vol: 0.2, duty: 0, arp: [0, 3, -2, 5], arpRate: 28, decay: 0.2, sustain: 0.5 }),
+  part('pulse2', 0.58, 0.06, n('F4'), { vol: 0.2, duty: 1, slideFrom: -7, slideTime: 0.04, decay: 0.04 }),
+  part('tri', 0.24, 0.07, n('G2'), { vol: 0.5, decay: 0.05, glideTo: 0.7 }),
+  part('tri', 0.33, 0.07, n('E2'), { vol: 0.5, decay: 0.05, glideTo: 0.7 }),
+  part('tri', 0.42, 0.07, n('C2'), { vol: 0.5, decay: 0.05, glideTo: 0.7 }),
+  part('tri', 0.51, 0.09, n('A1'), { vol: 0.5, decay: 0.06, glideTo: 0.6 }),
+  part('noise', 0, 0.2, 0.1, { vol: 0.3, decay: 0.12, sustain: 0.5, glideTo: 4, noise: 'long' }),
+  part('noise', 0.26, 0.04, 0.06, { vol: 0.3, decay: 0.02, noise: 'long' }),
+  part('noise', 0.35, 0.04, 0.05, { vol: 0.28, decay: 0.02, noise: 'long' }),
+  part('noise', 0.44, 0.04, 0.045, { vol: 0.26, decay: 0.02, noise: 'long' }),
+]);
+
+/**
  * Every effect is under 0.8 s, and each one has its own pitch shape so they
  * read against the music: steps are low and dull, plate moves click,
- * jumps rise, bounces dip then spring, falls slide down, wins arpeggiate up.
+ * jumps rise, bounces dip then spring, falls slide down, the grab slurps and
+ * gurgles, wins arpeggiate up.
  */
 export const SFX: Readonly<Record<AudioEvent, SfxDef>> = {
   footstep: sfx('footstep', [
@@ -79,13 +110,15 @@ export const SFX: Readonly<Record<AudioEvent, SfxDef>> = {
     part('noise', 0.42, 0.18, 0.15, { vol: 0.45, decay: 0.06 }),
   ]),
 
+  grab: GRAB,
+
   life_lost: sfx('life_lost', [
     part('pulse1', 0, 0.22, n('E4'), { vol: 0.3, duty: 2, decay: 0.4, sustain: 0.8, vib: { depth: 20, rate: 5, delay: 0.08 } }),
     part('pulse1', 0.22, 0.42, n('Eb4'), { vol: 0.3, duty: 2, decay: 0.45, sustain: 0.6, vib: { depth: 35, rate: 5, delay: 0.1 } }),
     part('pulse2', 0, 0.22, n('C4'), { vol: 0.18, duty: 1, decay: 0.4, sustain: 0.8 }),
     part('pulse2', 0.22, 0.42, n('B3'), { vol: 0.18, duty: 1, decay: 0.45, sustain: 0.6 }),
     part('tri', 0.22, 0.45, n('E2'), { vol: 0.5, decay: 0.3 }),
-  ]),
+  ], GRAB.length),
 
   unlock: sfx('unlock', [
     // The first three motif notes (A A E), then a sparkle up two octaves.
