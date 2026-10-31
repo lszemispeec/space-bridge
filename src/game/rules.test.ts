@@ -3,7 +3,7 @@ import { AUDIO_EVENTS } from '../audio/api';
 import { DIFFICULTY } from '../config/difficulty';
 import { ROCKET_SLOT } from '../config/layout';
 import { STEP_SECONDS } from '../platform/loop';
-import { bestScore, canLeaveGameOver, step } from './rules';
+import { bestScore, canLeaveGameOver, musicTempo, step } from './rules';
 import { defaultSave } from './save';
 import { instantBotOptions } from './bot';
 import { move, playBot, press, run, runUntil, startGame, titleState, types } from './testing';
@@ -41,22 +41,42 @@ describe('title screen', () => {
   });
 
   it('cycles only unlocked themes with the theme key', () => {
-    const locked = step(titleState(), press({ theme: true }), STEP_SECONDS);
+    const locked = step(titleState(), press({ theme: 1 }), STEP_SECONDS);
     expect(locked.state.save.settings.theme).toBe('polar-signal');
     expect(types(locked.events)).not.toContain('theme_changed');
 
     const save = defaultSave();
     save.unlocked = ['polar-signal', 'neon-orbit'];
-    const r = step(titleState(save), press({ theme: true }), STEP_SECONDS);
+    const r = step(titleState(save), press({ theme: 1 }), STEP_SECONDS);
     expect(r.state.save.settings.theme).toBe('neon-orbit');
     expect(types(r.events)).toEqual(['theme_changed', 'save_changed']);
   });
 
   it('toggles mute in any phase and asks to persist', () => {
-    const r = step(titleState(), press({ mute: true }), STEP_SECONDS);
+    const r = step(titleState(), press({ mute: 1 }), STEP_SECONDS);
     expect(r.state.save.settings.muted).toBe(true);
     expect(r.events).toContainEqual({ type: 'mute_changed', muted: true });
     expect(types(r.events)).toContain('save_changed');
+  });
+
+  it('counts every theme and mute press in one step as its own toggle', () => {
+    const save = defaultSave();
+    save.unlocked = ['polar-signal', 'desert-expedition', 'neon-orbit'];
+    const r = step(titleState(save), press({ theme: 2, mute: 2 }), STEP_SECONDS);
+    expect(r.state.save.settings.theme).toBe('neon-orbit');
+    expect(r.state.save.settings.muted).toBe(false);
+    expect(r.events.filter((e) => e.type === 'theme_changed')).toHaveLength(2);
+    expect(r.events.filter((e) => e.type === 'mute_changed')).toEqual([
+      { type: 'mute_changed', muted: true },
+      { type: 'mute_changed', muted: false },
+    ]);
+  });
+
+  it('plays the music at the mode tempo in a round and at its own tempo on the title', () => {
+    expect(musicTempo(titleState())).toBe(1);
+    expect(musicTempo(startGame(titleState(), 'A'))).toBe(DIFFICULTY.modes.A.musicTempo);
+    expect(musicTempo(startGame(titleState(), 'B'))).toBe(DIFFICULTY.modes.B.musicTempo);
+    expect(DIFFICULTY.modes.B.musicTempo).toBeGreaterThan(DIFFICULTY.modes.A.musicTempo);
   });
 });
 

@@ -16,6 +16,7 @@ export const SCREEN_H = 240;
 export const GUTTER_W = 32;
 export const PLAY_X0 = GUTTER_W;
 export const PLAY_X1 = SCREEN_W - GUTTER_W;
+export const PLAY_W = PLAY_X1 - PLAY_X0;
 
 export const GROUND_Y = 175;
 
@@ -70,11 +71,33 @@ export const TAP_TARGETS = {
 
 export type TapTargetId = keyof typeof TAP_TARGETS;
 
+/**
+ * The title's button row: both buttons and the gap between them. A tap in
+ * the row that misses a button does nothing, so a thumb that lands in the
+ * gap never starts a round.
+ */
+export const TITLE_BUTTON_ROW: Rect = union(TAP_TARGETS.titleTheme, TAP_TARGETS.titleMute);
+
+/**
+ * Portrait layout: the gutters move below the playfield as one strip.
+ * `y`/`h` is the slice of each gutter column that holds its side button,
+ * with a margin; `tileY` is a plain slice of the column, used to fill the
+ * strip between the two buttons.
+ */
+export const PORTRAIT_STRIP = { y: 148, h: 56, tileY: 60 } as const;
+
 /** Smallest comfortable thumb target on a touch screen, in CSS pixels. */
 export const MIN_TAP_CSS_PX = 44;
 
 export function inRect(r: Rect, x: number, y: number): boolean {
   return x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h;
+}
+
+/** Smallest rectangle that holds both. */
+export function union(a: Rect, b: Rect): Rect {
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  return { x, y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
 }
 
 /**
