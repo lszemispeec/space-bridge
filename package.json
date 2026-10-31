@@ -15,7 +15,7 @@
     "check": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
