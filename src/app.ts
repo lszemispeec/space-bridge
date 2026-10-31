@@ -94,15 +94,24 @@ export function createApp(options: AppOptions): App {
 
   const stopLoop = startLoop({
     update(dt) {
-      const result = step(state, input.consume(), dt);
+      const frame = input.consume();
+      for (const move of frame.moves) renderer.pull(move);
+      const result = step(state, frame, dt);
       state = result.state;
       for (const event of result.events) emit(event);
       followTempo();
     },
     render() {
       const theme = state.save.settings.theme;
-      renderer.render(screen.ctx, state, input.held(), art.get(theme) ?? null, performance.now());
-      screen.present();
+      const target = {
+        scene: screen.scene,
+        room: screen.room,
+        viewport: screen.viewport(),
+        present: () => {
+          screen.present();
+        },
+      };
+      renderer.render(target, state, input.held(), art.get(theme) ?? null, performance.now());
     },
   });
 

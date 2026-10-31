@@ -51,13 +51,6 @@ export const SIDE_BUTTONS = {
   right: { x: 292, y: 152 },
 } as const;
 
-export const HUD = {
-  scoreIcon: { x: 40, y: 8 },
-  digits: { x: 56, y: 8, pitch: 8, count: 4 },
-  modeLabel: { x: 40, y: 22 },
-  lives: { x: 212, y: 7, pitch: 20 },
-} as const;
-
 export interface Rect {
   x: number;
   y: number;
@@ -65,17 +58,111 @@ export interface Rect {
   h: number;
 }
 
-/** On-screen buttons. Taps inside them do not count as plate presses. */
+/** On-screen buttons drawn on the scene. Taps inside them do not count as plate presses. */
 export const TAP_TARGETS = {
   /** Cycles the theme. Title screen only. */
   titleTheme: { x: 100, y: 190, w: 56, h: 16 },
   /** Toggles mute. Title screen only. */
   titleMute: { x: 164, y: 190, w: 56, h: 16 },
-  /** Toggles mute. Every screen, in the HUD. */
-  hudMute: { x: 142, y: 4, w: 36, h: 16 },
 } as const satisfies Record<string, Rect>;
 
-export type TapTargetId = keyof typeof TAP_TARGETS;
+/** `hudMute` is the sound readout on the console; see `CONSOLE_HUD`. */
+export type TapTargetId = keyof typeof TAP_TARGETS | 'hudMute';
+
+/**
+ * The operator room: the player looks at the scene through the windshield of
+ * the bridge's control room. The window frame sits outside the 320x240 scene
+ * and the console under it holds the HUD and the levers, so the visible
+ * canvas is larger than the scene. `bezel` is the frame thickness: struts at
+ * the sides and a lintel on top. `consoleH` is the height of the console
+ * deck per orientation; in portrait the deck also holds the lever strip.
+ * `cornerCut` is the size of the slanted upper mullions, which cover the
+ * scene's top corners where x + y < cornerCut. The atlas carries the same
+ * numbers in its `operatorRoom` table; the art test checks that the two agree.
+ */
+export const ROOM = {
+  bezel: { side: 16, top: 12 },
+  consoleH: { landscape: 68, portrait: 92 },
+  cornerCut: 20,
+  /** The deck-mounted lever art: 40x64 frames, their bases on the console, overlapping the window's bottom edge. */
+  lever: { w: 40, h: 64, inset: 8, overlap: 12 },
+  /** The lever tap zones keep the gutters' old 24x48 button rectangles. */
+  leverTap: { w: 24, h: 48 },
+} as const;
+
+/** The name of the atlas plate drawn through the window: it fills the glass edge to edge. */
+export const ROOM_BACKGROUND = 'background.window';
+
+export type Orientation = 'landscape' | 'portrait';
+
+export type PlateSide = 'left' | 'right';
+
+/** Where the parts of the room sit on the visible canvas, in room pixels. */
+export interface RoomLayout {
+  orientation: Orientation;
+  w: number;
+  h: number;
+  /** The part of the scene that shows through the window: the whole frame in landscape, the playfield in portrait. */
+  window: Rect;
+  /** The console deck under the window, with the HUD readouts and the levers. */
+  console: Rect;
+  /** Top-left corners of the two lever frames on the deck. Art only; the taps are `leverTaps`. */
+  levers: Record<PlateSide, { x: number; y: number }>;
+  /** The lever tap zones: beside the window in landscape, in the strip in portrait. */
+  leverTaps: Record<PlateSide, Rect>;
+  /** Portrait only: the strip at the bottom of the console that holds the lever taps. The room art draws it. */
+  strip: Rect | null;
+}
+
+export function roomLayout(orientation: Orientation): RoomLayout {
+  const { side, top } = ROOM.bezel;
+  const consoleH = ROOM.consoleH[orientation];
+  const sceneW = orientation === 'landscape' ? SCREEN_W : PLAY_W;
+  const w = sceneW + 2 * side;
+  const consoleY = top + SCREEN_H;
+  const h = consoleY + consoleH;
+  const strip = orientation === 'portrait' ? { x: side, y: h - PORTRAIT_STRIP.h, w: sceneW, h: PORTRAIT_STRIP.h } : null;
+  const tapY = strip ? strip.y + SIDE_BUTTONS.left.y - PORTRAIT_STRIP.y : top + SIDE_BUTTONS.left.y;
+  const leverY = consoleY - ROOM.lever.overlap;
+  const tap = ROOM.leverTap;
+  return {
+    orientation,
+    w,
+    h,
+    window: { x: side, y: top, w: sceneW, h: SCREEN_H },
+    console: { x: 0, y: consoleY, w, h: consoleH },
+    levers: {
+      left: { x: ROOM.lever.inset, y: leverY },
+      right: { x: w - ROOM.lever.inset - ROOM.lever.w, y: leverY },
+    },
+    leverTaps: {
+      left: { x: side + SIDE_BUTTONS.left.x, y: tapY, ...tap },
+      right: { x: side + sceneW - GUTTER_W + SIDE_BUTTONS.left.x, y: tapY, ...tap },
+    },
+    strip,
+  };
+}
+
+/** A rectangle on the scene, moved to where the window shows it on the room canvas. */
+export function frameToRoom(r: Rect, room: RoomLayout): Rect {
+  const shift = room.orientation === 'portrait' ? PLAY_X0 : 0;
+  return { x: r.x - shift + room.window.x, y: r.y + room.window.y, w: r.w, h: r.h };
+}
+
+/**
+ * The HUD readouts on the console, in room pixels. The same in both
+ * orientations: the score row and the lives row fit the narrower portrait
+ * console. `sound` is the `hudMute` tap target; `lights` is where the console
+ * light loop blinks.
+ */
+export const CONSOLE_HUD = {
+  scoreIcon: { x: 56, y: 262 },
+  digits: { x: 72, y: 262, pitch: 8, count: 4 },
+  modeLabel: { x: 112, y: 266 },
+  lives: { x: 80, y: 290, pitch: 20 },
+  sound: { x: 188, y: 260, w: 36, h: 16 },
+  lights: { x: 152, y: 298 },
+} as const;
 
 /**
  * The title's button row: both buttons and the gap between them. A tap in
@@ -85,12 +172,11 @@ export type TapTargetId = keyof typeof TAP_TARGETS;
 export const TITLE_BUTTON_ROW: Rect = union(TAP_TARGETS.titleTheme, TAP_TARGETS.titleMute);
 
 /**
- * Portrait layout: the gutters move below the playfield as one strip.
- * `y`/`h` is the slice of each gutter column that holds its side button,
- * with a margin; `tileY` is a plain slice of the column, used to fill the
- * strip between the two buttons.
+ * Portrait layout: the levers move below the console into a strip of height
+ * `h`. `y` is the top of the slice of the gutter the levers come from, so a
+ * lever keeps its margin inside the strip.
  */
-export const PORTRAIT_STRIP = { y: 148, h: 56, tileY: 60 } as const;
+export const PORTRAIT_STRIP = { y: 148, h: 56 } as const;
 
 /** Smallest comfortable thumb target on a touch screen, in CSS pixels. */
 export const MIN_TAP_CSS_PX = 44;

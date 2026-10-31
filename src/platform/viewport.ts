@@ -1,23 +1,25 @@
 /**
- * How the fixed 320x240 frame is shown on a screen. Pure, so the choice is
+ * How the fixed 320x240 scene is shown on a screen. Pure, so the choice is
  * testable; `canvas.ts` applies it.
  *
- * Landscape and desktop show the frame as it is, gutters at the sides.
- * Portrait shows the 256 px playfield on top and moves the gutters, with
- * their side buttons, into a strip below it. The canvas is scaled by a whole
- * number of device pixels per game pixel, the largest that fits, so pixels
- * stay crisp on every screen.
+ * The visible canvas is the operator room (see `roomLayout` in layout.ts):
+ * the scene shows through its window, the console with the HUD sits below.
+ * Landscape and desktop show the whole scene, levers in the gutters at the
+ * sides. Portrait shows the 256 px playfield and moves the levers into a
+ * strip under the console; the room art draws that strip. The canvas is
+ * scaled by a whole number of device pixels per room pixel, the largest
+ * that fits, so pixels stay crisp on every screen.
  */
-import { GUTTER_W, PLAY_W, PLAY_X0, PORTRAIT_STRIP, SCREEN_H, SCREEN_W } from '../config/layout';
+import { inRect, PLAY_W, PLAY_X0, roomLayout, SCREEN_H, SCREEN_W, type Orientation } from '../config/layout';
 import type { Point } from '../game/jump';
 
-export type Orientation = 'landscape' | 'portrait';
+export type { Orientation } from '../config/layout';
 
 export interface Viewport {
   orientation: Orientation;
-  /** Device pixels per game pixel. */
+  /** Device pixels per room pixel. */
   scale: number;
-  /** Size of the visible canvas in game pixels. */
+  /** Size of the visible canvas in room pixels. */
   width: number;
   height: number;
   /** Size of the visible canvas in CSS pixels. */
@@ -25,13 +27,13 @@ export interface Viewport {
   cssH: number;
 }
 
-/** The visible canvas size, in game pixels, of each orientation. */
+/** The visible canvas size, in room pixels, of each orientation. */
 export const CANVAS_SIZE: Record<Orientation, { w: number; h: number }> = {
-  landscape: { w: SCREEN_W, h: SCREEN_H },
-  portrait: { w: PLAY_W, h: SCREEN_H + PORTRAIT_STRIP.h },
+  landscape: { w: roomLayout('landscape').w, h: roomLayout('landscape').h },
+  portrait: { w: roomLayout('portrait').w, h: roomLayout('portrait').h },
 };
 
-/** Largest whole number of device pixels per game pixel at which `w` x `h` game pixels fit the viewport. */
+/** Largest whole number of device pixels per room pixel at which `w` x `h` room pixels fit the viewport. */
 export function fitScale(viewportW: number, viewportH: number, dpr: number, w: number, h: number): number {
   return Math.max(1, Math.floor(Math.min((viewportW * dpr) / w, (viewportH * dpr) / h)));
 }
@@ -48,19 +50,20 @@ export function chooseViewport(viewportW: number, viewportH: number, dpr = 1): V
 }
 
 /**
- * Maps a point on the visible canvas, in canvas pixels, to a point on the
- * 320x240 frame. Null for the portrait strip: it holds only the side
- * buttons, and a tap there is a plate press for its half of the screen.
+ * Maps a point on the visible canvas, in room pixels, to a point on the
+ * 320x240 scene. Null outside the window: the console has its own targets,
+ * and a tap on the frame or in the portrait lever strip is a plate press for
+ * its half of the screen.
  */
 export function canvasToFrame(x: number, y: number, v: Viewport): Point | null {
   if (x < 0 || y < 0 || x >= v.width || y >= v.height) return null;
-  if (v.orientation === 'landscape') return { x, y };
-  if (y >= SCREEN_H) return null;
-  return { x: x + PLAY_X0, y };
+  const { window: win, orientation } = roomLayout(v.orientation);
+  if (!inRect(win, x, y)) return null;
+  return { x: x - win.x + (orientation === 'portrait' ? PLAY_X0 : 0), y: y - win.y };
 }
 
 export interface Blit {
-  /** Source rectangle on the frame. */
+  /** Source rectangle on the scene. */
   sx: number;
   sy: number;
   w: number;
@@ -70,15 +73,9 @@ export interface Blit {
   dy: number;
 }
 
-/** The copies, in draw order, that compose the visible canvas from the frame. */
-export function composition(orientation: Orientation): Blit[] {
-  if (orientation === 'landscape') return [{ sx: 0, sy: 0, w: SCREEN_W, h: SCREEN_H, dx: 0, dy: 0 }];
-  const strip = PORTRAIT_STRIP;
-  const blits: Blit[] = [{ sx: PLAY_X0, sy: 0, w: PLAY_W, h: SCREEN_H, dx: 0, dy: 0 }];
-  for (let x = 0; x < PLAY_W; x += GUTTER_W) {
-    blits.push({ sx: 0, sy: strip.tileY, w: GUTTER_W, h: strip.h, dx: x, dy: SCREEN_H });
-  }
-  blits.push({ sx: 0, sy: strip.y, w: GUTTER_W, h: strip.h, dx: 0, dy: SCREEN_H });
-  blits.push({ sx: PLAY_X0 + PLAY_W, sy: strip.y, w: GUTTER_W, h: strip.h, dx: PLAY_W - GUTTER_W, dy: SCREEN_H });
-  return blits;
+/** The copy that puts the scene into the room's window on the visible canvas. */
+export function composition(orientation: Orientation): Blit {
+  const { x: dx, y: dy } = roomLayout(orientation).window;
+  if (orientation === 'landscape') return { sx: 0, sy: 0, w: SCREEN_W, h: SCREEN_H, dx, dy };
+  return { sx: PLAY_X0, sy: 0, w: PLAY_W, h: SCREEN_H, dx, dy };
 }

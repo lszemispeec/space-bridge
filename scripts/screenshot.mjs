@@ -20,8 +20,9 @@ const CHROME =
   process.env.CHROME ??
   (process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : 'google-chrome');
 const PORT = 9333;
-const WIDTH = 1280;
-const HEIGHT = 960;
+/** The 352x320 operator room at 4x. */
+const WIDTH = 1408;
+const HEIGHT = 1280;
 const DESKTOP = { width: WIDTH, height: HEIGHT, deviceScaleFactor: 1, mobile: false };
 /** A 390x844 phone at 3x: 4x in both orientations since the portrait layout. */
 const PHONES = {

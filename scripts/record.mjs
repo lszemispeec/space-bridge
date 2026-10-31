@@ -26,8 +26,9 @@ const CHROME =
   process.env.CHROME ??
   (process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : 'google-chrome');
 const PORT = 9334;
-const WIDTH = 1280;
-const HEIGHT = 960;
+/** The 352x320 operator room at 4x; the mirror canvas records it at the same size. */
+const WIDTH = 1408;
+const HEIGHT = 1280;
 const SCALE = 4;
 /** Title screen time after the music starts. */
 const TITLE_MS = 1_500;

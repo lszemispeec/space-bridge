@@ -221,6 +221,16 @@ recesses; the renderer supplies these readouts and removes the old sky HUD.
 Draw the full-bleed scene, room, levers, readouts, lights. Do not copy old gutter
 or arrow-button rasters into the room. Vehicle placement uses the revision-8 models and mouth sockets below.
 
+Engine notes on this section (`src/render/room.ts`, `src/render/lever.ts`,
+`src/config/layout.ts`): the room geometry lives in `layout.ts` and the art
+test checks that every atlas's `operatorRoom` table, including `background`,
+`levers`, `leverTapZones` and `hud`, matches it. The renderer draws
+`operatorRoom.background` through the glass and never the legacy plate. A full
+lever pull or return is compressed to at most 120 ms, so presses 150 ms apart
+read as separate pulls; a press during the return pulls again from the current
+pose. The engine shows one pair of eyes at a time: the creature director picks
+a random crater, other than the last one, from its seeded RNG.
+
 Eyes keep their existing names, cells, anchors and durations. Their whites are
 round stepped circles with moving pupils; the blink compresses that circle,
 and the hidden terminal frame stays transparent. Polar suits become dark teal

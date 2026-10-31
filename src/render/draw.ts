@@ -8,31 +8,39 @@ import {
   CRATER_BOTTOM_Y,
   CRATER_SLOTS,
   CRATER_Y,
-  HUD,
   PLATE_Y,
-  PLAY_X0,
-  PLAY_X1,
   ROCKET,
   ROCKET_LEDGE,
   ROCKET_SLOT,
+  ROOM_BACKGROUND,
   ROVER,
+  roomLayout,
   SCREEN_H,
   SCREEN_W,
-  SIDE_BUTTONS,
   TAP_TARGETS,
+  type PlateSide,
   type Rect,
 } from '../config/layout';
 import { getTheme, type Theme, type ThemePalette } from '../config/themes';
-import { createCreatures, creatureAnimation, stepCreatures, type Creatures } from '../game/creatures';
+import { createCreatures, creatureAnimation, creatureAt, stepCreatures, type Creatures } from '../game/creatures';
 import { tumbleFrame, type Point } from '../game/jump';
 import { cosmonautView, progressOf, slotPoint, type CosmonautView } from '../game/positions';
 import { bestScore, canLeaveGameOver } from '../game/rules';
 import { nextLanding } from '../game/schedule';
 import type { Cosmonaut, GameState } from '../game/types';
 import type { HeldButtons } from '../platform/input';
+import type { Viewport } from '../platform/viewport';
 import type { Atlas, AtlasFrame } from './atlas';
-import { drawText, drawTextCentered } from './font';
+import { drawTextCentered } from './font';
+import { LEVER_IDLE, leverPull, pullLever, settleLever, type Lever } from './lever';
+import { drawRoom, drawRoomLoading, leverPullMs, pad as padTo, soundState, type LeverPulls } from './room';
 import { drawFrame, frameAt, frameByProgress, frameOf, hasAnimation, type Art } from './sprites';
+
+export { soundState } from './room';
+
+/** The score digits as the console shows them. */
+const SCORE_DIGITS = 4;
+const pad = (n: number): string => padTo(n, SCORE_DIGITS);
 
 const CENTER_X = SCREEN_W / 2;
 /** How long the plate shows its move frame after a press, in ms. */
@@ -75,12 +83,21 @@ const GRAB = 'crater.tentacle.grab';
 /** Longest real gap between two frames that the creatures advance by; a hidden tab does not fast-forward them. */
 const MAX_CREATURE_STEP = 0.1;
 
-export interface Renderer {
-  render(ctx: CanvasRenderingContext2D, s: GameState, held: HeldButtons, art: Art | null, nowMs: number): void;
+/** Where the renderer draws: the scene, and the room on the page canvas around it. */
+export interface RenderTarget {
+  /** The 320x240 scene. */
+  scene: CanvasRenderingContext2D;
+  /** The page canvas, in room pixels. */
+  room: CanvasRenderingContext2D;
+  viewport: Viewport;
+  /** Copies the scene into the room's window. */
+  present(): void;
 }
 
-function pad(n: number, width = HUD.digits.count): string {
-  return String(Math.min(n, 10 ** width - 1)).padStart(width, '0');
+export interface Renderer {
+  render(target: RenderTarget, s: GameState, held: HeldButtons, art: Art | null, nowMs: number): void;
+  /** A plate press, so the lever on that side pulls. Queued presses pull in turn. */
+  pull(side: PlateSide): void;
 }
 
 function flailFrame(atlas: Atlas, nowMs: number): AtlasFrame {
@@ -114,12 +131,6 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
     case 'board':
       return frameByProgress(atlas, 'cosmonaut.board', p);
   }
-}
-
-/** The sound button state for the saved flag and the pointer. */
-export function soundState(muted: boolean, pressed: boolean): string {
-  if (muted) return pressed ? 'muted_pressed' : 'muted';
-  return pressed ? 'pressed' : 'idle';
 }
 
 /** The rim of the `index`-th crater, left to right. */
@@ -172,9 +183,10 @@ function drawLoading(ctx: CanvasRenderingContext2D, theme: Theme): void {
   drawTextCentered(ctx, 'LOADING', CENTER_X, 116, theme.palette.text, 2);
 }
 
+/** Dims the whole scene under the title and game-over text: the window shows the scene edge to edge. */
 function drawOverlay(ctx: CanvasRenderingContext2D, p: ThemePalette): void {
   ctx.globalAlpha = 0.8;
-  fill(ctx, { x: PLAY_X0, y: 30, w: PLAY_X1 - PLAY_X0, h: SCREEN_H - 30 }, p.overlay);
+  fill(ctx, { x: 0, y: 0, w: SCREEN_W, h: SCREEN_H }, p.overlay);
   ctx.globalAlpha = 1;
 }
 
@@ -194,6 +206,8 @@ export function createRenderer(): Renderer {
   let hatchLeftAt = -Infinity;
   let creatures: Creatures | null = null;
   let creaturesSteppedAt = 0;
+  const levers: Record<PlateSide, Lever> = { left: LEVER_IDLE, right: LEVER_IDLE };
+  const pendingPulls: PlateSide[] = [];
 
   const stepScene = (s: GameState, nowMs: number): Creatures => {
     if (!creatures) {
@@ -288,31 +302,12 @@ export function createRenderer(): Renderer {
       const index = craterIndex(slot);
       const at = slotPoint(slot);
       drawFrame(ctx, art, craterFrame(atlas, index), at.x, CRATER_Y);
-      const creature = scene.creatures.find((k) => k.slot === slot);
-      const animation = creature ? creatureAnimation(creature) : null;
-      if (animation && creature?.act !== 'grab') {
+      const creature = creatureAt(scene, slot);
+      if (creature && creature.act !== 'grab') {
+        const animation = creatureAnimation(creature);
         drawFrame(ctx, art, frameByProgress(atlas, animation.name, animation.progress), at.x, CRATER_Y);
       }
       drawFrame(ctx, art, craterFrontFrame(atlas, index), at.x, CRATER_Y);
-    }
-  };
-
-  const drawHud = (ctx: CanvasRenderingContext2D, s: GameState, held: HeldButtons, art: Art, nowMs: number): void => {
-    const { atlas } = art;
-    const p = getTheme(s.save.settings.theme).palette;
-    drawFrame(ctx, art, frameAt(atlas, 'hud.icon.score', nowMs), HUD.scoreIcon.x, HUD.scoreIcon.y);
-    const digits = pad(s.score);
-    for (let i = 0; i < digits.length; i++) {
-      const frame = frameOf(atlas, `hud.digit.${digits.charAt(i)}`);
-      drawFrame(ctx, art, frame, HUD.digits.x + i * HUD.digits.pitch, HUD.digits.y);
-    }
-    drawText(ctx, `GAME ${s.mode}`, HUD.modeLabel.x, HUD.modeLabel.y, p.text, 1);
-    const sound = frameAt(atlas, `ui.hud_sound.${soundState(s.save.settings.muted, held.mute)}`, nowMs);
-    drawFrame(ctx, art, sound, TAP_TARGETS.hudMute.x, TAP_TARGETS.hudMute.y);
-    for (let i = 0; i < DIFFICULTY.lives; i++) {
-      const name = i < s.lives ? 'hud.icon.life' : 'hud.icon.life_empty';
-      if (!hasAnimation(atlas, name)) continue;
-      drawFrame(ctx, art, frameAt(atlas, name, nowMs), HUD.lives.x + i * HUD.lives.pitch, HUD.lives.y);
     }
   };
 
@@ -352,16 +347,38 @@ export function createRenderer(): Renderer {
     if (canLeaveGameOver(s)) drawTextCentered(ctx, 'PRESS ANY BUTTON', CENTER_X, 176, text, 1);
   };
 
+  /** Pulls the levers for the presses since the last frame, lets them settle on the clock, and reads them. */
+  const stepLevers = (held: HeldButtons, atlas: Atlas, nowMs: number): LeverPulls => {
+    const pulls = {} as LeverPulls;
+    for (const side of ['left', 'right'] as const) {
+      const pullMs = leverPullMs(atlas, side);
+      let lever = levers[side];
+      for (const pressed of pendingPulls) if (pressed === side) lever = pullLever(lever, nowMs, pullMs);
+      lever = settleLever(lever, held[side], nowMs, pullMs);
+      levers[side] = lever;
+      pulls[side] = { pull: leverPull(lever, nowMs, pullMs), releasing: lever.phase === 'release' };
+    }
+    pendingPulls.length = 0;
+    return pulls;
+  };
+
   return {
-    render(ctx, s, held, art, nowMs) {
+    pull(side) {
+      pendingPulls.push(side);
+    },
+    render(target, s, held, art, nowMs) {
+      const ctx = target.scene;
+      const room = roomLayout(target.viewport.orientation);
       if (!art) {
         drawLoading(ctx, getTheme(s.save.settings.theme));
+        drawRoomLoading(target.room, room, getTheme(s.save.settings.theme).palette);
+        target.present();
         return;
       }
       const { atlas } = art;
       trackPlate(s, atlas, nowMs);
 
-      drawFrame(ctx, art, frameOf(atlas, 'background'), 0, 0);
+      drawFrame(ctx, art, frameOf(atlas, ROOM_BACKGROUND), 0, 0);
       drawAmbient(ctx, art, nowMs, false);
       drawVehicles(ctx, s, art, nowMs);
       drawAmbient(ctx, art, nowMs, true);
@@ -369,12 +386,11 @@ export function createRenderer(): Renderer {
       drawFrame(ctx, art, plateFrame(s, atlas, nowMs), slotPoint(s.plateSlot).x, PLATE_Y);
       for (const c of s.cosmonauts) if (c.state !== 'board') drawCosmonaut(ctx, c, art, nowMs);
 
-      drawFrame(ctx, art, frameAt(atlas, `button.left.${held.left ? 'pressed' : 'idle'}`, nowMs), SIDE_BUTTONS.left.x, SIDE_BUTTONS.left.y);
-      drawFrame(ctx, art, frameAt(atlas, `button.right.${held.right ? 'pressed' : 'idle'}`, nowMs), SIDE_BUTTONS.right.x, SIDE_BUTTONS.right.y);
-      drawHud(ctx, s, held, art, nowMs);
-
       if (s.phase === 'title') drawTitle(ctx, s, held, art, nowMs);
       if (s.phase === 'game_over') drawGameOver(ctx, s);
+
+      target.present();
+      drawRoom(target.room, room, s, held, stepLevers(held, atlas, nowMs), art, nowMs);
     },
   };
 }

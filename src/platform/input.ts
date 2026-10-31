@@ -9,21 +9,25 @@
  * thumb near the button toggles it instead of moving the plate. A tap in the
  * title's button row that misses both buttons does nothing. Any other tap is
  * a plate press: the left half of the viewport is left, the right half is
- * right. The drawn gutters are the visual hint; the hit area is the whole
+ * right. The drawn levers are the visual hint; the hit area is the whole
  * side so thumbs never miss on a phone, and the letterbox counts too.
  */
 import {
+  CONSOLE_HUD,
+  frameToRoom,
   hitRect,
   inRect,
   MIN_TAP_CSS_PX,
-  SCREEN_W,
+  roomLayout,
   TAP_TARGETS,
   TITLE_BUTTON_ROW,
+  type Orientation,
+  type Rect,
   type TapTargetId,
 } from '../config/layout';
 import type { Point } from '../game/jump';
 import { NO_INPUT, type InputFrame, type Phase, type PlateMove, type Toggle } from '../game/types';
-import { canvasToFrame, type Viewport } from './viewport';
+import type { Viewport } from './viewport';
 
 /** Buttons currently held, for drawing their pressed states. */
 export interface HeldButtons {
@@ -46,9 +50,9 @@ export interface InputOptions {
   onFirstGesture: () => void;
   /** The screen that is showing, to resolve taps on its buttons. */
   getPhase: () => Phase;
-  /** The game canvas, to map taps to game pixels. */
+  /** The game canvas, to map taps to room pixels. */
   canvas: HTMLCanvasElement;
-  /** How the canvas shows the frame, to map taps to game pixels. */
+  /** How the canvas shows the room, to map taps to room pixels. */
   getViewport: () => Viewport;
 }
 
@@ -77,12 +81,13 @@ export interface CanvasBox {
   height: number;
 }
 
-/** Maps a page position to a point on the 320x240 frame, or null outside the frame. */
-export function toGamePoint(clientX: number, clientY: number, box: CanvasBox, viewport: Viewport): Point | null {
+/** Maps a page position to a point on the visible canvas, in room pixels, or null outside the canvas. */
+export function toRoomPoint(clientX: number, clientY: number, box: CanvasBox, viewport: Viewport): Point | null {
   if (box.width <= 0 || box.height <= 0) return null;
   const x = ((clientX - box.left) / box.width) * viewport.width;
   const y = ((clientY - box.top) / box.height) * viewport.height;
-  return canvasToFrame(x, y, viewport);
+  if (x < 0 || y < 0 || x >= viewport.width || y >= viewport.height) return null;
+  return { x, y };
 }
 
 const TARGET_ACTIONS: Record<TapTargetId, Action> = {
@@ -91,27 +96,33 @@ const TARGET_ACTIONS: Record<TapTargetId, Action> = {
   hudMute: 'mute',
 };
 
-function targetsOn(phase: Phase): TapTargetId[] {
-  return phase === 'title' ? ['hudMute', 'titleTheme', 'titleMute'] : ['hudMute'];
+/** The buttons a tap can hit on a screen, with their rectangles in room pixels. */
+export function tapTargets(phase: Phase, orientation: Orientation): { id: TapTargetId; rect: Rect }[] {
+  const room = roomLayout(orientation);
+  const targets: { id: TapTargetId; rect: Rect }[] = [{ id: 'hudMute', rect: CONSOLE_HUD.sound }];
+  if (phase === 'title') {
+    targets.push({ id: 'titleTheme', rect: frameToRoom(TAP_TARGETS.titleTheme, room) });
+    targets.push({ id: 'titleMute', rect: frameToRoom(TAP_TARGETS.titleMute, room) });
+  }
+  return targets;
 }
 
-/** The smallest tap target in game pixels, from the canvas size on the page and in game pixels. */
-export function minHitSize(canvasCssWidth: number, canvasWidth = SCREEN_W): number {
+/** The smallest tap target in room pixels, from the canvas size on the page and in room pixels. */
+export function minHitSize(canvasCssWidth: number, canvasWidth: number): number {
   if (canvasCssWidth <= 0) return 0;
   return (MIN_TAP_CSS_PX * canvasWidth) / canvasCssWidth;
 }
 
 /**
- * The button a tap hits, or null. Hit areas are grown to `minHit` game
+ * The button a tap hits, or null. Hit areas are grown to `minHit` room
  * pixels; when grown areas overlap, the button whose centre is nearest wins.
  */
-export function tapTarget(phase: Phase, point: Point, minHit = 0): TapTargetId | null {
+export function tapTarget(phase: Phase, point: Point, orientation: Orientation, minHit = 0): TapTargetId | null {
   let best: TapTargetId | null = null;
   let bestDistance = Infinity;
-  for (const id of targetsOn(phase)) {
-    const r = TAP_TARGETS[id];
-    if (!inRect(hitRect(r, minHit), point.x, point.y)) continue;
-    const distance = Math.hypot(point.x - (r.x + r.w / 2), point.y - (r.y + r.h / 2));
+  for (const { id, rect } of tapTargets(phase, orientation)) {
+    if (!inRect(hitRect(rect, minHit), point.x, point.y)) continue;
+    const distance = Math.hypot(point.x - (rect.x + rect.w / 2), point.y - (rect.y + rect.h / 2));
     if (distance < bestDistance) {
       best = id;
       bestDistance = distance;
@@ -120,12 +131,13 @@ export function tapTarget(phase: Phase, point: Point, minHit = 0): TapTargetId |
   return best;
 }
 
-/** What a tap means on the current screen. */
-export function tapAction(phase: Phase, point: Point | null, side: PlateMove, minHit = 0): Action {
+/** What a tap at a room point means on the current screen. */
+export function tapAction(phase: Phase, point: Point | null, orientation: Orientation, side: PlateMove, minHit = 0): Action {
   if (!point) return side;
-  const target = tapTarget(phase, point, minHit);
+  const target = tapTarget(phase, point, orientation, minHit);
   if (target) return TARGET_ACTIONS[target];
-  if (phase === 'title' && inRect(hitRect(TITLE_BUTTON_ROW, minHit), point.x, point.y)) return 'none';
+  const row = frameToRoom(TITLE_BUTTON_ROW, roomLayout(orientation));
+  if (phase === 'title' && inRect(hitRect(row, minHit), point.x, point.y)) return 'none';
   return side;
 }
 
@@ -173,9 +185,9 @@ export function createInput(options: InputOptions): InputSource {
     gesture();
     const box = options.canvas.getBoundingClientRect();
     const viewport = options.getViewport();
-    const point = toGamePoint(e.clientX, e.clientY, box, viewport);
+    const point = toRoomPoint(e.clientX, e.clientY, box, viewport);
     const side = sideForPointer(e.clientX, window.innerWidth);
-    const action = tapAction(options.getPhase(), point, side, minHitSize(box.width, viewport.width));
+    const action = tapAction(options.getPhase(), point, viewport.orientation, side, minHitSize(box.width, viewport.width));
     pointers.set(e.pointerId, action);
     queue(action);
   };
