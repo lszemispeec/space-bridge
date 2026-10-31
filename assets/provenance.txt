@@ -58,3 +58,9 @@ poses retain the accepted silhouettes in explicit indexed ink maps in
 assets/polar-suit-pixels.json; airborne maps retain their independent poses
 and use darker suit / lighter visor palette indices. Captured victims use
 those same native airborne pixels. Every theme retains its original palette.
+
+Revision 8: rocket and rover models are newly authored native integer pixel
+shapes in assets/tools/export-vehicles.mjs. No generated image or raster
+resampling was used for production models. Only the offline exit mock scales
+an existing cosmonaut pose, using nearest-neighbour integer sizes. All source
+palettes, backgrounds, actor frames and room plates are preserved.
