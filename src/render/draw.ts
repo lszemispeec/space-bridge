@@ -18,6 +18,8 @@ import {
   ROVER,
   SCREEN_H,
   SCREEN_W,
+  TAP_TARGETS,
+  type Rect,
 } from '../config/layout';
 import { getTheme, type Theme, type ThemePalette } from '../config/themes';
 import { cosmonautView, slotPoint } from '../game/positions';
@@ -31,6 +33,13 @@ const CENTER_X = SCREEN_W / 2;
 function rect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string): void {
   ctx.fillStyle = color;
   ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+}
+
+/** A framed label that is also a tap target. */
+function drawButton(ctx: CanvasRenderingContext2D, r: Rect, label: string, color: string, fill: string): void {
+  rect(ctx, r.x, r.y, r.w, r.h, color);
+  rect(ctx, r.x + 1, r.y + 1, r.w - 2, r.h - 2, fill);
+  drawTextCentered(ctx, label, r.x + r.w / 2, r.y + Math.floor((r.h - 5) / 2), color, 1);
 }
 
 function pad(n: number, width = 4): string {
@@ -72,7 +81,7 @@ function drawHud(ctx: CanvasRenderingContext2D, s: GameState, p: ThemePalette): 
     }
   }
   drawText(ctx, `GAME ${s.mode}`, HUD.scoreX, HUD.y + 12, p.hud, 1);
-  if (s.save.settings.muted) drawTextCentered(ctx, 'MUTE', CENTER_X, HUD.y + 12, p.accent, 1);
+  drawButton(ctx, TAP_TARGETS.hudMute, s.save.settings.muted ? 'MUTE' : 'SND', s.save.settings.muted ? p.accent : p.hud, p.sky);
 }
 
 function drawVehicles(ctx: CanvasRenderingContext2D, p: ThemePalette): void {
@@ -152,7 +161,8 @@ function drawTitle(ctx: CanvasRenderingContext2D, s: GameState, theme: Theme): v
   if (lockedNames) drawTextCentered(ctx, lockedNames, CENTER_X, 128, light, 1);
   drawTextCentered(ctx, 'PRESS LEFT OR RIGHT TO START', CENTER_X, 160, light, 1);
   drawTextCentered(ctx, 'TAP THE SIDES ON TOUCH', CENTER_X, 170, light, 1);
-  drawTextCentered(ctx, 'T THEME   M MUTE', CENTER_X, 196, light, 1);
+  drawButton(ctx, TAP_TARGETS.titleTheme, 'THEME T', light, theme.palette.overlay);
+  drawButton(ctx, TAP_TARGETS.titleMute, s.save.settings.muted ? 'MUTED M' : 'SOUND M', light, theme.palette.overlay);
 }
 
 function themeUnlockHints(s: GameState): string {

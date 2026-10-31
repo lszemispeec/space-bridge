@@ -7,9 +7,10 @@ Cosmonauts jump from the rocket to the rover across a road with four craters. Yo
 ## Play
 
 - **Left / Right arrows** or **A / D**: move the plate. On the title screen, left starts Game A and right starts Game B.
-- **Touch**: tap the left or right half of the screen.
-- **T**: cycle unlocked themes (title screen). **M**: mute.
+- **Touch**: tap the left or right half of the screen. Every press moves the plate one crater, in order.
+- **T**: cycle unlocked themes (title screen). **M**: mute. On touch, tap the THEME and SOUND buttons on the title screen, or the SND / MUTE box in the HUD.
 - Game A is slower. Game B starts faster and climbs higher. Each mode keeps its own high score.
+- Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (reaction margin, one press per crater) is in `src/config/difficulty.ts` and shrinks with the speed curve.
 - Themes unlock with your best score: Desert Expedition at 500, Neon Orbit at 1000.
 
 ## Run
@@ -20,6 +21,7 @@ Node 22 or newer (`.nvmrc` pins 22; `nvm use` picks it up).
 npm install
 npm run dev        # http://localhost:5173, also reachable on the LAN for phones
 npm run check      # typecheck, lint, test, build
+npm run measure    # how far bots of different skill get, for tuning unlock targets
 ```
 
 ## Stack

@@ -31,6 +31,27 @@ export const COSMONAUT = { w: 10, h: 14 } as const;
 
 export const HUD = { y: 8, scoreX: 40, livesX: 212 } as const;
 
+export interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** On-screen buttons. Taps inside them do not count as plate presses. */
+export const TAP_TARGETS = {
+  /** Cycles the theme. Title screen only. */
+  titleTheme: { x: 100, y: 190, w: 56, h: 16 },
+  /** Toggles mute. Title screen only. */
+  titleMute: { x: 164, y: 190, w: 56, h: 16 },
+  /** Toggles mute. Every screen, in the HUD. */
+  hudMute: { x: 142, y: 4, w: 36, h: 16 },
+} as const satisfies Record<string, Rect>;
+
+export function inRect(r: Rect, x: number, y: number): boolean {
+  return x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h;
+}
+
 /** Arc height of a jump between two neighbouring slots. */
 export const JUMP_HEIGHT = 26;
 /** How far below the ground a fallen cosmonaut sinks. */

@@ -40,10 +40,14 @@ export function createApp(options: AppOptions): App {
     for (const listener of listeners) listener(event, state);
   };
 
-  const input = createInput(() => {
-    audio.unlock();
-    audio.setMuted(state.save.settings.muted);
-    audio.music(getTheme(state.save.settings.theme).id);
+  const input = createInput({
+    canvas: options.canvas,
+    getPhase: () => state.phase,
+    onFirstGesture: () => {
+      audio.unlock();
+      audio.setMuted(state.save.settings.muted);
+      audio.music(getTheme(state.save.settings.theme).id);
+    },
   });
 
   listeners.add((event) => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { defaultSave } from '../game/save';
 import { cssSize, fitScale } from './canvas';
-import { sideForPointer } from './input';
+import { sideForPointer, tapAction, toGamePoint } from './input';
 import { accumulateSteps, STEP_SECONDS } from './loop';
 import { loadSave, memoryStore, writeSave } from './storage';
 
@@ -30,6 +30,41 @@ describe('sideForPointer', () => {
     expect(sideForPointer(10, 400)).toBe('left');
     expect(sideForPointer(199, 400)).toBe('left');
     expect(sideForPointer(200, 400)).toBe('right');
+  });
+});
+
+describe('toGamePoint', () => {
+  const box = { left: 100, top: 50, width: 960, height: 720 };
+
+  it('maps viewport pixels to game pixels', () => {
+    expect(toGamePoint(100, 50, box)).toEqual({ x: 0, y: 0 });
+    expect(toGamePoint(580, 410, box)).toEqual({ x: 160, y: 120 });
+  });
+
+  it('returns null outside the canvas', () => {
+    expect(toGamePoint(50, 60, box)).toBeNull();
+    expect(toGamePoint(1060, 60, box)).toBeNull();
+    expect(toGamePoint(200, 800, box)).toBeNull();
+    expect(toGamePoint(10, 10, { ...box, width: 0 })).toBeNull();
+  });
+});
+
+describe('tapAction', () => {
+  it('hits the theme and mute buttons on the title screen', () => {
+    expect(tapAction('title', { x: 110, y: 195 }, 'left')).toBe('theme');
+    expect(tapAction('title', { x: 170, y: 195 }, 'right')).toBe('mute');
+    expect(tapAction('title', { x: 150, y: 10 }, 'left')).toBe('mute');
+  });
+
+  it('hits only the HUD mute button during play', () => {
+    expect(tapAction('playing', { x: 150, y: 10 }, 'left')).toBe('mute');
+    expect(tapAction('playing', { x: 110, y: 195 }, 'left')).toBe('left');
+    expect(tapAction('life_lost', { x: 170, y: 195 }, 'right')).toBe('right');
+  });
+
+  it('treats everything else, including the letterbox, as a plate press', () => {
+    expect(tapAction('title', { x: 20, y: 120 }, 'left')).toBe('left');
+    expect(tapAction('playing', null, 'right')).toBe('right');
   });
 });
 
