@@ -331,5 +331,29 @@
     "durations": [
       1000
     ]
+  },
+  {
+    "animation": "cosmonaut.air.spin",
+    "file": "cosmonaut.air.spin-strip.png",
+    "loop": true,
+    "durations": [
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.air.flail",
+    "file": "cosmonaut.air.flail-strip.png",
+    "loop": true,
+    "durations": [
+      80,
+      80
+    ]
   }
 ]
