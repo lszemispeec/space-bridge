@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "measure": "vitest run src/game/measure.test.ts --mode measure --silent=false",
     "shots": "node scripts/screenshot.mjs http://localhost:4173/ shots",
+    "record": "node scripts/record.mjs http://localhost:4173/ shots/space-bridge.webm",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build",
     "audio:render": "tsx scripts/render-audio.ts"
   },
