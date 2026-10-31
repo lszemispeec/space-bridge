@@ -6,13 +6,13 @@ Cosmonauts climb out of a hatch high on the rocket, drop from its ledge to the f
 
 ## Play
 
-- **Left / Right arrows** or **A / D**: move the plate. On the title screen, left starts Game A and right starts Game B.
+- **Left / Right arrows** or **A / D**: move the plate; the levers beside the window pull with each press. On the title screen, left starts Game A and right starts Game B.
 - **Touch**: tap the left or right half of the screen. Every press moves the plate one crater, in order.
-- **T**: cycle unlocked themes (title screen). **M**: mute. On touch, tap the THEME and SOUND buttons on the title screen, or the SND / MUTE box in the HUD.
+- **T**: cycle unlocked themes (title screen). **M**: mute. On touch, tap the THEME and SOUND buttons on the title screen, or the SND / MUTE readout on the console.
 - Game A is slower. Game B starts faster and climbs higher. Each mode keeps its own high score.
 - Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (a reaction margin, then one press interval per extra crater) is in `src/config/difficulty.ts`. It shrinks with the speed curve, and the curve is tuned so a good player (0.22 s reaction, 0.15 s per press) can follow the longest trip, from crater 4 back to crater 1, at the top speed of both modes, and still has the reaction margin at the top of Game B.
 - A round starts calm, with one or two cosmonauts, and fills up with the score: the density ramp in `src/config/difficulty.ts` raises the cap and shortens the spawn gaps until four or five are on screen at the top of the curve. The scheduler promise holds all the way up.
-- The crater creatures (eyes, blinks, looks, a rare tentacle) are cosmetic: `src/game/creatures.ts`, stepped by the renderer with its own seeded RNG.
+- The crater creatures are cosmetic: one pair of eyes at a time peeks out of a random crater, blinks and looks around, and now and then a tentacle reaches up; a miss is a grab. `src/game/creatures.ts`, stepped by the renderer with its own seeded RNG.
 - Themes unlock with your best score: Desert Expedition at 250, Neon Orbit at 575.
 
 ## Run
@@ -25,6 +25,7 @@ npm run dev        # http://localhost:5173, also reachable on the LAN for phones
 npm run check      # typecheck, lint, test, build
 npm run measure    # how far bots of different skill get, for tuning unlock targets
 npm run shots      # 4x screenshots of every theme, title and play, plus portrait and landscape phone shots, from a running preview (needs Chrome)
+npm run record     # a 16-19.5 s Game A clip with sound from a running preview (needs Chrome; ffmpeg for the MP4)
 ```
 
 For `npm run shots`, build and start the preview first: `npm run build && npm run preview -- --port 4173`. The images land in `shots/`.
@@ -32,7 +33,7 @@ For `npm run shots`, build and start the preview first: `npm run build && npm ru
 ## Stack
 
 - Vite, strict TypeScript, Canvas 2D. No game engine.
-- 320×240 internal frame, integer scaling in device pixels, nearest-neighbour, letterboxed. On a portrait screen the 256 px playfield is scaled to the width and the gutters with the side buttons move into a strip below it (`src/platform/viewport.ts`).
+- 320×240 internal scene, shown through the window of the operator room: a 352×288 canvas with the frame around the scene and the console with the HUD below it. Integer scaling in device pixels, nearest-neighbour, letterboxed. On a portrait screen the room is 288×344: the 256 px playfield is scaled to the width, and the levers move into a strip under the console (`src/config/layout.ts`, `src/platform/viewport.ts`).
 - Fixed-timestep simulation at 60 Hz, rendering once per frame.
 - Game rules are pure modules in `src/game/` with Vitest tests. `src/platform/` and `src/render/` are thin adapters.
 - Content is config: `src/config/layout.ts`, `src/config/themes.ts`, `src/config/difficulty.ts`.
@@ -55,7 +56,7 @@ src/
   app.ts      wires everything together
 assets/       art masters per theme, with previews and change reports
 public/atlas/ the sheets and atlases the game loads
-scripts/      screenshot tool
+scripts/      screenshot and recording tools
 docs/         contracts for art and audio
 ```
 
