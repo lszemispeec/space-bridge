@@ -36,13 +36,11 @@ const CENTER_X = SCREEN_W / 2;
 const PLATE_MOVE_MS = 160;
 /** Share of the arc, from the start, that shows the take-off pose. */
 const TAKEOFF_SHARE = 0.03;
-/** Share of the arc, around the apex, that shows the apex pose when a theme has no tumble. */
-const APEX_SHARE = 0.24;
 /**
- * The tumble cycle: `cosmonaut.air.spin.0` upright, then 45° per frame for a
- * full turn. Optional in the atlas; without it the rise / apex / descend
- * poses show. The frames may carry any anchor: the renderer sets the bottom
- * of the 20×22 cell on the arc, so the body centre tumbles 11 px above it.
+ * The tumble cycle: `cosmonaut.air.spin.0` upright, then 45° clockwise per
+ * frame for a full turn. Its frames are anchored at the body centre, so the
+ * renderer sets the bottom of the 20×22 cell on the arc and the body centre
+ * tumbles 11 px above the feet position, as the atlas contract asks.
  */
 const SPIN_ANIMATION = 'cosmonaut.air.spin';
 const SPIN_FRAMES = 8;
@@ -57,23 +55,9 @@ function pad(n: number, width = HUD.digits.count): string {
   return String(Math.min(n, 10 ** width - 1)).padStart(width, '0');
 }
 
-function nearApex(progress: number): boolean {
-  return Math.abs(progress - 0.5) < APEX_SHARE / 2;
-}
-
-/** True when the atlas has the whole tumble cycle. */
-export function hasTumble(atlas: Atlas): boolean {
-  for (let i = 0; i < SPIN_FRAMES; i++) if (!(`${SPIN_ANIMATION}.${i}` in atlas.frames)) return false;
-  return true;
-}
-
-/** The airborne frame: the tumble step for the arc progress, or the static pose. */
-function airFrame(atlas: Atlas, view: CosmonautView, nowMs: number): AtlasFrame {
-  const p = view.progress;
-  if (hasTumble(atlas)) return frameOf(atlas, `${SPIN_ANIMATION}.${tumbleFrame(p, view.spin, SPIN_FRAMES)}`);
-  const apex = hasAnimation(atlas, 'cosmonaut.apex') && nearApex(p);
-  if (apex) return frameAt(atlas, 'cosmonaut.apex', nowMs);
-  return frameAt(atlas, view.pose === 'rise' ? 'cosmonaut.rise' : 'cosmonaut.descend', nowMs);
+/** The airborne frame: the tumble step for the arc progress and the hop's spin. */
+function airFrame(atlas: Atlas, view: CosmonautView): AtlasFrame {
+  return frameOf(atlas, `${SPIN_ANIMATION}.${tumbleFrame(view.progress, view.spin, SPIN_FRAMES)}`);
 }
 
 /** The cosmonaut frame for a pose. Pure, so the choice is testable. */
@@ -86,9 +70,9 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
       return frameAt(atlas, 'cosmonaut.crouch', nowMs);
     case 'rise':
       if (p < TAKEOFF_SHARE) return frameByProgress(atlas, 'cosmonaut.takeoff', p / TAKEOFF_SHARE);
-      return airFrame(atlas, view, nowMs);
+      return airFrame(atlas, view);
     case 'descend':
-      return airFrame(atlas, view, nowMs);
+      return airFrame(atlas, view);
     case 'land':
       return frameByProgress(atlas, 'cosmonaut.land', p);
     case 'crater_fall':
@@ -178,7 +162,7 @@ export function createRenderer(): Renderer {
     const view = cosmonautView(c);
     const frame = cosmonautFrame(art.atlas, view, nowMs);
     if (view.pose === 'rise' || view.pose === 'descend') {
-      // Tumble frames are anchored at the body centre; keep the cell's bottom on the arc.
+      // Tumble frames are anchored at the body centre, the take-off at the feet; keep the cell's bottom on the arc.
       drawFrame(ctx, art, frame, view.pos.x, view.pos.y - (frame.h - frame.ay));
       return;
     }
