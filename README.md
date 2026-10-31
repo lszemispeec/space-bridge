@@ -14,6 +14,8 @@ Cosmonauts jump from the rocket to the rover across a road with four craters. Yo
 
 ## Run
 
+Node 22 or newer (`.nvmrc` pins 22; `nvm use` picks it up).
+
 ```sh
 npm install
 npm run dev        # http://localhost:5173, also reachable on the LAN for phones
