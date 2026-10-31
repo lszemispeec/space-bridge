@@ -31,7 +31,7 @@ describe('production art handoff', () => {
         }
         // PR #4 TAP_TARGETS at 3621b0d; independent of gameplay integration.
         if (name.startsWith('ui.lever.')) {
-          expect([frame.w, frame.h], name).toEqual([24, 48]);
+          expect([frame.w, frame.h], name).toEqual([40, 64]);
         } else if (name.startsWith('ui.')) {
           expect([frame.w, frame.h], name).toEqual([name.startsWith('ui.hud_sound.') ? 36 : 56, 16]);
         }
@@ -79,7 +79,14 @@ describe('production art handoff', () => {
         expect(layout.scene.w + 32).toBe(layout.size.w);
         expect(layout.scene.h).toBe(240);
         expect(layout.scene.dx).toBe(16);
+        expect(layout.windowCornerCut).toBe(20);
+        expect(layout.leverTapZones).toEqual(orientation === 'landscape'
+          ? { l: { x: 20, y: 164, w: 24, h: 48 }, r: { x: 308, y: 164, w: 24, h: 48 } }
+          : { l: { x: 20, y: 292, w: 24, h: 48 }, r: { x: 244, y: 292, w: 24, h: 48 } });
+        expect(layout.levers.l.y).toBe(240);
+        expect(layout.levers.r.y).toBe(240);
       }
+      expect(atlas.operatorRoom.background).toBe('background.window');
     });
   }
 
