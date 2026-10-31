@@ -106,10 +106,10 @@ geometry, timing and order. Flight/scheduler integration belongs to the engine.
 | Name | Loop | Notes |
 |---|---|---|
 | `crater.idle` | yes | About 24×8. Drawn at the four crater slots. |
-| `rocket.door_closed` | yes | Fits inside x 43–75, y 80–168. |
-| `rocket.door_open` | no | Plays while a cosmonaut emerges. |
+| `rocket.door_closed` | yes | Retired transparent compatibility frame. |
+| `rocket.door_open` | no | Retired transparent compatibility frame. |
 | `rover.idle` | yes | Fits inside x 248–280, y 142–179. |
-| `rover.door_open` | no | Plays while a cosmonaut boards. |
+| `rover.door_open` | no | Retired transparent compatibility frames. |
 
 ### HUD and buttons (anchor: top left)
 
@@ -219,7 +219,7 @@ four digits **(72,262)** with pitch 8, mode label **(112,266)**, life icons
 **(188,260)**. Draw `frame.lights` at **(152,298)**. Room art provides the panel
 recesses; the renderer supplies these readouts and removes the old sky HUD.
 Draw the full-bleed scene, room, levers, readouts, lights. Do not copy old gutter
-or arrow-button rasters into the room. Rocket and rover frames are unchanged.
+or arrow-button rasters into the room. Vehicle placement uses the revision-8 models and mouth sockets below.
 
 Eyes keep their existing names, cells, anchors and durations. Their whites are
 round stepped circles with moving pupils; the blink compresses that circle,
@@ -232,27 +232,54 @@ silhouette, animation timing or collision geometry changes.
 All additions below share names, geometry and timing across themes. This is an
 art contract; the engine owns spawn timing, creature RNG and plate safety.
 
-### Rocket hatch and ledge
+### Built-in rocket and rover hatches (revision 8)
 
-Replace the old rocket hull with one `rocket.hatch.*` full-hull frame, drawn at
-bottom-left **(43,169)**. New cells are **44×89**, anchor **(0,89)**; the extra
-width contains the right-hand gantry. The ledge foot point is local **(39,30)**,
-world **(82,110)**. It is about two thirds of the rocket height above the base.
-Every atlas supplies `sockets.rocketLedge = {frame: "rocket.hatch.open.0",
-x:39, y:30}`. The socket is measured from the frame's top-left, not its anchor.
+Draw **one complete model** per vehicle. The three unique poses are closed,
+partly open and open; only the shutter pixels change. The hatch stays inside
+the hull outline. Light comes from upper left; silhouettes use a one-pixel
+darkest-palette contour with flat shade clusters. No ground door remains on
+the rocket. Vehicle cells, anchors, durations and socket coordinates match
+across all three themes.
 
-| Animation | Frames | Duration per frame | Loop |
+| Prefix | Cell / anchor | World anchor | Mouth rectangle (local) | Mouth-floor socket / world |
+|---|---|---|---|---|
+| `rocket.tophatch` | 33×89 / (0,89) | (43,169) | x16,y20,w8,h12 | `rocketTopHatch` (20,32) / **(63,112)** |
+| `rover.hatch` | 33×38 / (0,38) | (248,180) | x4,y12,w8,h18 | `roverHatch` (8,30) / **(256,172)** |
+
+Both prefixes expose these animations:
+
+| Suffix | Frame | Duration | Loop |
 |---|---|---|---|
-| `rocket.hatch.closed` | `.0` | 1000ms | yes |
-| `rocket.hatch.opening` | `.0`, `.1`, `.2` | 90ms | no |
-| `rocket.hatch.open` | `.0` | 1000ms | yes |
-| `rocket.hatch.closing` | `.0`, `.1`, `.2` | 90ms | no |
-| `cosmonaut.ledge.stand` | `.0` | 1000ms | yes |
-| `cosmonaut.ledge.crouch` | `.0` | 1000ms | yes |
+| `.closed` | `.closed.0` | 1000ms | yes |
+| `.opening` | `.opening.0` | 90ms | no |
+| `.open` | `.open.0` | 1000ms | yes |
+| `.closing` | reuses `.opening.0` | 90ms | no |
 
-Cosmonaut ledge poses retain **20×22, feet anchor (10,22)**. Place their feet
-at (82,110); the first flight starts there. Draw the hatch hull, then the actor.
-Do not also draw the old `rocket.door_*` hull. Its frames remain for compatibility.
+Hold closed → play opening → hold open. For closing, play closing → hold closed.
+Sockets are measured from the full frame's top-left: world = draw anchor minus
+frame anchor plus socket. `vehicleModels` records draw anchors, mouth rectangles
+and socket keys. `rover.idle` remains as a compatibility alias in pixels to the
+closed model; do not layer it under another rover frame.
+
+The gantry is **retired**. It no longer makes sense beside a small hull hatch.
+`retiredSockets: ["rocketLedge"]` marks the historical (82,110) ledge point as
+unusable. Its metadata and the old cosmonaut ledge poses remain for old readers,
+but there is no visible platform at that point. Use the new mouth socket for
+spawn/exit; the engineer must update the departure trajectory and boarding
+alignment. The crater slots, collision geometry and game code are unchanged.
+
+Every `rocket.door_*`, `rocket.hatch.*` and `rover.door_*` animation is listed in
+`retiredAnimations`; all corresponding pixels are fully transparent. Their old
+frame names, rectangles, anchors, durations and animation sequences remain.
+This also covers any future dotted door names selected by the exporter prefix.
+Polar additionally keeps `ambient.sky` retired.
+
+`previews/tophatch-exit-4x.gif` is an **offline mock**, not implemented gameplay.
+It shows a 6×7 → 20×22 nearest-neighbour scale-in from (63,112), then departure
+toward crater 1, with integer positions and a closed-to-closed loop seam.
+Production actor cells stay 20×22 and unchanged. The renderer owns reveal,
+clipping, animation timing, and the new path. Each animation has native and 4×
+strip previews. Full operator screens are exported in both orientations.
 
 ### Four crater rims and their occupants
 
@@ -310,8 +337,8 @@ The renderer draws every `ambient.*` animation that has a placement, so you can 
 | HUD | y 8–25 |
 | Ground line | y 175 |
 | Slot x (rocket door, 4 craters, rover door) | 82, 106, 146, 186, 226, 252 |
-| Ledge (feet of the cosmonaut before the first drop) | (82,110), from the `rocketLedge` socket |
+| Rocket mouth floor | (63,112), from `rocketTopHatch`; old ledge (82,110) retired |
 | Jump apex | 90 px above the ground (feet at y 85) |
-| Drop from the ledge to crater 1 | rises to about y 99, then falls to the ground |
+| Rover mouth floor | (256,172), from `roverHatch` |
 
 The slot positions come from `src/config/layout.ts`. If art needs them moved, say so on the issue and we change the config, not the art.

@@ -1,0 +1,54 @@
+{
+  "addedFrames": [
+    "rocket.tophatch.closed.0",
+    "rocket.tophatch.opening.0",
+    "rocket.tophatch.open.0",
+    "rover.hatch.closed.0",
+    "rover.hatch.opening.0",
+    "rover.hatch.open.0"
+  ],
+  "retiredAnimations": [
+    "rocket.door_closed",
+    "rocket.door_open",
+    "rover.door_open",
+    "rocket.hatch.closed",
+    "rocket.hatch.opening",
+    "rocket.hatch.open",
+    "rocket.hatch.closing"
+  ],
+  "retiredSockets": [
+    "rocketLedge"
+  ],
+  "vehicleModels": {
+    "rocket": {
+      "anchor": {
+        "x": 43,
+        "y": 169
+      },
+      "mouth": "rocketTopHatch",
+      "hatch": {
+        "x": 16,
+        "y": 20,
+        "w": 8,
+        "h": 12
+      }
+    },
+    "rover": {
+      "anchor": {
+        "x": 248,
+        "y": 180
+      },
+      "mouth": "roverHatch",
+      "hatch": {
+        "x": 4,
+        "y": 12,
+        "w": 8,
+        "h": 18
+      }
+    },
+    "gantry": "retired"
+  },
+  "paletteUnchanged": true,
+  "unchanged": "All pre-existing frame rectangles, actor pixels, room plates, backgrounds and creatures.",
+  "integration": "Select one new full-model frame per vehicle. Replace the retired ledge spawn with the mouth socket. Mock scale-in is preview-only."
+}

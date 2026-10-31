@@ -943,5 +943,47 @@
     "y": 4193,
     "w": 320,
     "h": 240
+  },
+  {
+    "name": "rocket.tophatch.closed.0",
+    "x": 326,
+    "y": 4193,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rocket.tophatch.opening.0",
+    "x": 363,
+    "y": 4193,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rocket.tophatch.open.0",
+    "x": 400,
+    "y": 4193,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rover.hatch.closed.0",
+    "x": 437,
+    "y": 4193,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.hatch.opening.0",
+    "x": 474,
+    "y": 4193,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.hatch.open.0",
+    "x": 511,
+    "y": 4193,
+    "w": 33,
+    "h": 38
   }
 ]

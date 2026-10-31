@@ -50,6 +50,7 @@ describe('production art handoff', () => {
           'rocket.hatch.opening', 'rocket.hatch.closing', 'crater.eyes.peek',
           'crater.eyes.blink', 'crater.eyes.hide', 'crater.tentacle.reach', 'crater.tentacle.grab',
           'ui.lever.l.pull', 'ui.lever.l.release', 'ui.lever.r.pull', 'ui.lever.r.release',
+          'rocket.tophatch.opening', 'rocket.tophatch.closing', 'rover.hatch.opening', 'rover.hatch.closing',
         ]);
         expect(animation.loop, name).toBe(!oneShot.has(name));
       }
@@ -59,7 +60,15 @@ describe('production art handoff', () => {
       expect([43 + atlas.sockets.rocketLedge.x, 169 - hatch.ay + atlas.sockets.rocketLedge.y]).toEqual([82, 110]);
       expect(atlas.animations['crater.tentacle.grab'].frames).toHaveLength(5);
       expect(atlas.animations['crater.tentacle.reach'].frames).toHaveLength(4);
-      expect(atlas.retiredAnimations).toEqual(atlas.meta.theme === 'polar-signal' ? ['ambient.sky'] : []);
+      const retiredVehicles = Object.keys(atlas.animations).filter(name =>
+        name.startsWith('rocket.door') || name.startsWith('rocket.hatch.') || name.startsWith('rover.door'));
+      expect(atlas.retiredAnimations).toEqual([
+        ...(atlas.meta.theme === 'polar-signal' ? ['ambient.sky'] : []), ...retiredVehicles,
+      ]);
+      expect(atlas.retiredSockets).toEqual(['rocketLedge']);
+      expect(atlas.sockets.rocketTopHatch).toEqual({ frame: 'rocket.tophatch.open.0', x: 20, y: 32 });
+      expect(atlas.sockets.roverHatch).toEqual({ frame: 'rover.hatch.open.0', x: 8, y: 30 });
+      expect(atlas.vehicleModels.gantry).toBe('retired');
       for (const [name, frame] of Object.entries(atlas.frames)) {
         if (name.startsWith('crater.eyes.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 16, 12, 12]);
         if (name.startsWith('crater.tentacle.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 32, 12, 28]);
@@ -100,6 +109,8 @@ describe('production art handoff', () => {
       expect(atlas.animations).toEqual(polar.animations);
       expect(atlas.placements).toEqual(polar.placements);
       expect(atlas.sockets).toEqual(polar.sockets);
+      expect(atlas.vehicleModels).toEqual(polar.vehicleModels);
+      expect(atlas.retiredSockets).toEqual(polar.retiredSockets);
       expect(atlas.operatorRoom).toEqual(polar.operatorRoom);
     }
   });
