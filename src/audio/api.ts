@@ -1,7 +1,7 @@
 /**
  * Audio event API. The game emits these names; the audio engine plays them.
- * See docs/audio-events.md. The engine lives in src/audio/ and is built on a
- * separate issue. Until it lands, `nullAudio` keeps the game silent.
+ * See docs/audio-events.md. The engine is `audio` in src/audio/index.ts;
+ * `nullAudio` is the silent sink for tests and for an app without audio.
  */
 import type { ThemeId } from '../config/themes';
 

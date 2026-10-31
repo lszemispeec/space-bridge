@@ -31,6 +31,14 @@ export function limitBotOptions(): BotOptions {
   };
 }
 
+/**
+ * A good human in real seconds: the profile the difficulty curve is tuned
+ * for. It must survive both modes up to the speed cap.
+ */
+export function goodHumanOptions(): BotOptions {
+  return { reaction: 0.22, pressInterval: 0.15, beatSeconds: false };
+}
+
 /** A bot with no reaction time that presses as often as it needs. */
 export function instantBotOptions(): BotOptions {
   return { reaction: 0, pressInterval: 0, beatSeconds: false };
