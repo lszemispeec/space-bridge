@@ -1,8 +1,8 @@
 {
-  "revision": 8,
+  "revision": 9,
   "themes": {
     "polar-signal": {
-      "frames": 141,
+      "frames": 137,
       "animations": 71,
       "size": [
         1024,
@@ -11,7 +11,7 @@
       "palette": 16
     },
     "desert-expedition": {
-      "frames": 141,
+      "frames": 137,
       "animations": 71,
       "size": [
         1024,
@@ -20,7 +20,7 @@
       "palette": 16
     },
     "neon-orbit": {
-      "frames": 141,
+      "frames": 137,
       "animations": 71,
       "size": [
         1024,

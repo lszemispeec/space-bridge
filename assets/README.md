@@ -1,3 +1,35 @@
+## Revision 9 — calm console and compact levers
+
+Run **`node assets/tools/export-console.mjs` last** after any older exporter.
+It replaces only room, lamp and lever pixels, retaining every other frame's
+pixels and atlas position. Four obsolete pull frames are removed. Production
+sheets/JSON are copied to `public/atlas`. The first commit drafts the contract
+in `docs/atlas-contract.md`; each `revision-9.json` contains the final table.
+
+The five recesses hold score + mode, lives, SND, MENU and one small lamp.
+All gaps between adjacent recesses are four pixels. There are no decorative
+meters or spare boxes. Four rail rivets and one glint per frame corner keep
+the surround quiet. Upper-left lighting and palette-0 outlines are retained.
+Levers are 24×40 with two 50ms pull frames, an 18.4° swing and a fixed base.
+Their entire cells sit below the window. Tap zones are unchanged.
+
+Review `console-before-{landscape,portrait}-{1,4}x.png` alongside
+`operator-{landscape,portrait}-{1,4}x.png` and `levers-cycle-4x.gif` in each
+theme. These are **offline art compositions**, not runtime captures. Both
+sides use identical scenery, score and vehicle poses, and include the real
+mode label and MENU rectangle. Historical `tophatch-exit-4x.gif` remains a
+revision-8 vehicle study; use `operator-room.gif` for the current console.
+
+**Integration is separate:** Forge must update runtime room constants,
+SND/MENU targets and lever playback against the revision-9 table. The existing
+TypeScript integration assertions still describe revision 7 and will fail
+until that work lands; do not weaken them. `python3 assets/tools/verify-art.py`
+validates this art handoff, including palette, binary alpha, nonoverlapping
+controls, unchanged tap zones, fixed bases, readout containment, preserved
+unrelated pixels and exact 4× output. All 16-colour palettes below are unchanged.
+
+The sections below record earlier art revisions, not the current export order.
+
 ## Revision 8 — in-scale built-in hatches
 
 Current production art is exported by `node assets/tools/export-vehicles.mjs`
