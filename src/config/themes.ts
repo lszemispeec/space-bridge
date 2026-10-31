@@ -40,7 +40,7 @@ export const THEMES: readonly Theme[] = [
   {
     id: 'desert-expedition',
     name: 'DESERT EXPEDITION',
-    unlockAt: 500,
+    unlockAt: 350,
     atlas: 'atlas/desert-expedition.json',
     music: 'desert-expedition',
     palette: { text: '#FFF4DA', accent: '#F16A42', overlay: '#251C29' },
@@ -48,7 +48,7 @@ export const THEMES: readonly Theme[] = [
   {
     id: 'neon-orbit',
     name: 'NEON ORBIT',
-    unlockAt: 1000,
+    unlockAt: 700,
     atlas: 'atlas/neon-orbit.json',
     music: 'neon-orbit',
     palette: { text: '#FFF8CB', accent: '#55E7DE', overlay: '#080C24' },
