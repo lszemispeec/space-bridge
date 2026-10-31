@@ -2,12 +2,17 @@
  * The whole game as a pure function: `step(state, input, dt)` returns the next
  * state and the events that happened. No DOM, no timers, no randomness other
  * than the seeded RNG inside the state.
+ *
+ * Cosmonauts and the spawn clock run on beat seconds (`dt * speed`), so the
+ * difficulty curve speeds everything up together and the landing scheduler
+ * can reason about gaps without knowing the speed.
  */
 import { DIFFICULTY, speedAt, type GameMode, type ModeConfig } from '../config/difficulty';
 import { CRATER_SLOTS, ROCKET_SLOT, ROVER_SLOT } from '../config/layout';
 import { pick } from './rng';
+import { spawnFits } from './schedule';
 import { newlyUnlocked, nextUnlockedTheme } from './unlocks';
-import type { Cosmonaut, GameEvent, GameState, InputFrame, SaveData, StepResult } from './types';
+import type { Cosmonaut, GameEvent, GameState, InputFrame, PlateMove, SaveData, StepResult } from './types';
 
 const FIRST_CRATER = CRATER_SLOTS[0];
 const LAST_CRATER = CRATER_SLOTS[CRATER_SLOTS.length - 1] ?? FIRST_CRATER;
@@ -50,7 +55,8 @@ function modeConfig(mode: GameMode): ModeConfig {
   return DIFFICULTY.modes[mode];
 }
 
-function currentSpeed(s: GameState): number {
+/** Beat seconds per real second at the current score. */
+export function currentSpeed(s: GameState): number {
   return speedAt(modeConfig(s.mode).curve, s.score);
 }
 
@@ -87,46 +93,59 @@ function addScore(s: GameState, points: number, events: GameEvent[]): void {
   }
 }
 
-function movePlate(s: GameState, delta: number, events: GameEvent[]): void {
+function movePlate(s: GameState, move: PlateMove, events: GameEvent[]): void {
+  const delta = move === 'left' ? -1 : 1;
   const next = Math.min(LAST_CRATER, Math.max(FIRST_CRATER, s.plateSlot + delta));
   if (next === s.plateSlot) return;
   s.plateSlot = next;
   events.push({ type: 'plate_move' });
 }
 
+function applyMoves(s: GameState, input: InputFrame, events: GameEvent[]): void {
+  for (const move of input.moves) movePlate(s, move, events);
+}
+
 function spawn(s: GameState, events: GameEvent[]): void {
-  const cfg = modeConfig(s.mode);
-  const speed = currentSpeed(s);
   const cosmonaut: Cosmonaut = {
     id: s.nextId,
     state: 'crouch',
     slot: ROCKET_SLOT,
     t: 0,
-    duration: DIFFICULTY.timing.crouch / speed,
+    duration: DIFFICULTY.timing.emerge,
   };
   s.nextId += 1;
   s.cosmonauts.push(cosmonaut);
   events.push({ type: 'footstep' });
 
-  const gap = pick(s.rng, cfg.spawnGapBeats);
+  const gap = pick(s.rng, modeConfig(s.mode).spawnGap);
   s.rng = gap.rng;
-  const beat = (DIFFICULTY.timing.crouch + DIFFICULTY.timing.jump) / speed;
-  s.spawnTimer = gap.value * beat;
+  s.spawnTimer = gap.value;
 }
 
-/** Advances one cosmonaut and resolves its state change, if its timer ran out. */
-function advanceCosmonaut(s: GameState, c: Cosmonaut, dt: number, events: GameEvent[]): void {
-  c.t += dt;
+/**
+ * A cosmonaut leaves the rocket once the spawn clock has run out, the road
+ * has room, and the landing scheduler finds a slot for all its landings.
+ */
+function trySpawn(s: GameState, events: GameEvent[]): void {
+  if (s.spawnTimer > 0) return;
+  s.spawnTimer = 0;
+  if (s.cosmonauts.length >= modeConfig(s.mode).maxOnScreen) return;
+  if (!spawnFits(s.cosmonauts, DIFFICULTY.timing, DIFFICULTY.scheduler)) return;
+  spawn(s, events);
+}
+
+/** Advances one cosmonaut by `beat` and resolves its state change, if its timer ran out. */
+function advanceCosmonaut(s: GameState, c: Cosmonaut, beat: number, events: GameEvent[]): void {
+  c.t += beat;
   if (c.t < c.duration) return;
   const carry = c.t - c.duration;
   const cfg = modeConfig(s.mode);
-  const speed = currentSpeed(s);
 
   switch (c.state) {
     case 'crouch':
       c.state = 'air';
       c.t = carry;
-      c.duration = DIFFICULTY.timing.jump / speed;
+      c.duration = DIFFICULTY.timing.jump;
       events.push({ type: 'jump' });
       return;
     case 'air': {
@@ -135,12 +154,12 @@ function advanceCosmonaut(s: GameState, c: Cosmonaut, dt: number, events: GameEv
       c.t = carry;
       if (landing === ROVER_SLOT) {
         c.state = 'board';
-        c.duration = DIFFICULTY.timing.board / speed;
+        c.duration = DIFFICULTY.timing.board;
         addScore(s, cfg.rescuePoints, events);
         events.push({ type: 'save' });
       } else if (landing === s.plateSlot) {
         c.state = 'crouch';
-        c.duration = DIFFICULTY.timing.crouch / speed;
+        c.duration = DIFFICULTY.timing.squash;
         addScore(s, cfg.bouncePoints, events);
         events.push({ type: 'bounce' });
       } else {
@@ -166,15 +185,13 @@ function advanceCosmonaut(s: GameState, c: Cosmonaut, dt: number, events: GameEv
 
 function stepPlaying(s: GameState, dt: number, events: GameEvent[]): void {
   s.time += dt;
-  const cfg = modeConfig(s.mode);
+  const beat = dt * currentSpeed(s);
 
-  s.spawnTimer -= dt;
-  if (s.spawnTimer <= 0 && s.cosmonauts.length < cfg.maxOnScreen) {
-    spawn(s, events);
-  }
+  s.spawnTimer -= beat;
+  trySpawn(s, events);
 
   for (const c of s.cosmonauts) {
-    advanceCosmonaut(s, c, dt, events);
+    advanceCosmonaut(s, c, beat, events);
     if (s.phase !== 'playing') break;
   }
   s.cosmonauts = s.cosmonauts.filter((c) => !(c.state === 'board' && c.t >= c.duration));
@@ -216,7 +233,7 @@ export function step(state: GameState, input: InputFrame, dt: number): StepResul
   }
 
   switch (s.phase) {
-    case 'title':
+    case 'title': {
       if (input.theme) {
         const theme = nextUnlockedTheme(s.save.settings.theme, s.save.unlocked);
         if (theme !== s.save.settings.theme) {
@@ -225,26 +242,26 @@ export function step(state: GameState, input: InputFrame, dt: number): StepResul
           events.push({ type: 'save_changed' });
         }
       }
-      if (input.left) startRound(s, 'A', events);
-      else if (input.right) startRound(s, 'B', events);
+      const first = input.moves[0];
+      if (first === 'left') startRound(s, 'A', events);
+      else if (first === 'right') startRound(s, 'B', events);
       else if (input.start) startRound(s, s.save.settings.mode, events);
       break;
+    }
 
     case 'playing':
-      if (input.left) movePlate(s, -1, events);
-      if (input.right) movePlate(s, 1, events);
+      applyMoves(s, input, events);
       stepPlaying(s, dt, events);
       break;
 
     case 'life_lost':
-      if (input.left) movePlate(s, -1, events);
-      if (input.right) movePlate(s, 1, events);
+      applyMoves(s, input, events);
       stepLifeLost(s, dt, events);
       break;
 
     case 'game_over':
       s.phaseTimer -= dt;
-      if (s.phaseTimer <= 0 && (input.left || input.right || input.start)) {
+      if (s.phaseTimer <= 0 && (input.moves.length > 0 || input.start)) {
         s.phase = 'title';
         s.cosmonauts = [];
       }

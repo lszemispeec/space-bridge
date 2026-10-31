@@ -1,36 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { AUDIO_EVENTS } from '../audio/api';
 import { DIFFICULTY } from '../config/difficulty';
-import { ROCKET_SLOT, ROVER_SLOT } from '../config/layout';
+import { ROCKET_SLOT } from '../config/layout';
 import { STEP_SECONDS } from '../platform/loop';
 import { bestScore, canLeaveGameOver, step } from './rules';
 import { defaultSave } from './save';
-import { press, run, runUntil, startGame, titleState, types } from './testing';
+import { instantBotOptions } from './bot';
+import { move, playBot, press, run, runUntil, startGame, titleState, types } from './testing';
 import { NO_INPUT, type GameState } from './types';
 
-/** Moves the plate so the next landing always succeeds. */
+/** Lets the instant bot keep the plate under every landing. */
 function followCosmonauts(state: GameState, seconds: number): { state: GameState; events: string[] } {
-  let s = state;
-  const events: string[] = [];
-  const steps = Math.round(seconds / STEP_SECONDS);
-  for (let i = 0; i < steps; i++) {
-    const next = nextLandingSlot(s);
-    let input = NO_INPUT;
-    if (next !== null && next !== s.plateSlot) input = press(next < s.plateSlot ? { left: true } : { right: true });
-    const r = step(s, input, STEP_SECONDS);
-    s = r.state;
-    events.push(...types(r.events));
-  }
-  return { state: s, events };
-}
-
-/** The crater slot of the airborne cosmonaut that lands first, if any. */
-function nextLandingSlot(s: GameState): number | null {
-  const airborne = s.cosmonauts
-    .filter((c) => c.state === 'air' && c.slot + 1 !== ROVER_SLOT)
-    .sort((a, b) => b.t / b.duration - a.t / a.duration);
-  const first = airborne[0];
-  return first ? first.slot + 1 : null;
+  const r = playBot(state, instantBotOptions(), seconds);
+  return { state: r.state, events: types(r.events) };
 }
 
 describe('title screen', () => {
@@ -108,17 +90,28 @@ describe('plate', () => {
   it('moves one crater per press and clamps at the ends', () => {
     let s = startGame(titleState());
     expect(s.plateSlot).toBe(1);
-    let r = step(s, press({ right: true }), STEP_SECONDS);
+    let r = step(s, move('right'), STEP_SECONDS);
     expect(r.state.plateSlot).toBe(2);
     expect(types(r.events)).toContain('plate_move');
-    r = step(r.state, press({ left: true }), STEP_SECONDS);
+    r = step(r.state, move('left'), STEP_SECONDS);
     expect(r.state.plateSlot).toBe(1);
-    r = step(r.state, press({ left: true }), STEP_SECONDS);
+    r = step(r.state, move('left'), STEP_SECONDS);
     expect(r.state.plateSlot).toBe(1);
     expect(types(r.events)).not.toContain('plate_move');
     s = r.state;
-    for (let i = 0; i < 5; i++) s = step(s, press({ right: true }), STEP_SECONDS).state;
+    for (let i = 0; i < 5; i++) s = step(s, move('right'), STEP_SECONDS).state;
     expect(s.plateSlot).toBe(4);
+  });
+
+  it('applies every press of one step in order', () => {
+    const s = startGame(titleState());
+    const three = step(s, press({ moves: ['right', 'right', 'right'] }), STEP_SECONDS);
+    expect(three.state.plateSlot).toBe(4);
+    expect(types(three.events).filter((e) => e === 'plate_move')).toHaveLength(3);
+
+    const back = step(three.state, press({ moves: ['left', 'right'] }), STEP_SECONDS);
+    expect(back.state.plateSlot).toBe(4);
+    expect(types(back.events).filter((e) => e === 'plate_move')).toHaveLength(2);
   });
 });
 
@@ -145,8 +138,8 @@ describe('bounce and fall', () => {
 
   it('loses a life and freezes when the plate is elsewhere', () => {
     let s = startGame(titleState());
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
     expect(s.plateSlot).toBe(3);
     const { state, events } = runUntil(s, 'fall');
     expect(types(events)).toContain('life_lost');
@@ -157,8 +150,8 @@ describe('bounce and fall', () => {
 
   it('resumes play after the freeze and removes the fallen cosmonaut', () => {
     let s = startGame(titleState());
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
     s = runUntil(s, 'fall').state;
     const frozenTime = s.time;
     const after = run(s, DIFFICULTY.timing.lifeLostPause + STEP_SECONDS).state;
@@ -169,10 +162,10 @@ describe('bounce and fall', () => {
 
   it('still lets the player move the plate during the freeze', () => {
     let s = startGame(titleState());
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
     s = runUntil(s, 'fall').state;
-    const moved = step(s, press({ left: true }), STEP_SECONDS).state;
+    const moved = step(s, move('left'), STEP_SECONDS).state;
     expect(moved.plateSlot).toBe(2);
   });
 });
@@ -180,8 +173,8 @@ describe('bounce and fall', () => {
 describe('game over and restart', () => {
   function playToGameOver(): { state: GameState; events: string[] } {
     let s = startGame(titleState());
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
-    s = step(s, press({ right: true }), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
+    s = step(s, move('right'), STEP_SECONDS).state;
     const events: string[] = [];
     for (let i = 0; i < 60 * 60; i++) {
       const r = step(s, NO_INPUT, STEP_SECONDS);
@@ -208,6 +201,8 @@ describe('game over and restart', () => {
     expect(canLeaveGameOver(waited)).toBe(true);
     const back = step(waited, press({ start: true }), STEP_SECONDS).state;
     expect(back.phase).toBe('title');
+    const viaMove = step(waited, move('left'), STEP_SECONDS).state;
+    expect(viaMove.phase).toBe('title');
     expect(back.cosmonauts).toEqual([]);
   });
 
@@ -251,7 +246,7 @@ describe('purity', () => {
   it('does not mutate the input state', () => {
     const s = startGame(titleState());
     const snapshot = JSON.stringify(s);
-    run(s, 3, press({ right: true }));
+    run(s, 3, move('right'));
     expect(JSON.stringify(s)).toBe(snapshot);
   });
 
