@@ -22,7 +22,7 @@ audio.setVolume('music', 0.4); // volumes persist in localStorage
 audio.onSettings((s) => icon.textContent = s.muted ? 'off' : 'on');
 ```
 
-Events and themes are the ones in `src/audio/api.ts` and `src/config/themes.ts`: `footstep`, `jump`, `bounce`, `plate_move`, `save`, `fall`, `life_lost`, `unlock`, `game_over`; `polar-signal`, `desert-expedition`, `neon-orbit`. `play('game_over')` plays the sting and the game-over jingle; the theme loop comes back when the jingle ends.
+Events and themes are the ones in `src/audio/api.ts` and `src/config/themes.ts`: `footstep`, `jump`, `bounce`, `plate_move`, `save`, `fall`, `grab`, `life_lost`, `unlock`, `game_over`; `polar-signal`, `desert-expedition`, `neon-orbit`. `play('game_over')` plays the sting and the game-over jingle; the theme loop comes back when the jingle ends.
 
 SFX calls before the first user gesture are dropped; a `music()` call is remembered and starts at unlock.
 
