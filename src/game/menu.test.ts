@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PLAY_X0, PLAY_W } from '../config/layout';
-import { MENU_PANEL, MENU_ROW_H, menuRowRect, menuRows, menuStep, menuTapAt, type MenuCaps, type MenuState } from './menu';
+import { MENU_PANEL, MENU_ROW_H, menuPanelRect, menuRowRect, menuRows, menuStep, menuTapAt, type MenuCaps, type MenuState } from './menu';
 import { defaultSave } from './save';
 import { startGame, titleState } from './testing';
 
@@ -125,6 +125,15 @@ describe('menu geometry', () => {
     expect(MENU_PANEL.x + MENU_PANEL.w).toBeLessThanOrEqual(PLAY_X0 + PLAY_W);
     const last = menuRowRect(7);
     expect(last.y + last.h).toBeLessThanOrEqual(MENU_PANEL.y + MENU_PANEL.h);
+  });
+
+  it('shrinks the panel to its rows, never past its tallest', () => {
+    expect(menuPanelRect(8)).toEqual(MENU_PANEL);
+    const six = menuPanelRect(6);
+    expect(six.h).toBe(MENU_PANEL.h - 2 * MENU_ROW_H);
+    const lastRow = menuRowRect(5);
+    expect(lastRow.y + lastRow.h).toBeLessThanOrEqual(six.y + six.h);
+    expect(menuPanelRect(20).h).toBe(MENU_PANEL.h);
   });
 
   it('maps a point to its row and side', () => {

@@ -421,9 +421,10 @@ export function createRenderer(): Renderer {
       drawFrame(ctx, art, plateFrame(s, atlas, nowMs), slotPoint(s.plateSlot).x, PLATE_Y);
       for (const c of s.cosmonauts) drawCosmonaut(ctx, c, art, nowMs);
 
-      if (s.phase === 'title') drawTitle(ctx, s, held, art, nowMs);
-      if (s.phase === 'game_over') drawGameOver(ctx, s);
+      // The menu replaces the title and game-over screens while it is open.
       if (s.paused) drawMenu(ctx, s, overlay.menu, overlay.caps);
+      else if (s.phase === 'title') drawTitle(ctx, s, held, art, nowMs);
+      else if (s.phase === 'game_over') drawGameOver(ctx, s);
 
       target.present();
       drawRoom(target.room, room, s, held, stepLevers(held, atlas, nowMs), art, nowMs);

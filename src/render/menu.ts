@@ -6,7 +6,7 @@
  */
 import type { Rect } from '../config/layout';
 import { getTheme, type ThemePalette } from '../config/themes';
-import { MENU_PANEL, MENU_TITLE_Y, menuRowRect, menuRows, type MenuCaps, type MenuState } from '../game/menu';
+import { MENU_TITLE_Y, menuPanelRect, menuRowRect, menuRows, type MenuCaps, type MenuState } from '../game/menu';
 import type { GameState } from '../game/types';
 import { drawText, drawTextCentered, textWidth } from './font';
 
@@ -40,12 +40,13 @@ export function drawMenu(ctx: CanvasRenderingContext2D, s: GameState, menu: Menu
   const p = getTheme(s.save.settings.theme).palette;
   const rows = menuRows(s, caps);
   const cursor = Math.min(rows.length - 1, Math.max(0, menu.cursor));
+  const panel = menuPanelRect(rows.length);
 
   ctx.globalAlpha = 0.6;
   fill(ctx, { x: 0, y: 0, w: ctx.canvas.width, h: ctx.canvas.height }, p.overlay);
   ctx.globalAlpha = 1;
-  drawPanel(ctx, MENU_PANEL, p);
-  drawTextCentered(ctx, s.phase === 'title' ? 'MENU' : 'PAUSED', MENU_PANEL.x + MENU_PANEL.w / 2, MENU_TITLE_Y, p.text, 2);
+  drawPanel(ctx, panel, p);
+  drawTextCentered(ctx, s.phase === 'title' ? 'MENU' : 'PAUSED', panel.x + panel.w / 2, MENU_TITLE_Y, p.text, 2);
 
   rows.forEach((row, i) => {
     const r = menuRowRect(i);
@@ -65,6 +66,6 @@ export function drawMenu(ctx: CanvasRenderingContext2D, s: GameState, menu: Menu
     }
   });
 
-  const hintY = MENU_PANEL.y + MENU_PANEL.h + 4;
-  drawTextCentered(ctx, 'ARROWS MOVE  ENTER OK  ESC BACK', MENU_PANEL.x + MENU_PANEL.w / 2, hintY, p.text, 1);
+  const hintY = panel.y + panel.h + 4;
+  drawTextCentered(ctx, 'ARROWS MOVE  ENTER OK  ESC BACK', panel.x + panel.w / 2, hintY, p.text, 1);
 }

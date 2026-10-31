@@ -58,11 +58,17 @@ export interface MenuResult {
 /** Volume rows step in tenths. */
 export const VOLUME_STEPS = 10;
 
-/** The menu panel on the scene. It fits inside the portrait window, so every row is reachable on a phone. */
-export const MENU_PANEL: Rect = { x: PLAY_X0 + 24, y: 36, w: PLAY_W - 48, h: 156 };
+/** The menu panel on the scene, at its tallest. It fits inside the portrait window, so every row is reachable on a phone. */
+export const MENU_PANEL: Rect = { x: PLAY_X0 + 24, y: 36, w: PLAY_W - 48, h: 144 };
 export const MENU_TITLE_Y = MENU_PANEL.y + 6;
 export const MENU_ROW_H = 14;
 export const MENU_FIRST_ROW_Y = MENU_PANEL.y + 24;
+const MENU_BOTTOM_PAD = 8;
+
+/** The panel sized to `rowCount` rows. */
+export function menuPanelRect(rowCount: number): Rect {
+  return { ...MENU_PANEL, h: Math.min(MENU_PANEL.h, MENU_FIRST_ROW_Y - MENU_PANEL.y + rowCount * MENU_ROW_H + MENU_BOTTOM_PAD) };
+}
 /** Share of a row's width at each end that counts as its arrow when tapped. */
 const SIDE_SHARE = 0.3;
 
