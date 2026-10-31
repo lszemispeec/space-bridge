@@ -251,5 +251,85 @@
     "durations": [
       1000
     ]
+  },
+  {
+    "animation": "ui.title_theme.idle",
+    "file": "ui.title_theme.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_theme.pressed",
+    "file": "ui.title_theme.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.idle",
+    "file": "ui.title_sound.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.pressed",
+    "file": "ui.title_sound.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.muted",
+    "file": "ui.title_sound.muted-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.muted_pressed",
+    "file": "ui.title_sound.muted_pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.idle",
+    "file": "ui.hud_sound.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.pressed",
+    "file": "ui.hud_sound.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.muted",
+    "file": "ui.hud_sound.muted-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.muted_pressed",
+    "file": "ui.hud_sound.muted_pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
   }
 ]

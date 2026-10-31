@@ -11,7 +11,7 @@ const atlases = [polar, desert, neon];
 
 describe('production art handoff', () => {
   for (const atlas of atlases) {
-    it(`${atlas.meta.theme}: satisfies the unchanged engine contract`, () => {
+    it(`${atlas.meta.theme}: satisfies the engine contract`, () => {
       expect(validateAtlas(atlas)).toEqual([]);
       expect(atlas.meta.palette).toHaveLength(16);
       expect(new Set(atlas.meta.palette).size).toBe(16);
@@ -24,8 +24,12 @@ describe('production art handoff', () => {
           }
         } else if (name.startsWith('rocket.') || name.startsWith('rover.')) {
           expect([frame.ax, frame.ay], name).toEqual([0, frame.h]);
-        } else if (name.startsWith('hud.') || name.startsWith('button.')) {
+        } else if (name.startsWith('hud.') || name.startsWith('button.') || name.startsWith('ui.')) {
           expect([frame.ax, frame.ay], name).toEqual([0, 0]);
+        }
+        // PR #4 TAP_TARGETS at 3621b0d; independent of gameplay integration.
+        if (name.startsWith('ui.')) {
+          expect([frame.w, frame.h], name).toEqual([name.startsWith('ui.hud_sound.') ? 36 : 56, 16]);
         }
       }
       for (const [name, animation] of Object.entries(atlas.animations)) {

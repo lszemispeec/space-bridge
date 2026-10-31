@@ -1,0 +1,155 @@
+{
+  "layoutCommit": "3621b0d94b113a1021b7ee43591789ce3c525e17",
+  "oldSize": [
+    1024,
+    1452
+  ],
+  "newSize": [
+    1024,
+    1470
+  ],
+  "addedFrames": [
+    {
+      "name": "ui.title_theme.idle.0",
+      "x": 1,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 100,
+        "y": 190
+      }
+    },
+    {
+      "name": "ui.title_theme.pressed.0",
+      "x": 59,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 100,
+        "y": 190
+      }
+    },
+    {
+      "name": "ui.title_sound.idle.0",
+      "x": 117,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 164,
+        "y": 190
+      }
+    },
+    {
+      "name": "ui.title_sound.pressed.0",
+      "x": 175,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 164,
+        "y": 190
+      }
+    },
+    {
+      "name": "ui.title_sound.muted.0",
+      "x": 233,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 164,
+        "y": 190
+      }
+    },
+    {
+      "name": "ui.title_sound.muted_pressed.0",
+      "x": 291,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 164,
+        "y": 190
+      }
+    },
+    {
+      "name": "ui.hud_sound.idle.0",
+      "x": 349,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 142,
+        "y": 4
+      }
+    },
+    {
+      "name": "ui.hud_sound.pressed.0",
+      "x": 387,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 142,
+        "y": 4
+      }
+    },
+    {
+      "name": "ui.hud_sound.muted.0",
+      "x": 425,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 142,
+        "y": 4
+      }
+    },
+    {
+      "name": "ui.hud_sound.muted_pressed.0",
+      "x": 463,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000,
+      "screen": {
+        "x": 142,
+        "y": 4
+      }
+    }
+  ],
+  "existingFrames": "All 61 existing rectangles, anchors, durations and pixels preserved.",
+  "palette": "Unchanged; native 1px rectangles and existing 3x5 menu font."
+}

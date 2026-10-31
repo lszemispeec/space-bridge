@@ -1,8 +1,26 @@
 # Space Bridge production art
 
-Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 61 frames, 29 animation entries, one 1024×1452 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
+Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 71 frames, 39 animation entries, one 1024×1470 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
 
-The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs already configured by the engine. The renderer in PR #1 still draws placeholders; loading and drawing these assets remains the engineer's integration work. No game logic, layout config or atlas contract changed.
+The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs already configured by the engine. Loading and drawing these assets remains the engineer's integration work. No game logic or layout config changed. Revision 3 extends the atlas contract with the requested UI names.
+
+## Revision 3: title and sound controls
+
+Ten new `ui.*` frames per theme match the exact tap targets in PR #4's `src/config/layout.ts` at `3621b0d`:
+
+| Animation prefix | States | Size | Screen top-left |
+|---|---|---|---|
+| `ui.title_theme` | `idle`, `pressed` | 56×16 | (100,190) |
+| `ui.title_sound` | `idle`, `pressed`, `muted`, `muted_pressed` | 56×16 | (164,190) |
+| `ui.hud_sound` | `idle`, `pressed`, `muted`, `muted_pressed` | 36×16 | (142,4) |
+
+Append `.<state>.0` for the frame name. Anchors are (0,0); each state is a single 1000ms looping hold selected by input. Muted-pressed variants preserve the crossed speaker while the button is held. Title text stays THEME / SOUND; the HUD switches SND / MUTE. Keyboard shortcut hints are separate renderer text.
+
+The native 3×5 menu font and simple pixel rectangles form the new controls. Upper-left highlight, lower-right shadow and a one-pixel downward press offset are shared across themes. All colours come from the unchanged palettes below. Editable `ui-controls.svg` sources and `ui-controls.json` strip coordinates accompany the raster frames. SVGs contain only integer pixel rectangles; render at exactly 500×16 with no filtering.
+
+The sheet grows by 18 rows to 1024×1470. All previous 61 rectangles, pixels, anchors, timing and animation lists are preserved. `revision-3.json` lists every addition and its screen target. `changes.json` and `revision-2.json` document the earlier 61-frame source conversion and readability pass.
+
+`previews/ui-states-1x.png` / `ui-states-4x.png` show all ten states (rows: theme, title sound, HUD sound; columns: idle, pressed, muted, muted-pressed). Every new animation also has a native strip. `title-controls-1x.png` / `title-controls-4x.png` are offline placement studies showing the title controls over the playfield, not screenshots of the title overlay or integrated gameplay. The regular screen previews include the HUD control. The existing jump GIF remains the revision-2 movement study.
 
 ## Revision 2: readability review
 
@@ -78,8 +96,8 @@ All ambient overlays have anchor (0,0). Draw sky/drift over the background and b
 
 ## Validation
 
-`npm run check` exercises the unmodified `validateAtlas()` against all real atlases, checks shared frame geometry/timing/animations/placements, checks anchors and loop flags, then runs the existing tests and production build.
+`npm run check` exercises `validateAtlas()` and its extended required UI names against all real atlases, checks shared frame geometry/timing/animations/placements, checks anchors, exact PR #4 button dimensions and loop flags, then runs the existing tests and production build.
 
 `python3 assets/tools/verify-art.py` needs Pillow. It audits every pixel for palette and binary alpha, sheet bounds and nonoverlapping rectangles, transparent unused space, actor feet and visible height, continuous dark actor contours, quiet corridors, panel-free gutters, life icon dimensions, ambient exclusions, runtime-copy parity, all animation strips, six-second GIFs, unscaled airborne crops and exact 4× enlargement.
 
-Visual review covers all 183 frames at native resolution and integer enlargement. Background texture was simplified; intentionally isolated ambient particles are not treated as stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
+Visual review covers all 213 frames at native resolution and integer enlargement, including the 30 new UI states. Background texture was simplified; intentionally isolated ambient particles are not treated as stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.

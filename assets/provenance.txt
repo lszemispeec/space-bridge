@@ -11,7 +11,12 @@ Cleanup inputs: the three source background frames, each cropped at (2,2,320,240
 The returned triptych was 836x1881; panels were isolated at (62,65,713,590),
 (62,655,713,604), (62,1259,713,622), sampled to 256x210 and placed at (32,30).
 Production source palettes were preserved, not inferred from the generated image.
-Exact built-in imagegen edit prompt:
+Revision 3 adds UI graphics from the repository's native 3x5 font and integer
+pixel rectangles. Editable SVG sources are included per theme. No new imagegen
+output was used for these code-native controls. Existing raster frames remain
+pixel-identical; atlas packing adds one row, plus exact PR #4 state metadata.
+
+Exact built-in imagegen edit prompt for revision 2:
 
 Edit these three approved game background plates for production pixel art. Return one image with THREE equal 320x240 logical panels vertically stacked in this exact order: Polar Signal, Desert Expedition, Neon Orbit. Output 1280x2880 (each logical pixel exactly 4x4) or exact integer enlargement. Keep each source scene composition, distinctive mountain silhouettes and colours, neon ringed planet. CLEANUP: remove tiny noisy single pixel texture and irregular speckled/dithered shading; simplify into deliberate connected flat pixel clusters with single logical pixel stair steps. No blur, gradients, glow, antialiasing, dithering, text, labels, sprites, vehicles, holes, icons or arrows. Native 320x240 each: side gutters x0..31 and x288..319 solid darkest palette shade; top HUD band y0..29 same darkest shade, empty. Quiet flat horizontal walkable strip across x32..287 at y168..184 with ground contact y175, no rocks or visual obstacles there. Foreground rocks only y199..239. All terrain inside x32..287. Light from upper left. Retain approved source identity, no new creative objects. Palette panel1 ONLY #173B3A #285552 #3F7068 #5E8D7A #83A792 #ABC3A6 #D1DCC0 #F0EED5 #FFFAE8 #233A46 #426573 #6C929A #9BB8B7 #C8493B #E67B59 #F1B683. Match warm desert and deep neon source palettes in panels2/3. Important: single native pixel scale, sharp intentional silhouettes, minimal texture for handheld readability. Three panels have no gaps or borders between them.
 

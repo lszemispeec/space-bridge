@@ -3,11 +3,11 @@
   "contractCommit": "ba9d78d6791f0a2827cf9c34169a2d5eacdc30f9",
   "themes": {
     "polar-signal": {
-      "frames": 61,
-      "animations": 29,
+      "frames": 71,
+      "animations": 39,
       "size": [
         1024,
-        1452
+        1470
       ],
       "palette": 16,
       "backgroundSpecklePixelsConsolidated": 1142,
@@ -30,14 +30,15 @@
       "lifeIconAnchor": [
         0,
         0
-      ]
+      ],
+      "uiFrames": 10
     },
     "desert-expedition": {
-      "frames": 61,
-      "animations": 29,
+      "frames": 71,
+      "animations": 39,
       "size": [
         1024,
-        1452
+        1470
       ],
       "palette": 16,
       "backgroundSpecklePixelsConsolidated": 2026,
@@ -60,14 +61,15 @@
       "lifeIconAnchor": [
         0,
         0
-      ]
+      ],
+      "uiFrames": 10
     },
     "neon-orbit": {
-      "frames": 61,
-      "animations": 29,
+      "frames": 71,
+      "animations": 39,
       "size": [
         1024,
-        1452
+        1470
       ],
       "palette": 16,
       "backgroundSpecklePixelsConsolidated": 2423,
@@ -90,8 +92,10 @@
       "lifeIconAnchor": [
         0,
         0
-      ]
+      ],
+      "uiFrames": 10
     }
   },
-  "revision": 2
+  "revision": 3,
+  "uiLayoutCommit": "3621b0d94b113a1021b7ee43591789ce3c525e17"
 }
