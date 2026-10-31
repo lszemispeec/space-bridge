@@ -146,6 +146,10 @@ states; renderer/input integration remains with Forge.
 
 ## Required single frames
 
+- `background`: the full 320×240 scene without sprites, craters, plate or HUD text. The 32 px gutters on both sides are part of it.
+- `hud.digit.0` … `hud.digit.9`: all the same size, about 8×10.
+- `crater.0` … `crater.3` and `crater.front.0` … `.3`: see the creature contract below.
+
 ## Elevated hatch and crater creatures
 
 All additions below share names, geometry and timing across themes. This is an
@@ -210,9 +214,6 @@ frames become transparent compatibility no-ops, and `retiredAnimations`
 contains `ambient.sky`. The frame names and rectangles remain identical across
 themes. The other two themes keep their sky loops. Polar drift and signal
 remain active. A renderer may skip animations listed in `retiredAnimations`.
-
-- `background`: the full 320×240 scene without sprites, craters, plate or HUD text. The 32 px gutters on both sides are part of it.
-- `hud.digit.0` … `hud.digit.9`: all the same size, about 8×10.
 
 ## Ambient animations (optional)
 

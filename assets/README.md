@@ -1,8 +1,60 @@
 # Space Bridge production art
 
-Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 81 frames, 41 animation entries, one 1024×1494 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
+Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 118 frames, 54 animation entries, one 1024×1619 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
 
-The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Existing art is integrated on `main`; the new airborne poses await the flight rework. This art change does not change game logic or layout config.
+The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Existing flight art is integrated on `main`; the new hatch and creatures await the engine's next integration. This art change does not change game logic or layout config.
+
+## Revision 5: elevated hatch, living craters, clear Polar sky
+
+**Rocket:** eight full-hull hatch frames, **44×89, anchor (0,89)**, replace the
+old hull when integrated. Opening and closing each have three 90ms frames;
+closed/open are static holds. The gantry adds 11px of width without moving the
+rocket base at (43,169). Its foot socket is **(39,30)** inside the frame:
+**world (82,110)**. The old low red door is a sealed maintenance cover in the
+new hull. `cosmonaut.ledge.stand.0` and `.crouch.0` use **20×22 / (10,22)** and a
+braced forward arm. All hatch states keep the same ledge and hull registration.
+
+**Craters:** four different 24×8 rims at the existing crater centres, with
+matching front lips: rounded, broken boulder, slanted fissure and scalloped.
+They retain anchor (12,4), plus a shared dark opening at local x5…18 / y3…5.
+Three-frame peek, blink and hide sequences and left/right looks use **24×16 /
+(12,12)**. Four-frame reach and five-frame grab use **24×32 / (12,28)**.
+Every creature anchor sits at (slot x,177). The final eye-hide frame is blank.
+
+**Grab integration:** frames include the captured flailing cosmonaut. Hide the
+separate victim while playing the 660ms grab; draw the matching front lip above
+it. The first visible feet register at y175. The suit sinks under the rim and
+only a retreating tentacle remains in the final frame. Decorative reaches must
+be suppressed where the plate sits; draw the plate last. The exact names,
+frame counts and durations are in `docs/atlas-contract.md`.
+
+Tentacle base/highlight/sucker inks: Polar **#C8493B / #E67B59 / #F1B683**;
+Desert **#28606A / #47908D / #B8D4BC**; Neon **#9747A6 / #FF76CA / #FFF8CB**.
+The dark contour is each palette's first colour. All original 16-colour
+palettes are unchanged. Eyes use light suit ink and dark pupils for 1× clarity.
+
+**Polar:** the curtain lived in `ambient.sky.0`…`.3`; these are now transparent
+compatibility frames. `retiredAnimations: ["ambient.sky"]` lets the renderer
+skip them. The separate green mark at (222,54) is also removed from the
+background. A built-in imagegen deletion was palette-cleaned into the 24×28
+`sky-repair.png` patch at (210,40), using only #FFFAE8. Every pixel outside that
+patch is preserved. Desert and Neon retain their sky loops. Drift and signal
+remain active in all themes.
+
+The sheet gains 37 frames per theme. Existing rectangles and timings remain
+fixed. The only changed old frame pixels are `crater.front.0` in every theme,
+plus Polar's background patch and four retired sky frames. Each `revision-5.json`
+lists the differences. Rebuild this revision with
+`node assets/tools/export-environment.mjs`; it extends the existing native art
+with integer pixel shapes, connected tentacle strokes and exact palette inks.
+
+Preview rows in `creatures-1x.png` / `creatures-4x.png`: four rims, peek, blink,
+look left, look right, hide, reach, grab. Native and 4× strips cover every new
+animation; creature GIFs and `rocket.hatch-cycle-4x.gif` show motion. New full
+screens show the elevated ledge, upper flight band and creatures. These are
+offline art compositions, not engine captures. `jump-bounce.gif` now contains a
+six-second creature/ledge study under its legacy filename. The unscaled airborne
+crop now uses (122,58) with size 48×64. Current Polar previews contain no aurora.
 
 ## Revision 4: airborne rotation and flail
 
@@ -138,4 +190,4 @@ All ambient overlays have anchor (0,0). Draw sky/drift over the background and b
 
 `python3 assets/tools/verify-art.py` needs Pillow. It audits every pixel for palette and binary alpha, sheet bounds and nonoverlapping rectangles, transparent unused space, actor feet and visible height, continuous dark actor contours, quiet corridors, panel-free gutters, life icon dimensions, ambient exclusions, runtime-copy parity, all animation strips, six-second GIFs, unscaled airborne crops and exact 4× enlargement.
 
-Visual review covers all 243 frames at native resolution and integer enlargement, including 30 airborne poses. The audit checks connected airborne silhouettes, the body pivot, dark contours, loop pixels/timing and exact 4× strips. Background texture was simplified; intentionally isolated ambient particles are not treated as stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
+Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 354 frames. It checks silhouette contours, body/foot pivots, the ledge socket, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.

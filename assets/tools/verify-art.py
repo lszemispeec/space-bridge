@@ -24,6 +24,7 @@ def audit(theme):
     check(len(palette) == 16, "palette length")
     occupied = set()
     crops = {}
+    retired_frames = {f for name in atlas.get('retiredAnimations', []) for f in atlas['animations'][name]['frames']}
     for name, frame in atlas["frames"].items():
         x, y, w, h = (frame[k] for k in ("x", "y", "w", "h"))
         check(0 <= x < x + w <= image.width and 0 <= y < y + h <= image.height, name)
@@ -32,7 +33,7 @@ def audit(theme):
         occupied.update(rectangle)
         crop = image.crop((x, y, x+w, y+h))
         crops[name] = crop
-        check(crop.getbbox() is not None or name == "ambient.drift.3", f"empty: {name}")
+        check(crop.getbbox() is not None or name in retired_frames or name in ('ambient.drift.3', 'crater.eyes.hide.2'), f"empty: {name}")
         if name.startswith("cosmonaut."):
             if name.startswith('cosmonaut.air.'):
                 check((w, h, frame['ax'], frame['ay']) == (20, 22, 10, 11), f'air body centre: {name}')
@@ -87,6 +88,22 @@ def audit(theme):
     for name in ('hud.icon.life.0', 'hud.icon.life_empty.0'):
         check(crops[name].size == (14, 16), f'life icon size: {name}')
 
+    check(atlas['sockets']['rocketLedge'] == {'frame': 'rocket.hatch.open.0', 'x': 39, 'y': 30}, 'ledge socket')
+    check(crops['rocket.hatch.open.0'].size == (44, 89), 'hatch hull size')
+    check(crops['rocket.hatch.open.0'].getpixel((39, 30))[3] == 255, 'solid ledge under foot socket')
+    check(len({crops[f'crater.{i}'].tobytes() for i in range(4)}) == 4, 'four distinct crater rims')
+    dark = tuple(bytes.fromhex(atlas['meta']['palette'][0][1:]))
+    for i in range(4):
+        rim = crops[f'crater.{i}']
+        check(rim.size == (24, 8), 'rim size')
+        check(all(rim.getpixel((x,y)) == (*dark,255) for x in range(5,19) for y in range(3,6)), 'shared creature mouth')
+    for name in retired_frames:
+        check(crops[name].getbbox() is None, f'retired animation blank: {name}')
+    if theme == 'polar-signal':
+        check(atlas['retiredAnimations'] == ['ambient.sky'], 'Polar aurora retired')
+        sky = tuple(bytes.fromhex(atlas['meta']['palette'][8][1:]))
+        check(set(crops['background'].crop((104,35,234,78)).getdata()) == {(*sky,255)}, 'Polar sky clear of curtain and mark')
+
     for control, width in (('title_theme', 56), ('title_sound', 56), ('hud_sound', 36)):
         states = ('idle', 'pressed') if control == 'title_theme' else ('idle', 'pressed', 'muted', 'muted_pressed')
         pixels = []
@@ -110,7 +127,7 @@ def audit(theme):
         check(small.resize(big.size, Image.Resampling.NEAREST).tobytes() == big.tobytes(), f'{prefix} nearest-neighbour')
     check(native.crop((142, 4, 178, 20)).tobytes() == crops['ui.hud_sound.idle.0'].tobytes(), 'HUD target placement')
     air_crop = Image.open(directory / 'previews/cosmonaut-air-1x.png').convert('RGBA')
-    check(air_crop.tobytes() == native.crop((122, 118, 170, 182)).tobytes(), 'unscaled airborne crop')
+    check(air_crop.tobytes() == native.crop((122, 58, 170, 122)).tobytes(), 'unscaled airborne crop')
     for file in (directory / "previews").glob("*.png"):
         for pixel in Image.open(file).convert("RGBA").getdata():
             check(pixel[3] in (0, 255), f"preview alpha: {file.name}")
@@ -125,15 +142,17 @@ def audit(theme):
             check(strip.crop((x, 0, x+frame.width, frame.height)).tobytes() == frame.tobytes(), f"strip source pixels: {name}")
             x += frame.width
         check(strip.width == x, "strip width")
-        if entry['animation'].startswith('cosmonaut.air.'):
+        if entry['animation'].startswith(('cosmonaut.air.', 'crater.eyes.', 'crater.tentacle.')):
             large_strip = Image.open(directory / 'previews' / entry['file'].replace('.png', '-4x.png')).convert('RGBA')
             check(strip.resize((strip.width * 4, strip.height * 4), Image.Resampling.NEAREST).tobytes() == large_strip.tobytes(), 'air strip exact 4x')
             loop = Image.open(directory / 'previews' / f"{entry['animation']}-4x.gif")
-            check(loop.n_frames == len(entry['durations']) and loop.info.get('loop') == 0, 'air loop frames')
+            check(loop.n_frames == len(entry['durations']), f"GIF frame count: {entry['animation']}")
+            check(loop.n_frames == 1 or loop.info.get('loop') == 0, f"GIF looping preview: {entry['animation']}")
             for index, gif_frame in enumerate(ImageSequence.Iterator(loop)):
-                expected = crops[atlas['animations'][entry['animation']]['frames'][index]].resize((80,88), Image.Resampling.NEAREST)
+                source = crops[atlas['animations'][entry['animation']]['frames'][index]]
+                expected = source.resize((source.width * 4, source.height * 4), Image.Resampling.NEAREST)
                 actual = gif_frame.convert('RGBA')
-                check(actual.size == expected.size and gif_frame.info['duration'] == 80, 'air loop size/timing')
+                check(actual.size == expected.size and gif_frame.info['duration'] == entry['durations'][index], 'loop size/timing')
                 for a, b in zip(actual.getdata(), expected.getdata()):
                     check(a[3] == b[3] and (not a[3] or a[:3] == b[:3]), 'air loop pixel fidelity')
 
