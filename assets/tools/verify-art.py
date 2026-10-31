@@ -114,16 +114,36 @@ def audit(theme):
             pixels.append(crops[name].tobytes())
         check(len(set(pixels)) == len(states), f'UI states must be visibly distinct: {control}')
 
-    # Room pixels may never cover the source scene, including window corners.
+    # The full-bleed window plate preserves the accepted centre and removes old UI bands.
     room = atlas['operatorRoom']
-    for orientation, size in [('landscape', (352, 288)), ('portrait', (288, 344))]:
+    plate = crops[room['background']]
+    check(plate.size == (320,240) and set(plate.getchannel('A').getdata()) == {255}, 'opaque full-bleed plate')
+    check(plate.crop((32,30,288,240)).tobytes() == crops['background'].crop((32,30,288,240)).tobytes(), 'accepted scenery centre preserved')
+    for x0,x1 in [(0,32),(288,320)]:
+        check(len(set(plate.crop((x0,30,x1,240)).getdata())) > 3, 'terrain in former gutter')
+        for y in range(130,190):
+            check(all(plate.getpixel((x,y)) == plate.getpixel((32 if x<32 else 287,y)) for x in range(x0,x1)), 'continuous ground through former gutter')
+    if theme != 'neon-orbit':
+        sky = tuple(bytes.fromhex(atlas['meta']['palette'][8 if theme=='polar-signal' else 11][1:]))
+        check(set(plate.crop((0,0,320,30)).getdata()) == {(*sky,255)}, 'sky replaces old HUD band')
+    for orientation, size in [('landscape', (352, 320)), ('portrait', (288, 344))]:
         layout = room[orientation]
         surround = crops[layout['frame']]
         check(surround.size == size, f'{orientation} outer dimensions')
         scene = layout['scene']
         window = (scene['dx'], scene['dy'], scene['dx']+scene['w'], scene['dy']+scene['h'])
-        check(surround.crop(window).getbbox() is None, f'{orientation} unobscured window')
+        # The only permitted intrusions are the two new upper chamfers and ten glint pixels.
+        glass = surround.crop(window)
+        allowed = {(x,y) for y in range(20) for i in range(20-y) for x in (i,glass.width-1-i)}
+        allowed.update((26+i,8+i) for i in range(6))
+        allowed.update((24+i,13+i) for i in range(4))
+        visible = {(x,y) for y in range(glass.height) for x in range(glass.width) if glass.getpixel((x,y))[3]}
+        check(visible <= allowed, f'{orientation} clear gameplay window outside chamfers/glints')
+        check((0,0) in visible and (19,0) in visible, 'angled upper mullion')
         check(scene['dy']+scene['h'] == layout['console']['y'], 'console below scene')
+        taps = layout['leverTapZones']
+        check(taps == ({'l':{'x':20,'y':164,'w':24,'h':48},'r':{'x':308,'y':164,'w':24,'h':48}} if orientation=='landscape' else {'l':{'x':20,'y':292,'w':24,'h':48},'r':{'x':244,'y':292,'w':24,'h':48}}), 'tap zones frozen')
+        check(layout['levers']['l']['y'] == layout['levers']['r']['y'] == 240, 'deck-mounted lever art')
         small = Image.open(directory / f'previews/operator-{orientation}-1x.png').convert('RGBA')
         big = Image.open(directory / f'previews/operator-{orientation}-4x.png').convert('RGBA')
         check(small.size == size, 'operator preview size')
@@ -135,7 +155,7 @@ def audit(theme):
         check(len(frames) == 5 and len({crops[n].tobytes() for n in frames}) == 5, 'five distinct lever poses')
         for name in frames:
             f = atlas['frames'][name]
-            check((f['w'],f['h'],f['ax'],f['ay']) == (24,48,0,0), 'unchanged lever tap cell')
+            check((f['w'],f['h'],f['ax'],f['ay']) == (40,64,0,0), 'larger native lever art')
     # Full-open eyes have circular 3/5/5/5/3 whites, including their dark pupil.
     eye = crops['crater.eyes.peek.2']
     eye_white = tuple(bytes.fromhex(atlas['meta']['palette'][15 if theme == 'neon-orbit' else 8][1:]))
@@ -151,7 +171,7 @@ def audit(theme):
     check(lever_loop.n_frames == 9 and lever_loop.info.get('loop') == 0, 'complete lever cycle')
     cycle = []
     for frame, duration in zip(ImageSequence.Iterator(lever_loop), [300,50,50,50,250,50,50,50,100]):
-        check(frame.size == (288,224) and frame.info['duration'] == duration, 'lever cycle geometry/timing')
+        check(frame.size == (416,288) and frame.info['duration'] == duration, 'lever cycle geometry/timing')
         check(set(frame.convert('RGB').getdata()) <= palette, 'lever cycle palette')
         cycle.append(frame.convert('RGBA').tobytes())
     check(cycle == list(reversed(cycle)), 'lever release returns through authored poses')

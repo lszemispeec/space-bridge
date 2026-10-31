@@ -22,12 +22,12 @@ const source=JSON.parse(fs.readFileSync(path.join(ROOT,'assets/airborne-pixels.j
 const suits=JSON.parse(fs.readFileSync(path.join(ROOT,'assets/polar-suit-pixels.json')));
 const themes=['polar-signal','desert-expedition','neon-orbit'];
 const grabPaths=[[[12,28],[8,25],[6,21],[6,17],[9,15],[12,16]],[[12,28],[8,26],[6,21],[8,17],[14,17],[17,20],[15,23],[10,23],[8,20]],[[12,28],[8,26],[7,23],[10,21],[15,22],[17,25],[14,27],[10,26]],[[12,29],[9,28],[8,25],[12,23],[16,25],[15,28],[12,28]],[[12,29],[10,28],[12,27],[14,28]]];
-const report={revision:6,themes:{}};
+const report={revision:7,themes:{}};
 for(const theme of themes){
  const dir=path.join(ROOT,'assets',theme),pv=path.join(dir,'previews'),temp=path.join(ROOT,'.scratch/operator',theme);fs.mkdirSync(temp,{recursive:true});
  const atlas=JSON.parse(fs.readFileSync(path.join(dir,`${theme}.json`))),sheet0=read(path.join(dir,`${theme}.png`)),p=atlas.meta.palette.map(rgba);
  const images={};for(const [n,f]of Object.entries(atlas.frames))images[n]=crop(sheet0,f.x,f.y,f.w,f.h);
- const oldNames=Object.keys(atlas.frames).filter(n=>!n.startsWith('frame.')&&!n.startsWith('ui.lever.'));
+ const oldNames=Object.keys(atlas.frames).filter(n=>!n.startsWith('frame.')&&!n.startsWith('ui.lever.')&&n!=='background.window');
  const changed=[];
  function replace(n,im){images[n]=im;changed.push(n);}
  function add(n,im,duration=1000){images[n]=im;atlas.frames[n]={x:0,y:0,w:im.w,h:im.h,ax:0,ay:0,duration};}
@@ -37,21 +37,21 @@ for(const theme of themes){
  const white=theme==='neon-orbit'?15:8;
  // Independent lever key poses: vertical, anticipation, tilt, pull, full pull.
  // Base and pivot never move; shaft and knob move on whole pixels.
- function lever(side,step){const im=blank(24,48),sign=side==='l'?-1:1;
-   rect(im,2,29,20,16,p[0]);rect(im,3,30,18,13,p[metal[1]]);rect(im,3,30,18,1,p[metal[3]]);rect(im,4,43,16,1,p[metal[0]]);
-   for(const x of [5,18])for(const y of [33,40]){dot(im,x,y,p[metal[4]]);dot(im,x+1,y+1,p[0]);}
-   rect(im,7,32,10,7,p[0]);rect(im,8,33,8,4,p[metal[0]]);
-   const positions=[[0,11],[-sign,10],[sign*2,13],[sign*4,17],[sign*6,22]], [dx,ky]=positions[step],kx=12+dx;
-   const ink=blank(24,48);for(const [x,y]of line([[12,35],[kx,ky+4]])){rect(ink,x-1,y,3,1,p[metal[3]]);dot(ink,x-1,y,p[metal[4]]);}
+ function lever(side,step){const im=blank(40,64),sign=side==='l'?-1:1;
+   rect(im,2,43,36,19,p[0]);rect(im,3,44,34,16,p[metal[1]]);rect(im,4,44,32,2,p[metal[3]]);rect(im,4,60,32,1,p[metal[0]]);
+   for(const x of [6,33])for(const y of [48,57]){rect(im,x,y,2,2,p[metal[4]]);dot(im,x+1,y+1,p[0]);}
+   rect(im,10,47,20,9,p[0]);rect(im,11,48,18,6,p[metal[0]]);
+   const positions=[[0,5],[-sign,4],[sign*3,12],[sign*7,22],[sign*11,31]], [dx,ky]=positions[step],kx=20+dx;
+   const ink=blank(40,64);for(const [x,y]of line([[20,51],[kx,ky+7]])){rect(ink,x-2,y,5,1,p[metal[3]]);dot(ink,x-2,y,p[metal[4]]);}
    paste(im,contour(ink,p[0]),0,0);
-   rect(im,kx-4,ky,9,6,p[0]);rect(im,kx-3,ky-1,7,8,p[0]);rect(im,kx-3,ky,7,5,p[accent]);rect(im,kx-2,ky,5,1,p[white]);rect(im,kx-3,ky+4,7,1,p[metal[1]]);dot(im,kx+2,ky+2,p[metal[4]]);
-   rect(im,9,34,7,4,p[0]);rect(im,10,34,5,2,p[metal[3]]);dot(im,11,34,p[white]);
-   for(let i=0;i<3;i++)rect(im,9+i*3,41,2,1,p[i<step?accent:metal[0]]);
+   rect(im,kx-7,ky+1,15,9,p[0]);rect(im,kx-6,ky,13,11,p[0]);rect(im,kx-6,ky+1,13,8,p[accent]);rect(im,kx-5,ky+1,11,2,p[white]);rect(im,kx-6,ky+8,13,1,p[metal[1]]);rect(im,kx+4,ky+4,2,2,p[metal[4]]);
+   rect(im,15,49,11,6,p[0]);rect(im,16,49,9,3,p[metal[3]]);rect(im,17,49,3,1,p[white]);
+   for(let i=0;i<3;i++)rect(im,14+i*5,58,3,1,p[i<step?accent:metal[0]]);
    return im;
  }
  for(const side of ['l','r']){anim(`ui.lever.${side}.idle`,[lever(side,0)],1000,true);anim(`ui.lever.${side}.pull`,[1,2,3,4].map(i=>lever(side,i)),50,false);atlas.animations[`ui.lever.${side}.release`]={frames:[2,1,0].map(i=>`ui.lever.${side}.pull.${i}`).concat(`ui.lever.${side}.idle.0`),loop:false};}
- // Bevel highlights and glass glints stay entirely outside the scene window.
- function room(portrait){const w=portrait?288:352,h=portrait?344:288,im=blank(w,h,p[0]);
+ // Two chamfered upper mullions and tiny diagonal reflections frame the glass.
+ function room(portrait){const w=portrait?288:352,h=portrait?344:320,im=blank(w,h,p[0]);
    rect(im,2,2,w-4,h-4,p[metal[0]]);rect(im,3,3,w-6,3,p[metal[2]]);rect(im,4,3,w-8,1,p[metal[3]]);
    rect(im,5,7,w-10,245,p[metal[1]]);rect(im,8,9,w-16,243,p[0]);rect(im,10,10,w-20,242,p[metal[3]]);
    rect(im,12,11,w-24,241,p[metal[0]]);
@@ -60,28 +60,31 @@ for(const theme of themes){
      for(let i=0;i<6;i++){dot(im,sx+7+i,12-i,p[metal[4]]);dot(im,sx+7+i,244+i,p[metal[2]]);}}
    for(const x of [30,64,w-66,w-32]){rect(im,x,6,3,3,p[0]);dot(im,x,6,p[metal[4]]);}
    rect(im,14,20,1,24,p[metal[4]]);rect(im,w-15,196,1,26,p[metal[3]]);
-   // Empty window is authoritative: even the corners are transparent.
+   // Only the 20px upper corner chamfers and sparse glass glints enter the window.
    rect(im,16,12,w-32,240,[0,0,0,0]);
-   rect(im,2,252,w-4,34,p[metal[1]]);rect(im,2,252,w-4,2,p[metal[3]]);rect(im,4,255,w-8,1,p[metal[0]]);rect(im,4,283,w-8,2,p[0]);
+   for(let j=0;j<20;j++)for(let i=0;i<20-j;i++)for(const x of [16+i,w-17-i])dot(im,x,12+j,p[i+j>16?metal[3]:metal[1]]);
+   for(const [xx,yy]of [[18,24],[24,18],[30,12]])for(const x of [xx,w-1-xx]){rect(im,x,yy,3,3,p[0]);dot(im,x,yy,p[metal[4]]);}
+   for(let i=0;i<6;i++)dot(im,42+i,20+i,p[theme==='polar-signal'?12:white]);
+   for(let i=0;i<4;i++)dot(im,40+i,25+i,p[metal[3]]);
+   rect(im,2,252,w-4,h-254,p[metal[1]]);rect(im,2,252,w-4,2,p[metal[3]]);rect(im,4,255,w-8,1,p[metal[0]]);rect(im,4,h-5,w-8,2,p[0]);
    function panel(x,y,pw,ph){rect(im,x-1,y-1,pw+2,ph+2,p[metal[3]]);rect(im,x,y,pw,ph,p[0]);rect(im,x+1,y+ph-1,pw-2,1,p[metal[0]]);}
-   panel(16,258,70,22);panel(144,258,64,22);panel(220,258,44,22);panel(86,260,48,11);
-   for(const x of [8,w-9])for(const y of [258,278]){rect(im,x-1,y-1,3,3,p[0]);dot(im,x-1,y-1,p[metal[4]]);}
-   // Instrument vents on the extra landscape console wing.
-   if(!portrait){panel(278,259,58,20);for(let x=284;x<331;x+=4)rect(im,x,264,2,9,p[metal[2]]);rect(im,284,262,12,1,p[accent]);}
-   if(portrait){rect(im,2,288,w-4,53,p[metal[0]]);rect(im,4,289,w-8,1,p[metal[3]]);
-     for(const x of [16,240]){rect(im,x,291,32,49,p[metal[1]]);rect(im,x+1,291,30,1,p[metal[3]]);}
-     rect(im,64,301,160,27,p[0]);rect(im,65,302,158,25,p[metal[1]]);
-     for(let x=76;x<214;x+=8){rect(im,x,309,3,13,p[metal[0]]);dot(im,x,308,p[metal[3]]);}rect(im,128,297,32,2,p[accent]);
-   }
+   panel(52,258,56,22);panel(76,288,64,22);panel(184,258,44,22);panel(110,260,30,11);
+   panel(184,288,44,22);for(let x=190;x<225;x+=5)rect(im,x,294,2,10,p[metal[2]]);
+   for(const x of [7,w-8])for(const y of [258,h-10]){rect(im,x-1,y-1,3,3,p[0]);dot(im,x-1,y-1,p[metal[4]]);}
+   for(const x of [6,w-50]){rect(im,x,279,44,28,p[0]);rect(im,x+1,280,42,26,p[metal[0]]);rect(im,x+2,280,40,1,p[metal[3]]);}
+   if(!portrait){panel(242,260,52,18);for(let x=248;x<290;x+=5)rect(im,x,265,2,8,p[metal[2]]);rect(im,248,262,12,1,p[accent]);}
+   if(portrait){rect(im,52,324,184,9,p[metal[0]]);for(let x=58;x<232;x+=8)rect(im,x,326,3,5,p[metal[2]]);}
    return im;
  }
  anim('frame.room.landscape',[room(false)],1000,true);anim('frame.room.portrait',[room(true)],1000,true);
  anim('frame.lights',[0,1,2,3].map(k=>{const im=blank(20,6,p[0]);for(let i=0;i<3;i++){rect(im,2+i*6,1,4,3,p[i===k||k===3?accent:metal[0]]);if(i===k||k===3)rect(im,2+i*6,1,2,1,p[white]);}return im;}),300,true);
  atlas.operatorRoom={
-   landscape:{size:{w:352,h:288},frame:'frame.room.landscape.0',scene:{sx:0,sy:0,w:320,h:240,dx:16,dy:12},console:{x:0,y:252,w:352,h:36},levers:{l:{x:20,y:164},r:{x:308,y:164}}},
-   portrait:{size:{w:288,h:344},frame:'frame.room.portrait.0',scene:{sx:32,sy:0,w:256,h:240,dx:16,dy:12},console:{x:0,y:252,w:288,h:36},levers:{l:{x:20,y:292},r:{x:244,y:292}},controlStrip:{x:16,y:288,w:256,h:56}},
-   hud:{scoreIcon:{x:20,y:262},digits:{x:36,y:262,pitch:8,count:4},modeLabel:{x:88,y:266},lives:{x:148,y:260,pitch:20},sound:{x:224,y:260,w:36,h:16},lights:{x:108,y:274}},
+   background:'background.window',
+   landscape:{size:{w:352,h:320},frame:'frame.room.landscape.0',scene:{sx:0,sy:0,w:320,h:240,dx:16,dy:12},console:{x:0,y:252,w:352,h:68},levers:{l:{x:8,y:240},r:{x:304,y:240}},leverTapZones:{l:{x:20,y:164,w:24,h:48},r:{x:308,y:164,w:24,h:48}},windowCornerCut:20},
+   portrait:{size:{w:288,h:344},frame:'frame.room.portrait.0',scene:{sx:32,sy:0,w:256,h:240,dx:16,dy:12},console:{x:0,y:252,w:288,h:92},levers:{l:{x:8,y:240},r:{x:240,y:240}},leverTapZones:{l:{x:20,y:292,w:24,h:48},r:{x:244,y:292,w:24,h:48}},windowCornerCut:20,controlStrip:{x:16,y:288,w:256,h:56}},
+   hud:{scoreIcon:{x:56,y:262},digits:{x:72,y:262,pitch:8,count:4},modeLabel:{x:112,y:266},lives:{x:80,y:290,pitch:20},sound:{x:188,y:260,w:36,h:16},lights:{x:152,y:298}},
  };
+ add('background.window',read(path.join(dir,'window-plate.png')));
  // Round whites: 3/5/5/5/3 pixel rows, surrounded by a one-pixel contour.
  // Peeking reveals the same circle from below; blinking squeezes its height.
  function eyes(level,look=0,blink=false){const ink=blank(24,16);if(!level)return ink;
@@ -111,7 +114,7 @@ for(const theme of themes){
  }
  json(path.join(pv,'strips.json'),strips);
  const at=(dst,n,px,py)=>{const f=atlas.frames[n];paste(dst,images[n],px-f.ax,py-f.ay);};
- function scene(ms=0,grab=false,legacy=false){const im=blank(320,240);paste(im,images.background,0,0);
+ function scene(ms=0,grab=false,legacy=false){const im=blank(320,240);paste(im,images[legacy?'background':'background.window'],0,0);
    for(const n of ['ambient.sky','ambient.drift'])if(!atlas.retiredAnimations.includes(n)){const a=atlas.animations[n];at(im,a.frames[Math.floor(ms/500)%a.frames.length],0,0);}
    at(im,'rocket.hatch.open.0',43,169);at(im,'rover.idle.0',248,180);at(im,'ambient.signal.0',0,0);
    at(im,'cosmonaut.ledge.stand.0',82,110);at(im,'cosmonaut.air.spin.1',106,126);at(im,'cosmonaut.air.spin.4',146,90);at(im,'cosmonaut.air.flail.1',206,119);
@@ -138,12 +141,11 @@ for(const theme of themes){
  const contact=blank(640,y+rh+2,p[1]);for(const f of index)paste(contact,images[f.name],f.x,f.y);save(contact,path.join(pv,'frames-1x.png'));save(contact,path.join(pv,'frames-4x.png'),4);json(path.join(pv,'frame-index.json'),index);
  const groups=[['crater.0','crater.1','crater.2','crater.3'],...['peek','blink','look.l','look.r','hide'].map(n=>atlas.animations[`crater.eyes.${n}`].frames),atlas.animations['crater.tentacle.reach'].frames,atlas.animations['crater.tentacle.grab'].frames];
  const board=blank(160,204,p[1]),review=[];let by=4;for(const names of groups){let bx=4,h=0;for(const n of names){const im=images[n];paste(board,im,bx,by);review.push({name:n,x:bx,y:by});bx+=im.w+4;h=Math.max(h,im.h);}by+=h+6;}save(board,path.join(pv,'creatures-1x.png'));save(board,path.join(pv,'creatures-4x.png'),4);json(path.join(pv,'creatures-index.json'),review);
- const controls=blank(144,108,p[1]);for(const [row,side]of ['l','r'].entries())for(let i=0;i<5;i++)paste(controls,images[`ui.lever.${side}.${i===0?'idle.0':`pull.${i-1}`}`],4+i*28,4+row*54);save(controls,path.join(pv,'levers-1x.png'));save(controls,path.join(pv,'levers-4x.png'),4);
- gif('levers-cycle-4x',[0,1,2,3,4,3,2,1,0].map(step=>{const im=blank(72,56,p[1]);for(const [i,side]of ['l','r'].entries())paste(im,images[`ui.lever.${side}.${step===0?'idle.0':`pull.${step-1}`}`],4+i*40,4);return im;}),[300,50,50,50,250,50,50,50,100],4);
+ const controls=blank(224,140,p[1]);for(const [row,side]of ['l','r'].entries())for(let i=0;i<5;i++)paste(controls,images[`ui.lever.${side}.${i===0?'idle.0':`pull.${i-1}`}`],4+i*44,4+row*70);save(controls,path.join(pv,'levers-1x.png'));save(controls,path.join(pv,'levers-4x.png'),4);
+ gif('levers-cycle-4x',[0,1,2,3,4,3,2,1,0].map(step=>{const im=blank(104,72,p[1]);for(const [i,side]of ['l','r'].entries())paste(im,images[`ui.lever.${side}.${step===0?'idle.0':`pull.${step-1}`}`],4+i*56,4);return im;}),[300,50,50,50,250,50,50,50,100],4);
  const actorNames=Object.keys(images).filter(n=>n.startsWith('cosmonaut.')||n.startsWith('hud.icon.life'));
  const actors=blank(288,Math.ceil(actorNames.length/12)*26+4,p[5]);actorNames.forEach((n,i)=>paste(actors,images[n],4+(i%12)*24,4+Math.floor(i/12)*26));save(actors,path.join(pv,'suits-1x.png'));save(actors,path.join(pv,'suits-4x.png'),4);json(path.join(pv,'suits-index.json'),actorNames);
- const unchangedEndpoints=new Set(['crater.eyes.hide.2','crater.tentacle.grab.4','hud.icon.life_empty.0']);
- json(path.join(dir,'revision-6.json'),{addedFrames:additions,changedFrames:[...new Set(changed)].filter(n=>!unchangedEndpoints.has(n)),sheetSize:atlas.meta.size,operatorRoom:atlas.operatorRoom,paletteUnchanged:true});report.themes[theme]={frames:Object.keys(atlas.frames).length,animations:Object.keys(atlas.animations).length,size:[sheet.w,sheet.h],palette:16};
+ json(path.join(dir,'revision-7.json'),{addedFrames:['background.window'],changedFrames:additions.filter(n=>n.startsWith('ui.lever.')||n.startsWith('frame.room.')),unchanged:'All pre-room scenery, actors, eyes, vehicles and old background pixels; all animation sequences and durations.',sheetSize:atlas.meta.size,operatorRoom:atlas.operatorRoom,paletteUnchanged:true});report.themes[theme]={frames:Object.keys(atlas.frames).length,animations:Object.keys(atlas.animations).length,size:[sheet.w,sheet.h],palette:16};
  console.log(`${theme}: ${report.themes[theme].frames} frames / ${report.themes[theme].animations} animations`);
 }
 json(path.join(ROOT,'assets/export-report.json'),report);

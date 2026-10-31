@@ -5,7 +5,7 @@ import neon from '../../assets/neon-orbit/neon-orbit.json';
 import publishedPolar from '../../public/atlas/polar-signal.json';
 import publishedDesert from '../../public/atlas/desert-expedition.json';
 import publishedNeon from '../../public/atlas/neon-orbit.json';
-import { CONSOLE_HUD, roomLayout } from '../config/layout';
+import { CONSOLE_HUD, ROOM_BACKGROUND, roomLayout } from '../config/layout';
 import { validateAtlas } from './atlas';
 
 const atlases = [polar, desert, neon];
@@ -32,7 +32,7 @@ describe('production art handoff', () => {
         }
         // PR #4 TAP_TARGETS at 3621b0d; independent of gameplay integration.
         if (name.startsWith('ui.lever.')) {
-          expect([frame.w, frame.h], name).toEqual([24, 48]);
+          expect([frame.w, frame.h], name).toEqual([40, 64]);
         } else if (name.startsWith('ui.')) {
           expect([frame.w, frame.h], name).toEqual([name.startsWith('ui.hud_sound.') ? 36 : 56, 16]);
         }
@@ -74,6 +74,7 @@ describe('production art handoff', () => {
       }
       // The atlas's room table and the code's layout must agree, or the art and the taps drift apart.
       expect(atlas.operatorRoom.hud).toEqual(CONSOLE_HUD);
+      expect(atlas.operatorRoom.background).toBe(ROOM_BACKGROUND);
       for (const orientation of ['landscape', 'portrait'] as const) {
         const layout = atlas.operatorRoom[orientation];
         const expected = roomLayout(orientation);
@@ -81,6 +82,7 @@ describe('production art handoff', () => {
         expect([layout.scene.dx, layout.scene.dy, layout.scene.w, layout.scene.h]).toEqual([expected.window.x, expected.window.y, expected.window.w, expected.window.h]);
         expect(layout.console).toEqual(expected.console);
         expect(layout.levers).toEqual({ l: expected.levers.left, r: expected.levers.right });
+        expect(layout.leverTapZones).toEqual({ l: expected.leverTaps.left, r: expected.leverTaps.right });
         expect('controlStrip' in layout ? layout.controlStrip : null).toEqual(expected.strip);
         const room = atlas.frames[layout.frame as 'frame.room.landscape.0' | 'frame.room.portrait.0'];
         expect([room.w, room.h, room.ax, room.ay]).toEqual([layout.size.w, layout.size.h, 0, 0]);
@@ -88,6 +90,12 @@ describe('production art handoff', () => {
         expect(layout.scene.w + 32).toBe(layout.size.w);
         expect(layout.scene.h).toBe(240);
         expect(layout.scene.dx).toBe(16);
+        expect(layout.windowCornerCut).toBe(20);
+        expect(layout.leverTapZones).toEqual(orientation === 'landscape'
+          ? { l: { x: 20, y: 164, w: 24, h: 48 }, r: { x: 308, y: 164, w: 24, h: 48 } }
+          : { l: { x: 20, y: 292, w: 24, h: 48 }, r: { x: 244, y: 292, w: 24, h: 48 } });
+        expect(layout.levers.l.y).toBe(240);
+        expect(layout.levers.r.y).toBe(240);
       }
     });
   }

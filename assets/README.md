@@ -1,10 +1,51 @@
 # Space Bridge production art
 
-Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 134 frames, 63 animation entries, one 1024×1965 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
+Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 135 frames, 63 animation entries, one 1024×2287 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
 
 The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Flight, hatch and creatures are integrated on `main`; the operator room and levers await renderer integration. This art change does not change game logic or layout config.
 
-## Revision 6: operator room, levers, round eyes, Polar contrast
+## Revision 7: full-bleed windshield and deck controls
+
+The window now uses **`background.window`**, a new 320×240 plate without the
+old HUD band or side gutters. The accepted centre (32,30)…(287,239) is exactly
+preserved. Only the old bands gain sky, mountain and terrain extensions.
+Ground heights and every vehicle/actor position stay fixed. `background`
+remains a legacy asset; the renderer must select `operatorRoom.background`
+for the new composition. Drawing the old plate would restore the rejected band.
+
+Two 20px angled upper mullions, rivets and ten diagonal pale reflection pixels
+make the surround read as a windshield. All other glass pixels are transparent.
+The native **40×64** lever cells replace the earlier 24×48 art, with larger
+knobs, shafts and base plates. They sit on the deck at (8,240)/(304,240) in
+landscape and (8,240)/(240,240) in portrait. **Tap zones do not move**: metadata
+keeps `leverTapZones` separate from `levers`, including the old 24×48 input sizes.
+The existing minimum CSS touch size and portrait strip input remain in force.
+
+Landscape output grows to **352×320** for the deeper console; portrait stays
+**288×344**. Both scene copies still begin at (16,12), with no scaling inside
+the scene. The deck starts at y252. Its central readouts move clear of the
+lever bases; exact positions are in `docs/atlas-contract.md` and atlas metadata.
+Rocket, rover, doors, eyes and Polar suits are unchanged in this revision.
+
+All original palettes below remain unchanged. Polar sky is **#FFFAE8**, Desert
+sky **#47908D**, Neon sky **#080C24**. The new glass glints use Polar
+**#9BB8B7 / #ABC3A6**, Desert **#FFF4DA / #F5C781**, Neon **#FFF8CB / #27A6AE**.
+Upper-left highlights and each theme's darkest outline remain consistent.
+
+The built-in imagegen tool extended the raster plates. Native palette/grid
+cleanup is documented in `window-extension-provenance.md`; production results
+are `assets/<theme>/window-plate.png`. No generated pixels replace the accepted
+centre. `tools/export-operator.mjs` exports the current atlases and previews.
+`revision-7.json` records the added frame, changed control/surround frames and
+layout. Animation names, sequences, anchors and durations remain unchanged.
+
+Review `operator-landscape-1x/4x.png`, `operator-portrait-1x/4x.png`,
+`operator-room.gif`, and `levers-cycle-4x.gif`. These are offline art studies;
+Forge owns renderer/input integration. Native/4× audit checks the scene-edge
+extensions, preserved centre, corner/glint mask, fixed tap zones and enlarged
+lever animations. The historical unframed previews still use the legacy plate.
+
+## Revision 6: operator room, levers, round eyes, Polar contrast (superseded layout)
 
 The contract draft preceded production art. The new `operatorRoom` metadata
 defines a **352×288 landscape** output around the complete 320×240 source scene.
@@ -235,4 +276,4 @@ All ambient overlays have anchor (0,0). Draw sky/drift over the background and b
 
 `python3 assets/tools/verify-art.py` needs Pillow. It audits every pixel for palette and binary alpha, sheet bounds and nonoverlapping rectangles, transparent unused space, actor feet and visible height, continuous dark actor contours, quiet corridors, panel-free gutters, life icon dimensions, ambient exclusions, runtime-copy parity, all animation strips, six-second GIFs, unscaled airborne crops and exact 4× enlargement.
 
-Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 402 frames. It checks silhouette contours, body/foot pivots, the ledge socket, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
+Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 405 frames. It checks silhouette contours, body/foot pivots, the ledge socket, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.

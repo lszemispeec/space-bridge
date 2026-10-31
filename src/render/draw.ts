@@ -14,6 +14,7 @@ import {
   ROCKET,
   ROCKET_LEDGE,
   ROCKET_SLOT,
+  ROOM_BACKGROUND,
   ROVER,
   roomLayout,
   SCREEN_H,
@@ -378,7 +379,7 @@ export function createRenderer(): Renderer {
       const { atlas } = art;
       trackPlate(s, atlas, nowMs);
 
-      drawFrame(ctx, art, frameOf(atlas, 'background'), 0, 0);
+      drawFrame(ctx, art, frameOf(atlas, ROOM_BACKGROUND), 0, 0);
       drawAmbient(ctx, art, nowMs, false);
       drawVehicles(ctx, s, art, nowMs);
       drawAmbient(ctx, art, nowMs, true);

@@ -5,10 +5,22 @@ describe('roomLayout', () => {
   it('puts the whole scene in the window and the console under it in landscape', () => {
     const room = roomLayout('landscape');
     expect(room.window).toEqual({ x: ROOM.bezel.side, y: ROOM.bezel.top, w: SCREEN_W, h: SCREEN_H });
-    expect(room.console).toEqual({ x: 0, y: ROOM.bezel.top + SCREEN_H, w: room.w, h: ROOM.consoleH });
+    expect(room.console).toEqual({ x: 0, y: ROOM.bezel.top + SCREEN_H, w: room.w, h: ROOM.consoleH.landscape });
     expect(room.strip).toBeNull();
+    expect([room.w, room.h]).toEqual([352, 320]);
     expect(room.h).toBe(room.console.y + room.console.h);
-    expect(room.levers).toEqual({ left: { x: 20, y: 164 }, right: { x: 308, y: 164 } });
+    expect(room.leverTaps).toEqual({ left: { x: 20, y: 164, w: 24, h: 48 }, right: { x: 308, y: 164, w: 24, h: 48 } });
+  });
+
+  it('mounts the lever art on the console deck at both ends, overlapping the window edge', () => {
+    for (const orientation of ['landscape', 'portrait'] as const) {
+      const room = roomLayout(orientation);
+      expect(room.levers.left).toEqual({ x: 8, y: room.console.y - 12 });
+      expect(room.levers.right).toEqual({ x: room.w - 8 - ROOM.lever.w, y: room.console.y - 12 });
+      expect(room.levers.left.y + ROOM.lever.h).toBeLessThanOrEqual(room.console.y + room.console.h);
+    }
+    expect(roomLayout('landscape').levers.right.x).toBe(304);
+    expect(roomLayout('portrait').levers.right.x).toBe(240);
   });
 
   it('shows only the playfield and adds the lever strip in portrait', () => {
@@ -16,8 +28,10 @@ describe('roomLayout', () => {
     expect(room.window.w).toBe(PLAY_W);
     expect(room.w).toBe(PLAY_W + 2 * ROOM.bezel.side);
     expect(room.strip).toEqual({ x: 16, y: 288, w: PLAY_W, h: 56 });
+    expect([room.w, room.h]).toEqual([288, 344]);
     expect(room.h).toBe((room.strip?.y ?? 0) + (room.strip?.h ?? 0));
-    expect(room.levers).toEqual({ left: { x: 20, y: 292 }, right: { x: 244, y: 292 } });
+    expect(room.console).toEqual({ x: 0, y: 252, w: 288, h: ROOM.consoleH.portrait });
+    expect(room.leverTaps).toEqual({ left: { x: 20, y: 292, w: 24, h: 48 }, right: { x: 244, y: 292, w: 24, h: 48 } });
   });
 });
 
@@ -35,8 +49,10 @@ describe('CONSOLE_HUD', () => {
     const digitsEnd = hud.digits.x + hud.digits.pitch * hud.digits.count;
     const livesEnd = hud.lives.x + hud.lives.pitch * 2 + 14;
     expect(digitsEnd).toBeLessThanOrEqual(hud.modeLabel.x);
-    expect(hud.modeLabel.x + 24).toBeLessThanOrEqual(hud.lives.x);
-    expect(livesEnd).toBeLessThanOrEqual(hud.sound.x);
+    expect(hud.modeLabel.x + 24).toBeLessThanOrEqual(hud.sound.x);
+    // The lives sit on their own row under the score, clear of the lights.
+    expect(hud.lives.y).toBeGreaterThanOrEqual(hud.sound.y + hud.sound.h);
+    expect(livesEnd).toBeLessThanOrEqual(hud.lights.x);
     for (const orientation of ['landscape', 'portrait'] as const) {
       const c = roomLayout(orientation).console;
       expect(hud.scoreIcon.x).toBeGreaterThanOrEqual(c.x);

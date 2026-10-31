@@ -6,7 +6,7 @@ Cosmonauts climb out of a hatch high on the rocket, drop from its ledge to the f
 
 ## Play
 
-- **Left / Right arrows** or **A / D**: move the plate; the levers beside the window pull with each press. On the title screen, left starts Game A and right starts Game B.
+- **Left / Right arrows** or **A / D**: move the plate; the levers on the console deck pull with each press. On the title screen, left starts Game A and right starts Game B.
 - **Touch**: tap the left or right half of the screen. Every press moves the plate one crater, in order.
 - **T**: cycle unlocked themes (title screen). **M**: mute. On touch, tap the THEME and SOUND buttons on the title screen, or the SND / MUTE readout on the console.
 - Game A is slower. Game B starts faster and climbs higher. Each mode keeps its own high score.
@@ -33,7 +33,7 @@ For `npm run shots`, build and start the preview first: `npm run build && npm ru
 ## Stack
 
 - Vite, strict TypeScript, Canvas 2D. No game engine.
-- 320×240 internal scene, shown through the window of the operator room: a 352×288 canvas with the frame around the scene and the console with the HUD below it. Integer scaling in device pixels, nearest-neighbour, letterboxed. On a portrait screen the room is 288×344: the 256 px playfield is scaled to the width, and the levers move into a strip under the console (`src/config/layout.ts`, `src/platform/viewport.ts`).
+- 320×240 internal scene, shown through the windshield of the operator room: a 352×320 canvas with the frame around the scene and the console deck with the HUD and the levers below it. The scene is drawn with the atlas's full-bleed `background.window` plate, so the sky and the terrain reach the glass. Integer scaling in device pixels, nearest-neighbour, letterboxed; a 1080p desktop shows the room at 3×. On a portrait screen the room is 288×344: the 256 px playfield is scaled to the width, and the lever taps move into a strip at the bottom of the console (`src/config/layout.ts`, `src/platform/viewport.ts`).
 - Fixed-timestep simulation at 60 Hz, rendering once per frame.
 - Game rules are pure modules in `src/game/` with Vitest tests. `src/platform/` and `src/render/` are thin adapters.
 - Content is config: `src/config/layout.ts`, `src/config/themes.ts`, `src/config/difficulty.ts`.

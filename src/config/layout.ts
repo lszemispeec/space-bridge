@@ -66,21 +66,36 @@ export const TAP_TARGETS = {
   titleMute: { x: 164, y: 190, w: 56, h: 16 },
 } as const satisfies Record<string, Rect>;
 
-/** `hudMute` is the sound readout on the console; see `consoleHud`. */
+/** `hudMute` is the sound readout on the console; see `CONSOLE_HUD`. */
 export type TapTargetId = keyof typeof TAP_TARGETS | 'hudMute';
 
 /**
- * The operator room: the player looks at the scene through the window of
+ * The operator room: the player looks at the scene through the windshield of
  * the bridge's control room. The window frame sits outside the 320x240 scene
- * and the console under it holds the HUD, so the visible canvas is larger
- * than the scene. `bezel` is the frame thickness: struts at the sides and a
- * lintel on top. `consoleH` is the height of the console strip. The atlas
- * carries the same numbers in its `operatorRoom` table; the art test checks
- * that the two agree.
+ * and the console under it holds the HUD and the levers, so the visible
+ * canvas is larger than the scene. `bezel` is the frame thickness: struts at
+ * the sides and a lintel on top. `consoleH` is the height of the console
+ * deck per orientation; in portrait the deck also holds the lever strip.
+ * `cornerCut` is the size of the slanted upper mullions, which cover the
+ * scene's top corners where x + y < cornerCut. The atlas carries the same
+ * numbers in its `operatorRoom` table; the art test checks that the two agree.
  */
-export const ROOM = { bezel: { side: 16, top: 12 }, consoleH: 36 } as const;
+export const ROOM = {
+  bezel: { side: 16, top: 12 },
+  consoleH: { landscape: 68, portrait: 92 },
+  cornerCut: 20,
+  /** The deck-mounted lever art: 40x64 frames, their bases on the console, overlapping the window's bottom edge. */
+  lever: { w: 40, h: 64, inset: 8, overlap: 12 },
+  /** The lever tap zones keep the gutters' old 24x48 button rectangles. */
+  leverTap: { w: 24, h: 48 },
+} as const;
+
+/** The name of the atlas plate drawn through the window: it fills the glass edge to edge. */
+export const ROOM_BACKGROUND = 'background.window';
 
 export type Orientation = 'landscape' | 'portrait';
+
+export type PlateSide = 'left' | 'right';
 
 /** Where the parts of the room sit on the visible canvas, in room pixels. */
 export interface RoomLayout {
@@ -89,33 +104,40 @@ export interface RoomLayout {
   h: number;
   /** The part of the scene that shows through the window: the whole frame in landscape, the playfield in portrait. */
   window: Rect;
-  /** The console strip under the window, with the HUD readouts. */
+  /** The console deck under the window, with the HUD readouts and the levers. */
   console: Rect;
-  /** Top-left corners of the two levers, 24x48 each. */
+  /** Top-left corners of the two lever frames on the deck. Art only; the taps are `leverTaps`. */
   levers: Record<PlateSide, { x: number; y: number }>;
-  /** Portrait only: the strip under the console that holds the levers. The room art draws it. */
+  /** The lever tap zones: beside the window in landscape, in the strip in portrait. */
+  leverTaps: Record<PlateSide, Rect>;
+  /** Portrait only: the strip at the bottom of the console that holds the lever taps. The room art draws it. */
   strip: Rect | null;
 }
 
-export type PlateSide = 'left' | 'right';
-
 export function roomLayout(orientation: Orientation): RoomLayout {
   const { side, top } = ROOM.bezel;
+  const consoleH = ROOM.consoleH[orientation];
   const sceneW = orientation === 'landscape' ? SCREEN_W : PLAY_W;
   const w = sceneW + 2 * side;
   const consoleY = top + SCREEN_H;
-  const strip = orientation === 'portrait' ? { x: side, y: consoleY + ROOM.consoleH, w: sceneW, h: PORTRAIT_STRIP.h } : null;
-  // The levers keep their place in the gutters: beside the window in landscape, in the strip in portrait.
-  const leverY = strip ? strip.y + SIDE_BUTTONS.left.y - PORTRAIT_STRIP.y : top + SIDE_BUTTONS.left.y;
+  const h = consoleY + consoleH;
+  const strip = orientation === 'portrait' ? { x: side, y: h - PORTRAIT_STRIP.h, w: sceneW, h: PORTRAIT_STRIP.h } : null;
+  const tapY = strip ? strip.y + SIDE_BUTTONS.left.y - PORTRAIT_STRIP.y : top + SIDE_BUTTONS.left.y;
+  const leverY = consoleY - ROOM.lever.overlap;
+  const tap = ROOM.leverTap;
   return {
     orientation,
     w,
-    h: consoleY + ROOM.consoleH + (strip?.h ?? 0),
+    h,
     window: { x: side, y: top, w: sceneW, h: SCREEN_H },
-    console: { x: 0, y: consoleY, w, h: ROOM.consoleH },
+    console: { x: 0, y: consoleY, w, h: consoleH },
     levers: {
-      left: { x: side + SIDE_BUTTONS.left.x, y: leverY },
-      right: { x: side + sceneW - GUTTER_W + SIDE_BUTTONS.left.x, y: leverY },
+      left: { x: ROOM.lever.inset, y: leverY },
+      right: { x: w - ROOM.lever.inset - ROOM.lever.w, y: leverY },
+    },
+    leverTaps: {
+      left: { x: side + SIDE_BUTTONS.left.x, y: tapY, ...tap },
+      right: { x: side + sceneW - GUTTER_W + SIDE_BUTTONS.left.x, y: tapY, ...tap },
     },
     strip,
   };
@@ -129,16 +151,17 @@ export function frameToRoom(r: Rect, room: RoomLayout): Rect {
 
 /**
  * The HUD readouts on the console, in room pixels. The same in both
- * orientations: the row fits the narrower portrait console. `sound` is the
- * `hudMute` tap target; `lights` is where the console light loop blinks.
+ * orientations: the score row and the lives row fit the narrower portrait
+ * console. `sound` is the `hudMute` tap target; `lights` is where the console
+ * light loop blinks.
  */
 export const CONSOLE_HUD = {
-  scoreIcon: { x: 20, y: 262 },
-  digits: { x: 36, y: 262, pitch: 8, count: 4 },
-  modeLabel: { x: 88, y: 266 },
-  lives: { x: 148, y: 260, pitch: 20 },
-  sound: { x: 224, y: 260, w: 36, h: 16 },
-  lights: { x: 108, y: 274 },
+  scoreIcon: { x: 56, y: 262 },
+  digits: { x: 72, y: 262, pitch: 8, count: 4 },
+  modeLabel: { x: 112, y: 266 },
+  lives: { x: 80, y: 290, pitch: 20 },
+  sound: { x: 188, y: 260, w: 36, h: 16 },
+  lights: { x: 152, y: 298 },
 } as const;
 
 /**

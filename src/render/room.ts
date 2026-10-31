@@ -1,8 +1,10 @@
 /**
- * The operator room around the scene: the window frame, the levers, the
- * console with the HUD readouts, and the blinking console lights. Drawn on
- * the page canvas after the scene is in the window, in the contract's order:
- * room plate, levers, readouts, lights.
+ * The operator room around the scene: the windshield frame, the levers on
+ * the console deck, the HUD readouts, and the blinking console lights. Drawn
+ * on the page canvas after the scene is in the window, in the contract's
+ * order: room plate, levers, readouts, lights. The scene itself is drawn with
+ * the atlas's `operatorRoom.background` plate, which fills the glass edge to
+ * edge; the old `background` plate would show its HUD band and gutters.
  */
 import { DIFFICULTY } from '../config/difficulty';
 import { CONSOLE_HUD, type PlateSide, type Rect, type RoomLayout } from '../config/layout';

@@ -56,10 +56,14 @@ export interface OperatorLayout {
   scene: { sx: number; sy: number; w: number; h: number; dx: number; dy: number };
   console: Placement & { w: number; h: number };
   levers: { l: Placement; r: Placement };
+  /** Input geometry stays separate from the larger deck-mounted art. */
+  leverTapZones: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
+  windowCornerCut: number;
   controlStrip?: Placement & { w: number; h: number };
 }
 
 export interface OperatorRoom {
+  background: string;
   landscape: OperatorLayout;
   portrait: OperatorLayout;
   hud: {
@@ -147,6 +151,7 @@ export const REQUIRED_ANIMATIONS = [
 
 /** Single frames the game draws by name. */
 export const REQUIRED_FRAMES = [
+  'background.window',
   'background',
   'crater.0',
   'crater.1',

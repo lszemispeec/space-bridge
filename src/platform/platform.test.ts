@@ -14,7 +14,7 @@ const WIN = ROOM_L.window;
 
 describe('CANVAS_SIZE', () => {
   it('is the operator room: the scene in the window and the console below, plus the lever strip in portrait', () => {
-    expect(CANVAS_SIZE.landscape).toEqual({ w: 352, h: 288 });
+    expect(CANVAS_SIZE.landscape).toEqual({ w: 352, h: 320 });
     expect(CANVAS_SIZE.portrait).toEqual({ w: 288, h: 344 });
     expect(WIN).toEqual({ x: 16, y: 12, w: SCREEN_W, h: SCREEN_H });
     expect(ROOM_P.window).toEqual({ x: 16, y: 12, w: PLAY_W, h: SCREEN_H });
@@ -25,11 +25,11 @@ describe('CANVAS_SIZE', () => {
 describe('fitScale', () => {
   const { w, h } = CANVAS_SIZE.landscape;
   it('uses the largest whole multiple that fits', () => {
-    expect(fitScale(1408, 1152, 1, w, h)).toBe(4);
+    expect(fitScale(1408, 1280, 1, w, h)).toBe(4);
     expect(fitScale(1920, 1080, 1, w, h)).toBe(3);
     expect(fitScale(1280, 960, 1, w, h)).toBe(3);
     expect(fitScale(720, 1000, 1, w, h)).toBe(2);
-    expect(fitScale(1000, 580, 1, w, h)).toBe(2);
+    expect(fitScale(1000, 660, 1, w, h)).toBe(2);
   });
 
   it('never goes below 1', () => {
@@ -37,16 +37,17 @@ describe('fitScale', () => {
   });
 
   it('counts device pixels on high-density screens', () => {
-    expect(fitScale(844, 390, 3, w, h)).toBe(4);
+    // A 390 CSS px tall landscape phone has 1170 device px: 3x of the 320 px room, not 4x.
+    expect(fitScale(844, 390, 3, w, h)).toBe(3);
     expect(fitScale(390, 844, 3, CANVAS_SIZE.portrait.w, CANVAS_SIZE.portrait.h)).toBe(4);
   });
 });
 
 describe('chooseViewport', () => {
   it('keeps the gutters at the sides on desktop and landscape phones', () => {
-    expect(landscape).toEqual({ orientation: 'landscape', scale: 3, width: 352, height: 288, cssW: 1056, cssH: 864 });
-    expect(chooseViewport(1408, 1152)).toMatchObject({ orientation: 'landscape', scale: 4, cssW: 1408, cssH: 1152 });
-    expect(chooseViewport(844, 390, 3)).toMatchObject({ orientation: 'landscape', scale: 4, cssW: 1408 / 3, cssH: 384 });
+    expect(landscape).toEqual({ orientation: 'landscape', scale: 3, width: 352, height: 320, cssW: 1056, cssH: 960 });
+    expect(chooseViewport(1408, 1280)).toMatchObject({ orientation: 'landscape', scale: 4, cssW: 1408, cssH: 1280 });
+    expect(chooseViewport(844, 390, 3)).toMatchObject({ orientation: 'landscape', scale: 3, cssW: 352, cssH: 320 });
     expect(chooseViewport(1000, 1000)).toMatchObject({ orientation: 'landscape', scale: 2 });
   });
 
@@ -100,7 +101,7 @@ describe('sideForPointer', () => {
 });
 
 describe('toRoomPoint', () => {
-  const box = { left: 100, top: 50, width: 1056, height: 864 };
+  const box = { left: 100, top: 50, width: 1056, height: 960 };
 
   it('maps page pixels to room pixels', () => {
     expect(toRoomPoint(100, 50, box, landscape)).toEqual({ x: 0, y: 0 });
@@ -110,7 +111,7 @@ describe('toRoomPoint', () => {
   it('returns null outside the canvas', () => {
     expect(toRoomPoint(50, 60, box, landscape)).toBeNull();
     expect(toRoomPoint(1156, 60, box, landscape)).toBeNull();
-    expect(toRoomPoint(200, 914, box, landscape)).toBeNull();
+    expect(toRoomPoint(200, 1010, box, landscape)).toBeNull();
     expect(toRoomPoint(10, 10, { ...box, width: 0 }, landscape)).toBeNull();
   });
 
