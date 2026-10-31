@@ -49,3 +49,12 @@ All shipped colours remain in the same 16-colour theme palettes.
 
 Exact built-in imagegen edit prompt:
 Edit this 4x4 cosmonaut animation sheet for a tiny pixel-art game. Preserve exact row-major pose meanings and right-facing orientation: row1 emerge0 narrow, emerge1 walking, emerge2, crouch; row2 takeoff stretched upright, rising airborne legs back, apex tucked, descending legs forward; row3 landing squash, landing recovery, falling arms up, tumbling sideways; row4 falling tucked, boarding step0, boarding step1, idle. ONE astronaut per cell. Keep recognizable ivory helmet, dark visor, backpack and tiny coral equipment patch. CRITICAL improve visibility: make clean stocky compact silhouettes, much larger solid IVORY body areas, continuous ONE logical pixel dark pine outline around entire silhouette. Aim logical actor 12-16px wide by18-20px tall, shorter16px squash. Logical cells24x24, each enlarged about10x, same centre and foot baseline. Output square1024x1024, strict4x4 equal256x256cells with generous transparent separation. Genuine transparent background, no checkerboard, no black background, no text or grid. Only six flat colours: outline/visor #173B3A, shadow #5E8D7A, suit #FFFAE8, midtone #D1DCC0, accent #C8493B, glass reflection #9BB8B7. One uniform pixel grid; no gradients, no blur, no soft edges, no scattered pixels. Helmet and body must read at native20px height. Keep every pose separated and centred within its cell; do not merge frames or add scenery.
+
+Revision 6: native operator-room art.
+Levers, window surrounds, console lights and circular eyes are authored as
+integer pixel shapes in assets/tools/export-operator.mjs. No bitmap rotation
+or AI raster generation is used for these code-native assets. Polar ground
+poses retain the accepted silhouettes in explicit indexed ink maps in
+assets/polar-suit-pixels.json; airborne maps retain their independent poses
+and use darker suit / lighter visor palette indices. Captured victims use
+those same native airborne pixels. Every theme retains its original palette.

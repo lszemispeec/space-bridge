@@ -147,8 +147,85 @@ states; renderer/input integration remains with Forge.
 ## Required single frames
 
 - `background`: the full 320×240 scene without sprites, craters, plate or HUD text. The 32 px gutters on both sides are part of it.
+- `background.window`: full-bleed 320×240 scenery for the operator room, without the old HUD band or gutters.
 - `hud.digit.0` … `hud.digit.9`: all the same size, about 8×10.
 - `crater.0` … `crater.3` and `crater.front.0` … `.3`: see the creature contract below.
+
+## Operator room and lever extension
+
+The simulation and its source scene remain **320×240**. All room/lever frames
+use top-left anchor **(0,0)** and the same geometry in all themes. Do not stretch
+the scene. This revision supersedes the first room draft's box-shaped window,
+24×48 lever cells and 352×288 landscape output.
+
+Use **`operatorRoom.background` (`background.window`)** instead of `background`
+when rendering the room. It extends the old x0…31 / x288…319 gutters and
+y0…29 HUD band with scenery. The accepted centre **x32…287 / y30…239** is
+pixel-identical to the old plate. Vehicle, crater and actor coordinates do not
+change. `background` remains untouched for legacy renderers; drawing it in the
+new room would reintroduce the rejected dark band.
+
+| Frame / animation | Cell | Sequence / timing | Loop |
+|---|---|---|---|
+| `frame.room.landscape.0` / `frame.room.landscape` | 352×320 | one frame, 1000ms | yes |
+| `frame.room.portrait.0` / `frame.room.portrait` | 288×344 | one frame, 1000ms | yes |
+| `frame.lights.0`…`.3` / `frame.lights` | 20×6 | four frames, 300ms each | yes |
+| `ui.lever.l.idle.0`, `ui.lever.r.idle.0` / corresponding idle animations | 40×64 | one frame, 1000ms | yes |
+| `ui.lever.l.pull.0`…`.3`, `ui.lever.r.pull.0`…`.3` / corresponding pull animations | 40×64 | four frames, 50ms each | no |
+| `ui.lever.l.release`, `ui.lever.r.release` (animations only) | 40×64 | pull `.2`, `.1`, `.0`, then idle `.0` | no |
+
+Hold pull `.3` while pressed or queued. Release returns through the authored
+poses; the idle frame's 1000ms is a static terminal hold, not a required delay.
+The engine may compress the 50ms transitions to match plate travel. Left and
+right handles lean in their respective directions. Existing `button.*` frames
+remain available for compatibility; replace them with the levers, not both.
+
+### Layout coordinates (all native pixels)
+
+Every atlas supplies `operatorRoom` metadata with these values. The screen
+coordinates below refer to the **expanded output**, not simulation positions.
+
+| Item | Landscape | Portrait |
+|---|---|---|
+| Output size | 352×320 | 288×344 |
+| Source scene crop | (0,0,320,240) | (32,0,256,240) |
+| Scene destination | (16,12) | (16,12) |
+| Console | (0,252,352,68) | (0,252,288,92) |
+| Left lever ART top-left | (8,240) | (8,240) |
+| Right lever ART top-left | (304,240) | (240,240) |
+| Left lever TAP zone | (20,164,24,48) | (20,292,24,48) |
+| Right lever TAP zone | (308,164,24,48) | (244,292,24,48) |
+| Existing portrait input strip | — | (16,288,256,56) |
+
+Landscape shows the full 320×240 plate; portrait keeps the existing 256×240
+centre crop. Both now show sky to the top edge. Two **20px upper chamfers**
+(`windowCornerCut`) form slanted mullions. Their pixels satisfy x+y<20 in each
+upper window corner. Rivets sit inside the mullions. Ten pale diagonal glint
+pixels enter the glass near its upper-left corner, at local window coordinates
+(26+i,8+i), i=0…5 and (24+i,13+i), i=0…3. The rest of the glass is transparent.
+These details stay above all flight paths. Idle handles can overlap the bottom
+window edge slightly; their bases are on the deck.
+
+**Art and input are separate:** `levers` are drawing positions;
+`leverTapZones` preserve the preceding draft's exact input rectangles. Do not
+derive hit areas from the enlarged 40×64 sprites or relocate them to the deck.
+Keep the existing portrait strip input handling and the 44 CSS pixel minimum
+touch target. Keep integer output scaling. Title theme/sound buttons retain
+their scene positions. Only the HUD sound target follows its readout below.
+
+Both layouts use the same console readout positions: score icon **(56,262)**,
+four digits **(72,262)** with pitch 8, mode label **(112,266)**, life icons
+**(80,290)** with pitch 20, and the existing 36×16 `ui.hud_sound.*` at
+**(188,260)**. Draw `frame.lights` at **(152,298)**. Room art provides the panel
+recesses; the renderer supplies these readouts and removes the old sky HUD.
+Draw the full-bleed scene, room, levers, readouts, lights. Do not copy old gutter
+or arrow-button rasters into the room. Rocket and rover frames are unchanged.
+
+Eyes keep their existing names, cells, anchors and durations. Their whites are
+round stepped circles with moving pupils; the blink compresses that circle,
+and the hidden terminal frame stays transparent. Polar suits become dark teal
+with pale visors across every pose, life icon and captured victim. No actor
+silhouette, animation timing or collision geometry changes.
 
 ## Elevated hatch and crater creatures
 

@@ -30,7 +30,9 @@ describe('production art handoff', () => {
           expect([frame.ax, frame.ay], name).toEqual([0, 0]);
         }
         // PR #4 TAP_TARGETS at 3621b0d; independent of gameplay integration.
-        if (name.startsWith('ui.')) {
+        if (name.startsWith('ui.lever.')) {
+          expect([frame.w, frame.h], name).toEqual([40, 64]);
+        } else if (name.startsWith('ui.')) {
           expect([frame.w, frame.h], name).toEqual([name.startsWith('ui.hud_sound.') ? 36 : 56, 16]);
         }
       }
@@ -47,6 +49,7 @@ describe('production art handoff', () => {
           'plate.move_right', 'plate.dip', 'rocket.door_open', 'rover.door_open',
           'rocket.hatch.opening', 'rocket.hatch.closing', 'crater.eyes.peek',
           'crater.eyes.blink', 'crater.eyes.hide', 'crater.tentacle.reach', 'crater.tentacle.grab',
+          'ui.lever.l.pull', 'ui.lever.l.release', 'ui.lever.r.pull', 'ui.lever.r.release',
         ]);
         expect(animation.loop, name).toBe(!oneShot.has(name));
       }
@@ -61,6 +64,29 @@ describe('production art handoff', () => {
         if (name.startsWith('crater.eyes.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 16, 12, 12]);
         if (name.startsWith('crater.tentacle.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 32, 12, 28]);
       }
+      for (const side of ['l', 'r'] as const) {
+        const pull = atlas.animations[`ui.lever.${side}.pull`].frames;
+        expect(pull).toHaveLength(4);
+        expect(atlas.animations[`ui.lever.${side}.release`].frames).toEqual([
+          ...pull.slice(0, 3).reverse(), `ui.lever.${side}.idle.0`,
+        ]);
+      }
+      for (const orientation of ['landscape', 'portrait'] as const) {
+        const layout = atlas.operatorRoom[orientation];
+        const room = atlas.frames[layout.frame as 'frame.room.landscape.0' | 'frame.room.portrait.0'];
+        expect([room.w, room.h, room.ax, room.ay]).toEqual([layout.size.w, layout.size.h, 0, 0]);
+        expect(layout.scene.dy + layout.scene.h).toBe(layout.console.y);
+        expect(layout.scene.w + 32).toBe(layout.size.w);
+        expect(layout.scene.h).toBe(240);
+        expect(layout.scene.dx).toBe(16);
+        expect(layout.windowCornerCut).toBe(20);
+        expect(layout.leverTapZones).toEqual(orientation === 'landscape'
+          ? { l: { x: 20, y: 164, w: 24, h: 48 }, r: { x: 308, y: 164, w: 24, h: 48 } }
+          : { l: { x: 20, y: 292, w: 24, h: 48 }, r: { x: 244, y: 292, w: 24, h: 48 } });
+        expect(layout.levers.l.y).toBe(240);
+        expect(layout.levers.r.y).toBe(240);
+      }
+      expect(atlas.operatorRoom.background).toBe('background.window');
     });
   }
 
@@ -74,6 +100,7 @@ describe('production art handoff', () => {
       expect(atlas.animations).toEqual(polar.animations);
       expect(atlas.placements).toEqual(polar.placements);
       expect(atlas.sockets).toEqual(polar.sockets);
+      expect(atlas.operatorRoom).toEqual(polar.operatorRoom);
     }
   });
 });

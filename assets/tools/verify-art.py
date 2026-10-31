@@ -114,6 +114,68 @@ def audit(theme):
             pixels.append(crops[name].tobytes())
         check(len(set(pixels)) == len(states), f'UI states must be visibly distinct: {control}')
 
+    # The full-bleed window plate preserves the accepted centre and removes old UI bands.
+    room = atlas['operatorRoom']
+    plate = crops[room['background']]
+    check(plate.size == (320,240) and set(plate.getchannel('A').getdata()) == {255}, 'opaque full-bleed plate')
+    check(plate.crop((32,30,288,240)).tobytes() == crops['background'].crop((32,30,288,240)).tobytes(), 'accepted scenery centre preserved')
+    for x0,x1 in [(0,32),(288,320)]:
+        check(len(set(plate.crop((x0,30,x1,240)).getdata())) > 3, 'terrain in former gutter')
+        for y in range(130,190):
+            check(all(plate.getpixel((x,y)) == plate.getpixel((32 if x<32 else 287,y)) for x in range(x0,x1)), 'continuous ground through former gutter')
+    if theme != 'neon-orbit':
+        sky = tuple(bytes.fromhex(atlas['meta']['palette'][8 if theme=='polar-signal' else 11][1:]))
+        check(set(plate.crop((0,0,320,30)).getdata()) == {(*sky,255)}, 'sky replaces old HUD band')
+    for orientation, size in [('landscape', (352, 320)), ('portrait', (288, 344))]:
+        layout = room[orientation]
+        surround = crops[layout['frame']]
+        check(surround.size == size, f'{orientation} outer dimensions')
+        scene = layout['scene']
+        window = (scene['dx'], scene['dy'], scene['dx']+scene['w'], scene['dy']+scene['h'])
+        # The only permitted intrusions are the two new upper chamfers and ten glint pixels.
+        glass = surround.crop(window)
+        allowed = {(x,y) for y in range(20) for i in range(20-y) for x in (i,glass.width-1-i)}
+        allowed.update((26+i,8+i) for i in range(6))
+        allowed.update((24+i,13+i) for i in range(4))
+        visible = {(x,y) for y in range(glass.height) for x in range(glass.width) if glass.getpixel((x,y))[3]}
+        check(visible <= allowed, f'{orientation} clear gameplay window outside chamfers/glints')
+        check((0,0) in visible and (19,0) in visible, 'angled upper mullion')
+        check(scene['dy']+scene['h'] == layout['console']['y'], 'console below scene')
+        taps = layout['leverTapZones']
+        check(taps == ({'l':{'x':20,'y':164,'w':24,'h':48},'r':{'x':308,'y':164,'w':24,'h':48}} if orientation=='landscape' else {'l':{'x':20,'y':292,'w':24,'h':48},'r':{'x':244,'y':292,'w':24,'h':48}}), 'tap zones frozen')
+        check(layout['levers']['l']['y'] == layout['levers']['r']['y'] == 240, 'deck-mounted lever art')
+        small = Image.open(directory / f'previews/operator-{orientation}-1x.png').convert('RGBA')
+        big = Image.open(directory / f'previews/operator-{orientation}-4x.png').convert('RGBA')
+        check(small.size == size, 'operator preview size')
+        check(small.resize((size[0]*4,size[1]*4), Image.Resampling.NEAREST).tobytes() == big.tobytes(), 'operator exact 4x')
+        snd = room['hud']['sound']
+        check(small.crop((snd['x'],snd['y'],snd['x']+snd['w'],snd['y']+snd['h'])).tobytes() == crops['ui.hud_sound.idle.0'].tobytes(), 'console sound target')
+    for side in ('l', 'r'):
+        frames = [f'ui.lever.{side}.idle.0'] + atlas['animations'][f'ui.lever.{side}.pull']['frames']
+        check(len(frames) == 5 and len({crops[n].tobytes() for n in frames}) == 5, 'five distinct lever poses')
+        for name in frames:
+            f = atlas['frames'][name]
+            check((f['w'],f['h'],f['ax'],f['ay']) == (40,64,0,0), 'larger native lever art')
+    # Full-open eyes have circular 3/5/5/5/3 whites, including their dark pupil.
+    eye = crops['crater.eyes.peek.2']
+    eye_white = tuple(bytes.fromhex(atlas['meta']['palette'][15 if theme == 'neon-orbit' else 8][1:]))
+    for cx in (8,16):
+        for y,width in enumerate((3,5,5,5,3), start=8):
+            for x in range(cx-width//2,cx+width//2+1):
+                check(eye.getpixel((x,y))[:3] in (eye_white,dark), 'round eye silhouette')
+    if theme == 'polar-signal':
+        suit = crops['cosmonaut.air.spin.0']
+        check(suit.getpixel((9,8))[:3] == tuple(bytes.fromhex('3F7068')), 'dark Polar suit')
+        check(suit.getpixel((10,5))[:3] == tuple(bytes.fromhex('FFFAE8')), 'light Polar visor')
+    lever_loop = Image.open(directory / 'previews/levers-cycle-4x.gif')
+    check(lever_loop.n_frames == 9 and lever_loop.info.get('loop') == 0, 'complete lever cycle')
+    cycle = []
+    for frame, duration in zip(ImageSequence.Iterator(lever_loop), [300,50,50,50,250,50,50,50,100]):
+        check(frame.size == (416,288) and frame.info['duration'] == duration, 'lever cycle geometry/timing')
+        check(set(frame.convert('RGB').getdata()) <= palette, 'lever cycle palette')
+        cycle.append(frame.convert('RGBA').tobytes())
+    check(cycle == list(reversed(cycle)), 'lever release returns through authored poses')
+
     # Full-screen previews must be an exact integer enlargement, with no new colours.
     native = Image.open(directory / "previews/screen-1x.png").convert("RGBA")
     large = Image.open(directory / "previews/screen-4x.png").convert("RGBA")
@@ -129,7 +191,9 @@ def audit(theme):
     air_crop = Image.open(directory / 'previews/cosmonaut-air-1x.png').convert('RGBA')
     check(air_crop.tobytes() == native.crop((122, 58, 170, 122)).tobytes(), 'unscaled airborne crop')
     for file in (directory / "previews").glob("*.png"):
-        for pixel in Image.open(file).convert("RGBA").getdata():
+        colours = Image.open(file).convert("RGBA").getcolors(maxcolors=256)
+        check(colours is not None, f"preview colour count: {file.name}")
+        for _, pixel in colours:
             check(pixel[3] in (0, 255), f"preview alpha: {file.name}")
             check(not pixel[3] or pixel[:3] in palette, f"preview palette: {file.name}")
     strips = json.loads((directory / "previews/strips.json").read_text())
@@ -142,7 +206,7 @@ def audit(theme):
             check(strip.crop((x, 0, x+frame.width, frame.height)).tobytes() == frame.tobytes(), f"strip source pixels: {name}")
             x += frame.width
         check(strip.width == x, "strip width")
-        if entry['animation'].startswith(('cosmonaut.air.', 'crater.eyes.', 'crater.tentacle.')):
+        if entry['animation'].startswith(('cosmonaut.air.', 'crater.eyes.', 'crater.tentacle.', 'ui.lever.', 'frame.lights')):
             large_strip = Image.open(directory / 'previews' / entry['file'].replace('.png', '-4x.png')).convert('RGBA')
             check(strip.resize((strip.width * 4, strip.height * 4), Image.Resampling.NEAREST).tobytes() == large_strip.tobytes(), 'air strip exact 4x')
             loop = Image.open(directory / 'previews' / f"{entry['animation']}-4x.gif")
