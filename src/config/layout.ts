@@ -87,8 +87,8 @@ export const ROOM = {
   bezel: { side: 16, top: 12 },
   consoleH: { landscape: 68, portrait: 92 },
   cornerCut: 20,
-  /** The deck-mounted lever art: 40x64 frames, their bases on the console, overlapping the window's bottom edge. */
-  lever: { w: 40, h: 64, inset: 8, overlap: 12 },
+  /** The deck-mounted lever art: 24x40 frames, wholly on the console, `drop` pixels below the window's bottom edge. */
+  lever: { w: 24, h: 40, inset: 8, drop: 18 },
   /** The lever tap zones keep the gutters' old 24x48 button rectangles. */
   leverTap: { w: 24, h: 48 },
 } as const;
@@ -126,7 +126,7 @@ export function roomLayout(orientation: Orientation): RoomLayout {
   const h = consoleY + consoleH;
   const strip = orientation === 'portrait' ? { x: side, y: h - PORTRAIT_STRIP.h, w: sceneW, h: PORTRAIT_STRIP.h } : null;
   const tapY = strip ? strip.y + SIDE_BUTTONS.left.y - PORTRAIT_STRIP.y : top + SIDE_BUTTONS.left.y;
-  const leverY = consoleY - ROOM.lever.overlap;
+  const leverY = consoleY + ROOM.lever.drop;
   const tap = ROOM.leverTap;
   return {
     orientation,
@@ -155,25 +155,27 @@ export function frameToRoom(r: Rect, room: RoomLayout): Rect {
 /**
  * The HUD readouts on the console, in room pixels. The same in both
  * orientations: the score row and the lives row fit the narrower portrait
- * console. `sound` is the `hudMute` tap target; `lights` is where the console
- * light loop blinks.
+ * console. The room art draws a recess around each readout; the score and
+ * the mode label share one. `sound` is the `hudMute` tap target; `lights` is
+ * the status lamp, a 6x6 loop next to the lives. The atlas's `operatorRoom.hud`
+ * table carries the same numbers.
  */
 export const CONSOLE_HUD = {
-  scoreIcon: { x: 56, y: 262 },
-  digits: { x: 72, y: 262, pitch: 8, count: 4 },
-  modeLabel: { x: 112, y: 266 },
-  lives: { x: 80, y: 290, pitch: 20 },
-  sound: { x: 188, y: 260, w: 36, h: 16 },
-  lights: { x: 152, y: 298 },
+  scoreIcon: { x: 52, y: 265 },
+  digits: { x: 68, y: 265, pitch: 8, count: 4 },
+  modeLabel: { x: 116, y: 268 },
+  lives: { x: 52, y: 289, pitch: 20 },
+  sound: { x: 166, y: 263, w: 36, h: 16 },
+  lights: { x: 122, y: 288 },
 } as const;
 
 /**
- * The MENU button on the console, in room pixels, right of the sound
- * readout. The renderer draws it with the bitmap font in the console style;
- * it is not part of the atlas's `hud` table. It opens the pause menu, and
- * closes it while the menu is open.
+ * The MENU button on the console, in room pixels, in its own recess right of
+ * the sound readout. The renderer draws it with the bitmap font in the
+ * console style; the atlas's `operatorRoom.menu` carries the same rectangle.
+ * It opens the pause menu, and closes it while the menu is open.
  */
-export const CONSOLE_MENU_BUTTON: Rect = { x: 232, y: 260, w: 36, h: 16 };
+export const CONSOLE_MENU_BUTTON: Rect = { x: 210, y: 263, w: 36, h: 16 };
 
 /**
  * The title's button row: both buttons and the gap between them. A tap in

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CONSOLE_HUD, frameToRoom, PLAY_W, PLAY_X0, ROOM, roomLayout, SCREEN_H, SCREEN_W, TAP_TARGETS } from './layout';
+import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, frameToRoom, PLAY_W, PLAY_X0, ROOM, roomLayout, SCREEN_H, SCREEN_W, TAP_TARGETS } from './layout';
 
 describe('roomLayout', () => {
   it('puts the whole scene in the window and the console under it in landscape', () => {
@@ -12,15 +12,16 @@ describe('roomLayout', () => {
     expect(room.leverTaps).toEqual({ left: { x: 20, y: 164, w: 24, h: 48 }, right: { x: 308, y: 164, w: 24, h: 48 } });
   });
 
-  it('mounts the lever art on the console deck at both ends, overlapping the window edge', () => {
+  it('mounts the lever art wholly on the console deck at both ends', () => {
     for (const orientation of ['landscape', 'portrait'] as const) {
       const room = roomLayout(orientation);
-      expect(room.levers.left).toEqual({ x: 8, y: room.console.y - 12 });
-      expect(room.levers.right).toEqual({ x: room.w - 8 - ROOM.lever.w, y: room.console.y - 12 });
+      expect(room.levers.left).toEqual({ x: 8, y: 270 });
+      expect(room.levers.right).toEqual({ x: room.w - 8 - ROOM.lever.w, y: 270 });
+      expect(room.levers.left.y).toBeGreaterThanOrEqual(room.console.y);
       expect(room.levers.left.y + ROOM.lever.h).toBeLessThanOrEqual(room.console.y + room.console.h);
     }
-    expect(roomLayout('landscape').levers.right.x).toBe(304);
-    expect(roomLayout('portrait').levers.right.x).toBe(240);
+    expect(roomLayout('landscape').levers.right.x).toBe(320);
+    expect(roomLayout('portrait').levers.right.x).toBe(256);
   });
 
   it('shows only the playfield and adds the lever strip in portrait', () => {
@@ -62,6 +63,17 @@ describe('CONSOLE_HUD', () => {
       }
       expect(hud.sound.y).toBeGreaterThanOrEqual(c.y);
       expect(hud.lights.y).toBeGreaterThanOrEqual(c.y);
+    }
+  });
+
+  it('keeps the MENU button clear of the sound readout and of the right lever in both orientations', () => {
+    const menu = CONSOLE_MENU_BUTTON;
+    expect(menu.x).toBeGreaterThanOrEqual(CONSOLE_HUD.sound.x + CONSOLE_HUD.sound.w + 4);
+    for (const orientation of ['landscape', 'portrait'] as const) {
+      const room = roomLayout(orientation);
+      expect(menu.y).toBeGreaterThanOrEqual(room.console.y);
+      expect(menu.y + menu.h).toBeLessThanOrEqual(room.console.y + room.console.h);
+      expect(menu.x + menu.w + 4).toBeLessThanOrEqual(room.levers.right.x);
     }
   });
 });

@@ -151,39 +151,34 @@ states; renderer/input integration remains with Forge.
 - `hud.digit.0` … `hud.digit.9`: all the same size, about 8×10.
 - `crater.0` … `crater.3` and `crater.front.0` … `.3`: see the creature contract below.
 
-## Operator room and lever extension
+## Operator room and lever extension — revision 9
 
-The simulation and its source scene remain **320×240**. All room/lever frames
-use top-left anchor **(0,0)** and the same geometry in all themes. Do not stretch
-the scene. This revision supersedes the first room draft's box-shaped window,
-24×48 lever cells and 352×288 landscape output.
-
-Use **`operatorRoom.background` (`background.window`)** instead of `background`
-when rendering the room. It extends the old x0…31 / x288…319 gutters and
-y0…29 HUD band with scenery. The accepted centre **x32…287 / y30…239** is
-pixel-identical to the old plate. Vehicle, crater and actor coordinates do not
-change. `background` remains untouched for legacy renderers; drawing it in the
-new room would reintroduce the rejected dark band.
+Contract drafted before art export. This art handoff requires the separate
+renderer integration: replace the old room constants, sound/menu targets and
+lever timing with this table. Pixel owns assets; Forge owns runtime changes.
+The simulation remains **320×240**. Room and lever anchors are **(0,0)**.
+All three themes share frame names, rectangles, anchors, timing and metadata.
+Use `operatorRoom.background` (`background.window`) through the glass.
+Scenery, actors, vehicles, sockets and all gameplay geometry are unchanged.
 
 | Frame / animation | Cell | Sequence / timing | Loop |
 |---|---|---|---|
 | `frame.room.landscape.0` / `frame.room.landscape` | 352×320 | one frame, 1000ms | yes |
 | `frame.room.portrait.0` / `frame.room.portrait` | 288×344 | one frame, 1000ms | yes |
-| `frame.lights.0`…`.3` / `frame.lights` | 20×6 | four frames, 300ms each | yes |
-| `ui.lever.l.idle.0`, `ui.lever.r.idle.0` / corresponding idle animations | 40×64 | one frame, 1000ms | yes |
-| `ui.lever.l.pull.0`…`.3`, `ui.lever.r.pull.0`…`.3` / corresponding pull animations | 40×64 | four frames, 50ms each | no |
-| `ui.lever.l.release`, `ui.lever.r.release` (animations only) | 40×64 | pull `.2`, `.1`, `.0`, then idle `.0` | no |
+| `frame.lights.0`…`.3` / `frame.lights` | 6×6 | one lamp, four brightness phases, 600ms each | yes |
+| `ui.lever.l.idle.0`, `ui.lever.r.idle.0` | 24×40 | one frame, 1000ms static hold | yes |
+| `ui.lever.l.pull.0`…`.1`, `ui.lever.r.pull.0`…`.1` | 24×40 | two frames, 50ms each | no |
+| `ui.lever.l.release`, `ui.lever.r.release` (animations only) | 24×40 | pull `.0`, then idle `.0` | no |
 
-Hold pull `.3` while pressed or queued. Release returns through the authored
-poses; the idle frame's 1000ms is a static terminal hold, not a required delay.
-The engine may compress the 50ms transitions to match plate travel. Left and
-right handles lean in their respective directions. Existing `button.*` frames
-remain available for compatibility; replace them with the levers, not both.
+Hold pull `.1` while pressed. Release returns through the intermediate pose.
+Idle's 1000ms is a terminal hold, not a required return delay. The engine owns
+snappy release timing. Removed pull `.2`/`.3` frames must not be indexed by
+number in code; use the animation arrays. The fixed pivot is **(12,30)**;
+shaft endpoints are **(12,12)** idle, **(±3+12,12)** intermediate, and
+**(±6+12,12)** pulled: a **18.4°** swing. Left pulls left; right pulls right.
+There is no raster rotation, scale animation or base movement.
 
 ### Layout coordinates (all native pixels)
-
-Every atlas supplies `operatorRoom` metadata with these values. The screen
-coordinates below refer to the **expanded output**, not simulation positions.
 
 | Item | Landscape | Portrait |
 |---|---|---|
@@ -191,45 +186,66 @@ coordinates below refer to the **expanded output**, not simulation positions.
 | Source scene crop | (0,0,320,240) | (32,0,256,240) |
 | Scene destination | (16,12) | (16,12) |
 | Console | (0,252,352,68) | (0,252,288,92) |
-| Left lever ART top-left | (8,240) | (8,240) |
-| Right lever ART top-left | (304,240) | (240,240) |
+| Left lever ART top-left | (8,270) | (8,270) |
+| Right lever ART top-left | (320,270) | (256,270) |
 | Left lever TAP zone | (20,164,24,48) | (20,292,24,48) |
 | Right lever TAP zone | (308,164,24,48) | (244,292,24,48) |
 | Existing portrait input strip | — | (16,288,256,56) |
 
-Landscape shows the full 320×240 plate; portrait keeps the existing 256×240
-centre crop. Both now show sky to the top edge. Two **20px upper chamfers**
-(`windowCornerCut`) form slanted mullions. Their pixels satisfy x+y<20 in each
-upper window corner. Rivets sit inside the mullions. Ten pale diagonal glint
-pixels enter the glass near its upper-left corner, at local window coordinates
-(26+i,8+i), i=0…5 and (24+i,13+i), i=0…3. The rest of the glass is transparent.
-These details stay above all flight paths. Idle handles can overlap the bottom
-window edge slightly; their bases are on the deck.
+Both levers fit wholly inside the deck, ending at y310. The window ends at
+y252. **Tap zones stay exactly as before**, including the portrait strip and
+44 CSS pixel minimum target. Do not derive input from the smaller art.
 
-**Art and input are separate:** `levers` are drawing positions;
-`leverTapZones` preserve the preceding draft's exact input rectangles. Do not
-derive hit areas from the enlarged 40×64 sprites or relocate them to the deck.
-Keep the existing portrait strip input handling and the 44 CSS pixel minimum
-touch target. Keep integer output scaling. Title theme/sound buttons retain
-their scene positions. Only the HUD sound target follows its readout below.
+Keep the 16px side rails, 12px lintel and 20px upper corner chamfers
+(`windowCornerCut`). Four rail rivets replace the crowded screws. One short
+glint sits on each frame corner, outside the glass. The only opaque pixels
+inside the glass are the two existing 20px upper chamfers. Lighting comes
+from upper left; outlines use palette ink 0; bevels use the same theme inks
+on every recess. No decorative meters, spare boxes or light strips remain.
 
-Both layouts use the same console readout positions: score icon **(56,262)**,
-four digits **(72,262)** with pitch 8, mode label **(112,266)**, life icons
-**(80,290)** with pitch 20, and the existing 36×16 `ui.hud_sound.*` at
-**(188,260)**. Draw `frame.lights` at **(152,298)**. Room art provides the panel
-recesses; the renderer supplies these readouts and removes the old sky HUD.
-Draw the full-bleed scene, room, levers, readouts, lights. Do not copy old gutter
-or arrow-button rasters into the room. Vehicle placement uses the revision-8 models and mouth sockets below.
+Both orientations share `operatorRoom.hud` and `operatorRoom.menu`:
+
+| Readout | Position / size |
+|---|---|
+| Score icon | (52,265), 12×12 |
+| Four digits | (68,265), pitch 8, count 4 |
+| Mode label `GAME A` / `GAME B` | (116,268), native 3×5 font |
+| Three life icons | (52,289), pitch 20, 14×16 each |
+| SND / MUTE | (166,263,36,16) |
+| MENU | (210,263,36,16) |
+| Status lamp | (122,288), 6×6 |
+
+`operatorRoom.recesses` records the **outer** bezel rectangles:
+scoreMode (48,260,112,22), sound (164,260,40,22), menu (208,260,40,22),
+lives (48,286,68,22), status (120,286,10,10). All adjacent recesses have
+**4px clear gaps**. Score and mode share one recess. Each other readout has
+its own. The narrower portrait deck still leaves an 8px gap before the right
+lever. MENU has no overlap with SND, the lamp, a lever or any other recess.
+`hud.sound` and `menu` are the visual rectangles for the runtime tap targets.
+
+Draw scene, room plate, levers, then readouts and lamp. Draw MENU with the
+existing native font/button renderer at the supplied rectangle. Do not bake
+text or readout state into the room plate. Old arrow-button frames remain
+available for legacy consumers. Title controls retain their existing positions.
+
+The exported PNGs are offline art compositions, including `GAME A` and MENU,
+not captures of the integrated game. Before/after shots use the same scene,
+score, lives and vehicle poses; only the room and its controls change.
+`previews/console-before-{landscape,portrait}-{1,4}x.png` shows the prior
+contract with the current engine's MENU and full mode text included.
+`operator-{landscape,portrait}-{1,4}x.png` shows this contract.
 
 Engine notes on this section (`src/render/room.ts`, `src/render/lever.ts`,
 `src/config/layout.ts`): the room geometry lives in `layout.ts` and the art
 test checks that every atlas's `operatorRoom` table, including `background`,
-`levers`, `leverTapZones` and `hud`, matches it. The renderer draws
-`operatorRoom.background` through the glass and never the legacy plate. A full
-lever pull or return is compressed to at most 120 ms, so presses 150 ms apart
-read as separate pulls; a press during the return pulls again from the current
-pose. The engine shows one pair of eyes at a time: the creature director picks
-a random crater, other than the last one, from its seeded RNG.
+`levers`, `leverTapZones`, `hud`, `menu` and `recesses`, matches it. The
+renderer draws `operatorRoom.background` through the glass and never the
+legacy plate. A full lever pull or return is compressed to at most 80 ms and
+the pulled hold after a tap is 60 ms, so a good player's press every 220 ms
+reads as separate pulls; a press during the return pulls again from the
+current pose. The lever poses are picked by travel, not by frame duration:
+the pull shows `.0` then `.1`, the release shows `.0` then idle, so the
+idle frame's terminal hold never swallows the intermediate pose.
 
 Eyes keep their existing names, cells, anchors and durations. Their whites are
 round stepped circles with moving pupils; the blink compresses that circle,

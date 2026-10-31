@@ -5,7 +5,7 @@ import neon from '../../assets/neon-orbit/neon-orbit.json';
 import publishedPolar from '../../public/atlas/polar-signal.json';
 import publishedDesert from '../../public/atlas/desert-expedition.json';
 import publishedNeon from '../../public/atlas/neon-orbit.json';
-import { CONSOLE_HUD, ROCKET, ROCKET_HATCH, ROOM_BACKGROUND, ROVER, ROVER_HATCH, roomLayout } from '../config/layout';
+import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, ROCKET, ROCKET_HATCH, ROOM, ROOM_BACKGROUND, ROVER, ROVER_HATCH, roomLayout, type Rect } from '../config/layout';
 import { validateAtlas } from './atlas';
 
 const atlases = [polar, desert, neon];
@@ -32,7 +32,7 @@ describe('production art handoff', () => {
         }
         // PR #4 TAP_TARGETS at 3621b0d; independent of gameplay integration.
         if (name.startsWith('ui.lever.')) {
-          expect([frame.w, frame.h], name).toEqual([40, 64]);
+          expect([frame.w, frame.h], name).toEqual([ROOM.lever.w, ROOM.lever.h]);
         } else if (name.startsWith('ui.')) {
           expect([frame.w, frame.h], name).toEqual([name.startsWith('ui.hud_sound.') ? 36 : 56, 16]);
         }
@@ -90,16 +90,36 @@ describe('production art handoff', () => {
         if (name.startsWith('crater.eyes.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 16, 12, 12]);
         if (name.startsWith('crater.tentacle.')) expect([frame.w, frame.h, frame.ax, frame.ay]).toEqual([24, 32, 12, 28]);
       }
+      // Two pull poses and a release back through the intermediate one; the engine owns the timing.
       for (const side of ['l', 'r'] as const) {
         const pull = atlas.animations[`ui.lever.${side}.pull`].frames;
-        expect(pull).toHaveLength(4);
-        expect(atlas.animations[`ui.lever.${side}.release`].frames).toEqual([
-          ...pull.slice(0, 3).reverse(), `ui.lever.${side}.idle.0`,
-        ]);
+        expect(pull).toEqual([`ui.lever.${side}.pull.0`, `ui.lever.${side}.pull.1`]);
+        expect(atlas.animations[`ui.lever.${side}.release`].frames).toEqual([pull[0], `ui.lever.${side}.idle.0`]);
+        for (const name of [...pull, `ui.lever.${side}.idle.0`]) expect(atlas.frames[name as 'ui.lever.l.idle.0'].duration, name).toBeLessThanOrEqual(1000);
       }
+      expect(atlas.animations['frame.lights'].frames).toHaveLength(4);
+      expect([atlas.frames['frame.lights.0'].w, atlas.frames['frame.lights.0'].h]).toEqual([6, 6]);
       // The atlas's room table and the code's layout must agree, or the art and the taps drift apart.
       expect(atlas.operatorRoom.hud).toEqual(CONSOLE_HUD);
+      expect(atlas.operatorRoom.menu).toEqual(CONSOLE_MENU_BUTTON);
       expect(atlas.operatorRoom.background).toBe(ROOM_BACKGROUND);
+      // Every readout sits inside its recess, and no two recesses touch.
+      const recesses = atlas.operatorRoom.recesses;
+      const hud = CONSOLE_HUD;
+      const inside = (inner: Rect, outer: Rect) => inner.x > outer.x && inner.y > outer.y && inner.x + inner.w < outer.x + outer.w && inner.y + inner.h < outer.y + outer.h;
+      expect(inside({ ...hud.scoreIcon, w: 12, h: 12 }, recesses.scoreMode)).toBe(true);
+      expect(inside({ x: hud.digits.x, y: hud.digits.y, w: hud.digits.pitch * hud.digits.count, h: 10 }, recesses.scoreMode)).toBe(true);
+      expect(inside({ ...hud.modeLabel, w: 6 * 4 - 1, h: 5 }, recesses.scoreMode)).toBe(true);
+      expect(inside({ x: hud.lives.x, y: hud.lives.y, w: hud.lives.pitch * 2 + 14, h: 16 }, recesses.lives)).toBe(true);
+      expect(inside(hud.sound, recesses.sound)).toBe(true);
+      expect(inside(CONSOLE_MENU_BUTTON, recesses.menu)).toBe(true);
+      expect(inside({ ...hud.lights, w: 6, h: 6 }, recesses.status)).toBe(true);
+      const boxes = Object.values(recesses);
+      for (const a of boxes) for (const b of boxes) {
+        if (a === b) continue;
+        const apart = a.x + a.w + 4 <= b.x || b.x + b.w + 4 <= a.x || a.y + a.h + 4 <= b.y || b.y + b.h + 4 <= a.y;
+        expect(apart, JSON.stringify([a, b])).toBe(true);
+      }
       for (const orientation of ['landscape', 'portrait'] as const) {
         const layout = atlas.operatorRoom[orientation];
         const expected = roomLayout(orientation);
@@ -119,8 +139,13 @@ describe('production art handoff', () => {
         expect(layout.leverTapZones).toEqual(orientation === 'landscape'
           ? { l: { x: 20, y: 164, w: 24, h: 48 }, r: { x: 308, y: 164, w: 24, h: 48 } }
           : { l: { x: 20, y: 292, w: 24, h: 48 }, r: { x: 244, y: 292, w: 24, h: 48 } });
-        expect(layout.levers.l.y).toBe(240);
-        expect(layout.levers.r.y).toBe(240);
+        // Both levers sit wholly on the deck, and the MENU recess clears the right lever.
+        expect(layout.levers.l.y).toBe(270);
+        expect(layout.levers.r.y).toBe(270);
+        expect(layout.levers.l.y).toBeGreaterThanOrEqual(layout.console.y);
+        expect(layout.levers.r.y + ROOM.lever.h).toBeLessThanOrEqual(layout.console.y + layout.console.h);
+        expect(layout.levers.r.x + ROOM.lever.w).toBeLessThanOrEqual(layout.size.w);
+        expect(recesses.menu.x + recesses.menu.w + 8).toBeLessThanOrEqual(layout.levers.r.x);
       }
     });
   }
