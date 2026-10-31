@@ -1,0 +1,138 @@
+{
+  "addedFrames": [
+    "ui.lever.l.idle.0",
+    "ui.lever.l.pull.0",
+    "ui.lever.l.pull.1",
+    "ui.lever.l.pull.2",
+    "ui.lever.l.pull.3",
+    "ui.lever.r.idle.0",
+    "ui.lever.r.pull.0",
+    "ui.lever.r.pull.1",
+    "ui.lever.r.pull.2",
+    "ui.lever.r.pull.3",
+    "frame.room.landscape.0",
+    "frame.room.portrait.0",
+    "frame.lights.0",
+    "frame.lights.1",
+    "frame.lights.2",
+    "frame.lights.3"
+  ],
+  "changedFrames": [
+    "crater.eyes.peek.0",
+    "crater.eyes.peek.1",
+    "crater.eyes.peek.2",
+    "crater.eyes.blink.0",
+    "crater.eyes.blink.1",
+    "crater.eyes.blink.2",
+    "crater.eyes.look.l.0",
+    "crater.eyes.look.r.0",
+    "crater.eyes.hide.0",
+    "crater.eyes.hide.1"
+  ],
+  "sheetSize": {
+    "w": 1024,
+    "h": 1965
+  },
+  "operatorRoom": {
+    "landscape": {
+      "size": {
+        "w": 352,
+        "h": 288
+      },
+      "frame": "frame.room.landscape.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 352,
+        "h": 36
+      },
+      "levers": {
+        "l": {
+          "x": 20,
+          "y": 164
+        },
+        "r": {
+          "x": 308,
+          "y": 164
+        }
+      }
+    },
+    "portrait": {
+      "size": {
+        "w": 288,
+        "h": 344
+      },
+      "frame": "frame.room.portrait.0",
+      "scene": {
+        "sx": 32,
+        "sy": 0,
+        "w": 256,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 288,
+        "h": 36
+      },
+      "levers": {
+        "l": {
+          "x": 20,
+          "y": 292
+        },
+        "r": {
+          "x": 244,
+          "y": 292
+        }
+      },
+      "controlStrip": {
+        "x": 16,
+        "y": 288,
+        "w": 256,
+        "h": 56
+      }
+    },
+    "hud": {
+      "scoreIcon": {
+        "x": 20,
+        "y": 262
+      },
+      "digits": {
+        "x": 36,
+        "y": 262,
+        "pitch": 8,
+        "count": 4
+      },
+      "modeLabel": {
+        "x": 88,
+        "y": 266
+      },
+      "lives": {
+        "x": 148,
+        "y": 260,
+        "pitch": 20
+      },
+      "sound": {
+        "x": 224,
+        "y": 260,
+        "w": 36,
+        "h": 16
+      },
+      "lights": {
+        "x": 108,
+        "y": 274
+      }
+    }
+  },
+  "paletteUnchanged": true
+}

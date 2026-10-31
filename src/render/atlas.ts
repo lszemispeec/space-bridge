@@ -49,6 +49,29 @@ export interface AtlasSocket {
   y: number;
 }
 
+/** Art layout in native output pixels; the simulation remains 320×240. */
+export interface OperatorLayout {
+  size: { w: number; h: number };
+  frame: string;
+  scene: { sx: number; sy: number; w: number; h: number; dx: number; dy: number };
+  console: Placement & { w: number; h: number };
+  levers: { l: Placement; r: Placement };
+  controlStrip?: Placement & { w: number; h: number };
+}
+
+export interface OperatorRoom {
+  landscape: OperatorLayout;
+  portrait: OperatorLayout;
+  hud: {
+    scoreIcon: Placement;
+    digits: Placement & { pitch: number; count: number };
+    modeLabel: Placement;
+    lives: Placement & { pitch: number };
+    sound: Placement & { w: number; h: number };
+    lights: Placement;
+  };
+}
+
 export interface Atlas {
   meta: AtlasMeta;
   frames: Record<string, AtlasFrame>;
@@ -58,10 +81,21 @@ export interface Atlas {
   sockets?: Record<string, AtlasSocket>;
   /** Compatibility animations with intentionally blank frames in this theme. */
   retiredAnimations?: string[];
+  /** Expanded surround and console coordinates. See docs/atlas-contract.md. */
+  operatorRoom?: OperatorRoom;
 }
 
 /** Animations the game plays by name. Every theme atlas must define these. */
 export const REQUIRED_ANIMATIONS = [
+  'frame.room.landscape',
+  'frame.room.portrait',
+  'frame.lights',
+  'ui.lever.l.idle',
+  'ui.lever.l.pull',
+  'ui.lever.l.release',
+  'ui.lever.r.idle',
+  'ui.lever.r.pull',
+  'ui.lever.r.release',
   'cosmonaut.emerge',
   'cosmonaut.crouch',
   'cosmonaut.takeoff',
