@@ -44,6 +44,16 @@ const TAKEOFF_SHARE = 0.03;
  */
 const SPIN_ANIMATION = 'cosmonaut.air.spin';
 const SPIN_FRAMES = 8;
+/**
+ * The flail: `cosmonaut.air.flail.0/1` swap on the clock, slower than the
+ * sheet's 80 ms reference so the spread limbs read at 1×. A flail hop shows
+ * it for the whole arc with no tumble; every crater fall shows it too, until
+ * the fall pose takes over at `FALL_FLAIL_SHARE` of the drop.
+ */
+const FLAIL_ANIMATION = 'cosmonaut.air.flail';
+const FLAIL_FRAMES = 2;
+const FLAIL_SWAP_MS = 160;
+const FALL_FLAIL_SHARE = 0.5;
 /** Ambient loops drawn over the vehicles instead of behind them. */
 const AMBIENT_FRONT = 'ambient.signal';
 
@@ -55,8 +65,13 @@ function pad(n: number, width = HUD.digits.count): string {
   return String(Math.min(n, 10 ** width - 1)).padStart(width, '0');
 }
 
-/** The airborne frame: the tumble step for the arc progress and the hop's spin. */
-function airFrame(atlas: Atlas, view: CosmonautView): AtlasFrame {
+function flailFrame(atlas: Atlas, nowMs: number): AtlasFrame {
+  return frameOf(atlas, `${FLAIL_ANIMATION}.${Math.floor(nowMs / FLAIL_SWAP_MS) % FLAIL_FRAMES}`);
+}
+
+/** The airborne frame: the flail on the clock, or the tumble step for the arc progress and the hop's spin. */
+function airFrame(atlas: Atlas, view: CosmonautView, nowMs: number): AtlasFrame {
+  if (view.flail) return flailFrame(atlas, nowMs);
   return frameOf(atlas, `${SPIN_ANIMATION}.${tumbleFrame(view.progress, view.spin, SPIN_FRAMES)}`);
 }
 
@@ -70,13 +85,14 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
       return frameAt(atlas, 'cosmonaut.crouch', nowMs);
     case 'rise':
       if (p < TAKEOFF_SHARE) return frameByProgress(atlas, 'cosmonaut.takeoff', p / TAKEOFF_SHARE);
-      return airFrame(atlas, view);
+      return airFrame(atlas, view, nowMs);
     case 'descend':
-      return airFrame(atlas, view);
+      return airFrame(atlas, view, nowMs);
     case 'land':
       return frameByProgress(atlas, 'cosmonaut.land', p);
     case 'crater_fall':
-      return frameByProgress(atlas, 'cosmonaut.crater_fall', p);
+      if (p < FALL_FLAIL_SHARE) return flailFrame(atlas, nowMs);
+      return frameByProgress(atlas, 'cosmonaut.crater_fall', (p - FALL_FLAIL_SHARE) / (1 - FALL_FLAIL_SHARE));
     case 'board':
       return frameByProgress(atlas, 'cosmonaut.board', p);
   }
@@ -161,20 +177,17 @@ export function createRenderer(): Renderer {
   const drawCosmonaut = (ctx: CanvasRenderingContext2D, c: Cosmonaut, art: Art, nowMs: number): void => {
     const view = cosmonautView(c);
     const frame = cosmonautFrame(art.atlas, view, nowMs);
-    if (view.pose === 'rise' || view.pose === 'descend') {
-      // Tumble frames are anchored at the body centre, the take-off at the feet; keep the cell's bottom on the arc.
-      drawFrame(ctx, art, frame, view.pos.x, view.pos.y - (frame.h - frame.ay));
-      return;
-    }
+    // Air frames are anchored at the body centre, the rest at the feet; keep the cell's bottom on the feet position.
+    const y = view.pos.y - (frame.h - frame.ay);
     if (view.pose !== 'crater_fall') {
-      drawFrame(ctx, art, frame, view.pos.x, view.pos.y);
+      drawFrame(ctx, art, frame, view.pos.x, y);
       return;
     }
     ctx.save();
     ctx.beginPath();
     ctx.rect(0, 0, SCREEN_W, CRATER_BOTTOM_Y);
     ctx.clip();
-    drawFrame(ctx, art, frame, view.pos.x, view.pos.y);
+    drawFrame(ctx, art, frame, view.pos.x, y);
     ctx.restore();
     if ('crater.front.0' in art.atlas.frames) {
       drawFrame(ctx, art, frameOf(art.atlas, 'crater.front.0'), slotPoint(c.slot).x, CRATER_Y);

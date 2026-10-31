@@ -17,6 +17,8 @@ export interface CosmonautView {
   progress: number;
   /** Signed turns of the tumble over the whole hop. 0 on the ground. */
   spin: number;
+  /** True while a flail hop is in the air; the arc shows spread limbs instead of the tumble. */
+  flail: boolean;
 }
 
 export function slotPoint(slot: number): Point {
@@ -33,23 +35,24 @@ export function cosmonautView(c: Cosmonaut): CosmonautView {
   const p = progressOf(c);
   switch (c.state) {
     case 'crouch':
-      if (c.slot === ROCKET_SLOT) return { pos: slotPoint(c.slot), pose: p < 0.5 ? 'emerge' : 'crouch', progress: p, spin: 0 };
-      return { pos: slotPoint(c.slot), pose: 'land', progress: p, spin: 0 };
+      if (c.slot === ROCKET_SLOT) return { pos: slotPoint(c.slot), pose: p < 0.5 ? 'emerge' : 'crouch', progress: p, spin: 0, flail: false };
+      return { pos: slotPoint(c.slot), pose: 'land', progress: p, spin: 0, flail: false };
     case 'air':
       return {
         pos: arcPosition(slotPoint(c.slot), slotPoint(c.slot + 1), p, JUMP_HEIGHT),
         pose: isRising(p) ? 'rise' : 'descend',
         progress: p,
         spin: c.spin,
+        flail: c.flail,
       };
     case 'fall': {
       const base = slotPoint(c.slot);
-      return { pos: { x: base.x, y: base.y + FALL_DEPTH * p }, pose: 'crater_fall', progress: p, spin: 0 };
+      return { pos: { x: base.x, y: base.y + FALL_DEPTH * p }, pose: 'crater_fall', progress: p, spin: 0, flail: false };
     }
     case 'board': {
       const from = slotPoint(c.slot);
       const toX = ROVER.x + ROVER.w / 2;
-      return { pos: { x: from.x + (toX - from.x) * p, y: from.y }, pose: 'board', progress: p, spin: 0 };
+      return { pos: { x: from.x + (toX - from.x) * p, y: from.y }, pose: 'board', progress: p, spin: 0, flail: false };
     }
   }
 }
