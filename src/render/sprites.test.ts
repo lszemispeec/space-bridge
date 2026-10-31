@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import polar from '../../public/atlas/polar-signal.json';
 import type { Atlas, AtlasFrame } from './atlas';
-import { cosmonautFrame, soundState } from './draw';
+import { cosmonautFrame, hasTumble, soundState } from './draw';
 import { drawFrame, frameAt, frameByProgress, frameOf, type Art } from './sprites';
 
 function frame(x: number, duration: number): AtlasFrame {
@@ -63,14 +63,14 @@ describe('drawFrame', () => {
 describe('cosmonautFrame with the production atlas', () => {
   const real = polar as Atlas;
   const at = (pose: Parameters<typeof cosmonautFrame>[1]['pose'], progress: number) =>
-    cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress }, 0);
+    cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 1 }, 0);
   const named = (name: string) => real.frames[name];
 
   it('plays the one-shots by progress and the poses by time', () => {
     expect(at('emerge', 0)).toBe(named('cosmonaut.emerge.0'));
     expect(at('emerge', 0.49)).toBe(named('cosmonaut.emerge.2'));
     expect(at('crouch', 0.7)).toBe(named('cosmonaut.crouch.0'));
-    expect(at('rise', 0.05)).toBe(named('cosmonaut.takeoff.0'));
+    expect(at('rise', 0.02)).toBe(named('cosmonaut.takeoff.0'));
     expect(at('rise', 0.2)).toBe(named('cosmonaut.rise.0'));
     expect(at('rise', 0.45)).toBe(named('cosmonaut.apex.0'));
     expect(at('descend', 0.55)).toBe(named('cosmonaut.apex.0'));
@@ -84,8 +84,31 @@ describe('cosmonautFrame with the production atlas', () => {
   it('falls back to rise and descend when a theme has no apex pose', () => {
     const animations = Object.fromEntries(Object.entries(real.animations).filter(([name]) => name !== 'cosmonaut.apex'));
     const noApex: Atlas = { ...real, animations };
-    expect(cosmonautFrame(noApex, { pos: { x: 0, y: 0 }, pose: 'rise', progress: 0.45 }, 0)).toBe(named('cosmonaut.rise.0'));
-    expect(cosmonautFrame(noApex, { pos: { x: 0, y: 0 }, pose: 'descend', progress: 0.55 }, 0)).toBe(named('cosmonaut.descend.0'));
+    expect(cosmonautFrame(noApex, { pos: { x: 0, y: 0 }, pose: 'rise', progress: 0.45, spin: 1 }, 0)).toBe(named('cosmonaut.rise.0'));
+    expect(cosmonautFrame(noApex, { pos: { x: 0, y: 0 }, pose: 'descend', progress: 0.55, spin: 1 }, 0)).toBe(named('cosmonaut.descend.0'));
+  });
+
+  it('tumbles through cosmonaut.air.spin.* when a theme has the cycle', () => {
+    expect(hasTumble(real)).toBe(false);
+    const spinFrames: Record<string, AtlasFrame> = {};
+    for (let i = 0; i < 8; i++) spinFrames[`cosmonaut.air.spin.${i}`] = { x: i * 20, y: 0, w: 20, h: 22, ax: 10, ay: 11, duration: 60 };
+    const tumbling: Atlas = { ...real, frames: { ...real.frames, ...spinFrames } };
+    expect(hasTumble(tumbling)).toBe(true);
+    const at = (pose: 'rise' | 'descend', progress: number, spin: number) =>
+      cosmonautFrame(tumbling, { pos: { x: 0, y: 0 }, pose, progress, spin }, 0);
+    expect(at('rise', 0.02, 1)).toBe(named('cosmonaut.takeoff.0'));
+    expect(at('rise', 0.1, 1)).toBe(spinFrames['cosmonaut.air.spin.0']);
+    expect(at('rise', 0.3, 1)).toBe(spinFrames['cosmonaut.air.spin.2']);
+    expect(at('descend', 0.5, 1)).toBe(spinFrames['cosmonaut.air.spin.4']);
+    expect(at('descend', 0.99, 1)).toBe(spinFrames['cosmonaut.air.spin.7']);
+    expect(at('rise', 0.3, -1)).toBe(spinFrames['cosmonaut.air.spin.6']);
+    expect(at('descend', 0.75, 1.5)).toBe(spinFrames['cosmonaut.air.spin.1']);
+  });
+
+  it('needs the whole cycle before it tumbles', () => {
+    const partial: Atlas = { ...real, frames: { ...real.frames, 'cosmonaut.air.spin.0': { x: 0, y: 0, w: 20, h: 22, ax: 10, ay: 11, duration: 60 } } };
+    expect(hasTumble(partial)).toBe(false);
+    expect(cosmonautFrame(partial, { pos: { x: 0, y: 0 }, pose: 'rise', progress: 0.2, spin: 1 }, 0)).toBe(named('cosmonaut.rise.0'));
   });
 });
 

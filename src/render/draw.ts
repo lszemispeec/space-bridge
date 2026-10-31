@@ -22,6 +22,7 @@ import {
   type Rect,
 } from '../config/layout';
 import { getTheme, type Theme, type ThemePalette } from '../config/themes';
+import { tumbleFrame } from '../game/jump';
 import { cosmonautView, progressOf, slotPoint, type CosmonautView } from '../game/positions';
 import { bestScore, canLeaveGameOver } from '../game/rules';
 import type { Cosmonaut, GameState } from '../game/types';
@@ -34,9 +35,17 @@ const CENTER_X = SCREEN_W / 2;
 /** How long the plate shows its move frame after a press, in ms. */
 const PLATE_MOVE_MS = 160;
 /** Share of the arc, from the start, that shows the take-off pose. */
-const TAKEOFF_SHARE = 0.12;
-/** Share of the arc, around the apex, that shows the apex pose when the theme has one. */
+const TAKEOFF_SHARE = 0.03;
+/** Share of the arc, around the apex, that shows the apex pose when a theme has no tumble. */
 const APEX_SHARE = 0.24;
+/**
+ * The tumble cycle: `cosmonaut.air.spin.0` upright, then 45° per frame for a
+ * full turn. Optional in the atlas; without it the rise / apex / descend
+ * poses show. The frames may carry any anchor: the renderer sets the bottom
+ * of the 20×22 cell on the arc, so the body centre tumbles 11 px above it.
+ */
+const SPIN_ANIMATION = 'cosmonaut.air.spin';
+const SPIN_FRAMES = 8;
 /** Ambient loops drawn over the vehicles instead of behind them. */
 const AMBIENT_FRONT = 'ambient.signal';
 
@@ -52,10 +61,24 @@ function nearApex(progress: number): boolean {
   return Math.abs(progress - 0.5) < APEX_SHARE / 2;
 }
 
+/** True when the atlas has the whole tumble cycle. */
+export function hasTumble(atlas: Atlas): boolean {
+  for (let i = 0; i < SPIN_FRAMES; i++) if (!(`${SPIN_ANIMATION}.${i}` in atlas.frames)) return false;
+  return true;
+}
+
+/** The airborne frame: the tumble step for the arc progress, or the static pose. */
+function airFrame(atlas: Atlas, view: CosmonautView, nowMs: number): AtlasFrame {
+  const p = view.progress;
+  if (hasTumble(atlas)) return frameOf(atlas, `${SPIN_ANIMATION}.${tumbleFrame(p, view.spin, SPIN_FRAMES)}`);
+  const apex = hasAnimation(atlas, 'cosmonaut.apex') && nearApex(p);
+  if (apex) return frameAt(atlas, 'cosmonaut.apex', nowMs);
+  return frameAt(atlas, view.pose === 'rise' ? 'cosmonaut.rise' : 'cosmonaut.descend', nowMs);
+}
+
 /** The cosmonaut frame for a pose. Pure, so the choice is testable. */
 export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number): AtlasFrame {
   const p = view.progress;
-  const apex = hasAnimation(atlas, 'cosmonaut.apex') && nearApex(p);
   switch (view.pose) {
     case 'emerge':
       return frameByProgress(atlas, 'cosmonaut.emerge', p * 2);
@@ -63,9 +86,9 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
       return frameAt(atlas, 'cosmonaut.crouch', nowMs);
     case 'rise':
       if (p < TAKEOFF_SHARE) return frameByProgress(atlas, 'cosmonaut.takeoff', p / TAKEOFF_SHARE);
-      return frameAt(atlas, apex ? 'cosmonaut.apex' : 'cosmonaut.rise', nowMs);
+      return airFrame(atlas, view, nowMs);
     case 'descend':
-      return frameAt(atlas, apex ? 'cosmonaut.apex' : 'cosmonaut.descend', nowMs);
+      return airFrame(atlas, view, nowMs);
     case 'land':
       return frameByProgress(atlas, 'cosmonaut.land', p);
     case 'crater_fall':
@@ -154,6 +177,11 @@ export function createRenderer(): Renderer {
   const drawCosmonaut = (ctx: CanvasRenderingContext2D, c: Cosmonaut, art: Art, nowMs: number): void => {
     const view = cosmonautView(c);
     const frame = cosmonautFrame(art.atlas, view, nowMs);
+    if (view.pose === 'rise' || view.pose === 'descend') {
+      // Tumble frames are anchored at the body centre; keep the cell's bottom on the arc.
+      drawFrame(ctx, art, frame, view.pos.x, view.pos.y - (frame.h - frame.ay));
+      return;
+    }
     if (view.pose !== 'crater_fall') {
       drawFrame(ctx, art, frame, view.pos.x, view.pos.y);
       return;
