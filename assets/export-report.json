@@ -1,0 +1,36 @@
+{
+  "sourceAttachment": "01a1924b-bbfe-718c-afd5-e7b00317f354",
+  "contractCommit": "ba9d78d6791f0a2827cf9c34169a2d5eacdc30f9",
+  "themes": {
+    "polar-signal": {
+      "frames": 61,
+      "animations": 29,
+      "size": [
+        1024,
+        1452
+      ],
+      "palette": 16,
+      "backgroundSpecklePixelsConsolidated": 1142
+    },
+    "desert-expedition": {
+      "frames": 61,
+      "animations": 29,
+      "size": [
+        1024,
+        1452
+      ],
+      "palette": 16,
+      "backgroundSpecklePixelsConsolidated": 2026
+    },
+    "neon-orbit": {
+      "frames": 61,
+      "animations": 29,
+      "size": [
+        1024,
+        1452
+      ],
+      "palette": 16,
+      "backgroundSpecklePixelsConsolidated": 2423
+    }
+  }
+}

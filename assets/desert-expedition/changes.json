@@ -1,0 +1,2680 @@
+{
+  "frames": [
+    {
+      "from": "background",
+      "to": "background",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "imagegen cleanup; native quantization; 2026 residual speckle pixels consolidated; 32px gutters, 30px HUD band, road y175"
+      ],
+      "sourceRectangle": {
+        "x": 2,
+        "y": 2,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 1,
+        "y": 1,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "cosmonaut_emerge_0",
+      "to": "cosmonaut.emerge.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 2,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 323,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_emerge_1",
+      "to": "cosmonaut.emerge.1",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 30,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 337,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_emerge_2",
+      "to": "cosmonaut.emerge.2",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 58,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 351,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_crouch",
+      "to": "cosmonaut.crouch.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 86,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 365,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_takeoff",
+      "to": "cosmonaut.takeoff.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 60,
+      "duration": 60,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 114,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 379,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_rise",
+      "to": "cosmonaut.rise.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 100,
+      "duration": 100,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 142,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 393,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_apex",
+      "to": "cosmonaut.apex.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 170,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 407,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_descend",
+      "to": "cosmonaut.descend.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 100,
+      "duration": 100,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 198,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 421,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_land_squash",
+      "to": "cosmonaut.land.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 226,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 435,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_land_recover",
+      "to": "cosmonaut.land.1",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 254,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 449,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_fall_0",
+      "to": "cosmonaut.crater_fall.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 100,
+      "duration": 100,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 282,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 463,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_fall_1",
+      "to": "cosmonaut.crater_fall.1",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 100,
+      "duration": 100,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 310,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 477,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_fall_2",
+      "to": "cosmonaut.crater_fall.2",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 140,
+      "duration": 140,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 338,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 491,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_board_0",
+      "to": "cosmonaut.board.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 100,
+      "duration": 100,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 366,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 505,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_board_1",
+      "to": "cosmonaut.board.1",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 100,
+      "duration": 100,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 394,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 519,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "cosmonaut_idle",
+      "to": "cosmonaut.idle.0",
+      "oldSize": [
+        24,
+        32
+      ],
+      "size": [
+        12,
+        16
+      ],
+      "oldAnchor": [
+        12,
+        30
+      ],
+      "anchor": [
+        6,
+        16
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "fixed-window native resample 24x32 -> 12x16; feet registered at y16"
+      ],
+      "sourceRectangle": {
+        "x": 422,
+        "y": 246,
+        "w": 24,
+        "h": 32
+      },
+      "rectangle": {
+        "x": 533,
+        "y": 1,
+        "w": 12,
+        "h": 16
+      }
+    },
+    {
+      "from": "rocket_closed",
+      "to": "rocket.door_closed.0",
+      "oldSize": [
+        48,
+        96
+      ],
+      "size": [
+        33,
+        89
+      ],
+      "oldAnchor": [
+        24,
+        92
+      ],
+      "anchor": [
+        0,
+        89
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "shared closed-source hull 33x89; fixed door aperture; bottom-left anchor"
+      ],
+      "sourceRectangle": {
+        "x": 450,
+        "y": 246,
+        "w": 48,
+        "h": 96
+      },
+      "rectangle": {
+        "x": 547,
+        "y": 1,
+        "w": 33,
+        "h": 89
+      }
+    },
+    {
+      "from": "rocket_open",
+      "to": "rocket.door_open.0",
+      "oldSize": [
+        48,
+        96
+      ],
+      "size": [
+        33,
+        89
+      ],
+      "oldAnchor": [
+        24,
+        92
+      ],
+      "anchor": [
+        0,
+        89
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "shared closed-source hull 33x89; fixed door aperture; bottom-left anchor"
+      ],
+      "sourceRectangle": {
+        "x": 2,
+        "y": 346,
+        "w": 48,
+        "h": 96
+      },
+      "rectangle": {
+        "x": 582,
+        "y": 1,
+        "w": 33,
+        "h": 89
+      }
+    },
+    {
+      "from": "rover_closed_0",
+      "to": "rover.idle.0",
+      "oldSize": [
+        48,
+        40
+      ],
+      "size": [
+        33,
+        38
+      ],
+      "oldAnchor": [
+        24,
+        36
+      ],
+      "anchor": [
+        0,
+        38
+      ],
+      "oldDuration": 420,
+      "duration": 420,
+      "operations": [
+        "shared closed-source hull 33x38; fixed door and wheels; antenna idle"
+      ],
+      "sourceRectangle": {
+        "x": 54,
+        "y": 346,
+        "w": 48,
+        "h": 40
+      },
+      "rectangle": {
+        "x": 617,
+        "y": 1,
+        "w": 33,
+        "h": 38
+      }
+    },
+    {
+      "from": "rover_open_0",
+      "to": "rover.door_open.0",
+      "oldSize": [
+        48,
+        40
+      ],
+      "size": [
+        33,
+        38
+      ],
+      "oldAnchor": [
+        24,
+        36
+      ],
+      "anchor": [
+        0,
+        38
+      ],
+      "oldDuration": 420,
+      "duration": 420,
+      "operations": [
+        "shared closed-source hull 33x38; fixed door and wheels; antenna idle"
+      ],
+      "sourceRectangle": {
+        "x": 106,
+        "y": 346,
+        "w": 48,
+        "h": 40
+      },
+      "rectangle": {
+        "x": 652,
+        "y": 1,
+        "w": 33,
+        "h": 38
+      }
+    },
+    {
+      "from": "rover_closed_1",
+      "to": "rover.idle.1",
+      "oldSize": [
+        48,
+        40
+      ],
+      "size": [
+        33,
+        38
+      ],
+      "oldAnchor": [
+        24,
+        36
+      ],
+      "anchor": [
+        0,
+        38
+      ],
+      "oldDuration": 420,
+      "duration": 420,
+      "operations": [
+        "shared closed-source hull 33x38; fixed door and wheels; antenna idle"
+      ],
+      "sourceRectangle": {
+        "x": 158,
+        "y": 346,
+        "w": 48,
+        "h": 40
+      },
+      "rectangle": {
+        "x": 687,
+        "y": 1,
+        "w": 33,
+        "h": 38
+      }
+    },
+    {
+      "from": "rover_open_1",
+      "to": "rover.door_open.1",
+      "oldSize": [
+        48,
+        40
+      ],
+      "size": [
+        33,
+        38
+      ],
+      "oldAnchor": [
+        24,
+        36
+      ],
+      "anchor": [
+        0,
+        38
+      ],
+      "oldDuration": 420,
+      "duration": 420,
+      "operations": [
+        "shared closed-source hull 33x38; fixed door and wheels; antenna idle"
+      ],
+      "sourceRectangle": {
+        "x": 210,
+        "y": 346,
+        "w": 48,
+        "h": 40
+      },
+      "rectangle": {
+        "x": 722,
+        "y": 1,
+        "w": 33,
+        "h": 38
+      }
+    },
+    {
+      "from": "bridge_idle",
+      "to": "plate.idle.0",
+      "oldSize": [
+        32,
+        12
+      ],
+      "size": [
+        26,
+        6
+      ],
+      "oldAnchor": [
+        16,
+        2
+      ],
+      "anchor": [
+        13,
+        6
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "clean 26x6 plate; bottom-centre anchor; 0/1/2px surface deformation replaces source contactOffsetY"
+      ],
+      "sourceRectangle": {
+        "x": 262,
+        "y": 346,
+        "w": 32,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 757,
+        "y": 1,
+        "w": 26,
+        "h": 6
+      }
+    },
+    {
+      "from": "bridge_move_left",
+      "to": "plate.move.0",
+      "oldSize": [
+        32,
+        12
+      ],
+      "size": [
+        26,
+        6
+      ],
+      "oldAnchor": [
+        16,
+        2
+      ],
+      "anchor": [
+        13,
+        6
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "clean 26x6 plate; bottom-centre anchor; 0/1/2px surface deformation replaces source contactOffsetY"
+      ],
+      "sourceRectangle": {
+        "x": 298,
+        "y": 346,
+        "w": 32,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 785,
+        "y": 1,
+        "w": 26,
+        "h": 6
+      }
+    },
+    {
+      "from": "bridge_move_right",
+      "to": "plate.move.1",
+      "oldSize": [
+        32,
+        12
+      ],
+      "size": [
+        26,
+        6
+      ],
+      "oldAnchor": [
+        16,
+        2
+      ],
+      "anchor": [
+        13,
+        6
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "clean 26x6 plate; bottom-centre anchor; 0/1/2px surface deformation replaces source contactOffsetY"
+      ],
+      "sourceRectangle": {
+        "x": 334,
+        "y": 346,
+        "w": 32,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 813,
+        "y": 1,
+        "w": 26,
+        "h": 6
+      }
+    },
+    {
+      "from": "bridge_dip",
+      "to": "plate.dip.0",
+      "oldSize": [
+        32,
+        12
+      ],
+      "size": [
+        26,
+        6
+      ],
+      "oldAnchor": [
+        16,
+        2
+      ],
+      "anchor": [
+        13,
+        6
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "clean 26x6 plate; bottom-centre anchor; 0/1/2px surface deformation replaces source contactOffsetY"
+      ],
+      "sourceRectangle": {
+        "x": 370,
+        "y": 346,
+        "w": 32,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 841,
+        "y": 1,
+        "w": 26,
+        "h": 6
+      }
+    },
+    {
+      "from": "bridge_recover",
+      "to": "plate.dip.1",
+      "oldSize": [
+        32,
+        12
+      ],
+      "size": [
+        26,
+        6
+      ],
+      "oldAnchor": [
+        16,
+        2
+      ],
+      "anchor": [
+        13,
+        6
+      ],
+      "oldDuration": 80,
+      "duration": 80,
+      "operations": [
+        "clean 26x6 plate; bottom-centre anchor; 0/1/2px surface deformation replaces source contactOffsetY"
+      ],
+      "sourceRectangle": {
+        "x": 406,
+        "y": 346,
+        "w": 32,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 869,
+        "y": 1,
+        "w": 26,
+        "h": 6
+      }
+    },
+    {
+      "from": "crater_back",
+      "to": "crater.idle.0",
+      "oldSize": [
+        32,
+        16
+      ],
+      "size": [
+        24,
+        8
+      ],
+      "oldAnchor": [
+        16,
+        6
+      ],
+      "anchor": [
+        12,
+        4
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "32x16 -> 24x8; centre anchor y4"
+      ],
+      "sourceRectangle": {
+        "x": 442,
+        "y": 346,
+        "w": 32,
+        "h": 16
+      },
+      "rectangle": {
+        "x": 897,
+        "y": 1,
+        "w": 24,
+        "h": 8
+      }
+    },
+    {
+      "from": "crater_front",
+      "to": "crater.front.0",
+      "oldSize": [
+        32,
+        16
+      ],
+      "size": [
+        24,
+        8
+      ],
+      "oldAnchor": [
+        16,
+        6
+      ],
+      "anchor": [
+        12,
+        4
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "32x16 -> 24x8; centre anchor y4"
+      ],
+      "sourceRectangle": {
+        "x": 478,
+        "y": 346,
+        "w": 32,
+        "h": 16
+      },
+      "rectangle": {
+        "x": 923,
+        "y": 1,
+        "w": 24,
+        "h": 8
+      }
+    },
+    {
+      "from": "hud_life",
+      "to": "hud.icon.life.0",
+      "oldSize": [
+        12,
+        12
+      ],
+      "size": [
+        12,
+        12
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 2,
+        "y": 446,
+        "w": 12,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 949,
+        "y": 1,
+        "w": 12,
+        "h": 12
+      }
+    },
+    {
+      "from": "hud_score_icon",
+      "to": "hud.icon.score.0",
+      "oldSize": [
+        12,
+        12
+      ],
+      "size": [
+        12,
+        12
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 18,
+        "y": 446,
+        "w": 12,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 963,
+        "y": 1,
+        "w": 12,
+        "h": 12
+      }
+    },
+    {
+      "from": "hud_life_empty",
+      "to": "hud.icon.life_empty.0",
+      "oldSize": [
+        12,
+        12
+      ],
+      "size": [
+        12,
+        12
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 34,
+        "y": 446,
+        "w": 12,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 977,
+        "y": 1,
+        "w": 12,
+        "h": 12
+      }
+    },
+    {
+      "from": "hud_digit_0",
+      "to": "hud.digit.0",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 50,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 991,
+        "y": 1,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_1",
+      "to": "hud.digit.1",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 62,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 1001,
+        "y": 1,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_2",
+      "to": "hud.digit.2",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 74,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 1011,
+        "y": 1,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_3",
+      "to": "hud.digit.3",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 86,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 1,
+        "y": 243,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_4",
+      "to": "hud.digit.4",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 98,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 11,
+        "y": 243,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_5",
+      "to": "hud.digit.5",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 110,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 21,
+        "y": 243,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_6",
+      "to": "hud.digit.6",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 122,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 31,
+        "y": 243,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_7",
+      "to": "hud.digit.7",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 134,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 41,
+        "y": 243,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_8",
+      "to": "hud.digit.8",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 146,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 51,
+        "y": 243,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_digit_9",
+      "to": "hud.digit.9",
+      "oldSize": [
+        8,
+        12
+      ],
+      "size": [
+        8,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [
+        "8x12 -> 8x10; trim unused bottom padding"
+      ],
+      "sourceRectangle": {
+        "x": 158,
+        "y": 446,
+        "w": 8,
+        "h": 12
+      },
+      "rectangle": {
+        "x": 61,
+        "y": 243,
+        "w": 8,
+        "h": 10
+      }
+    },
+    {
+      "from": "touch_left_idle",
+      "to": "button.left.idle.0",
+      "oldSize": [
+        24,
+        48
+      ],
+      "size": [
+        24,
+        48
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 170,
+        "y": 446,
+        "w": 24,
+        "h": 48
+      },
+      "rectangle": {
+        "x": 71,
+        "y": 243,
+        "w": 24,
+        "h": 48
+      }
+    },
+    {
+      "from": "touch_left_pressed",
+      "to": "button.left.pressed.0",
+      "oldSize": [
+        24,
+        48
+      ],
+      "size": [
+        24,
+        48
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 198,
+        "y": 446,
+        "w": 24,
+        "h": 48
+      },
+      "rectangle": {
+        "x": 97,
+        "y": 243,
+        "w": 24,
+        "h": 48
+      }
+    },
+    {
+      "from": "touch_right_idle",
+      "to": "button.right.idle.0",
+      "oldSize": [
+        24,
+        48
+      ],
+      "size": [
+        24,
+        48
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 226,
+        "y": 446,
+        "w": 24,
+        "h": 48
+      },
+      "rectangle": {
+        "x": 123,
+        "y": 243,
+        "w": 24,
+        "h": 48
+      }
+    },
+    {
+      "from": "touch_right_pressed",
+      "to": "button.right.pressed.0",
+      "oldSize": [
+        24,
+        48
+      ],
+      "size": [
+        24,
+        48
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 254,
+        "y": 446,
+        "w": 24,
+        "h": 48
+      },
+      "rectangle": {
+        "x": 149,
+        "y": 243,
+        "w": 24,
+        "h": 48
+      }
+    },
+    {
+      "from": "hud_score_label",
+      "to": "hud.label.score.0",
+      "oldSize": [
+        36,
+        10
+      ],
+      "size": [
+        36,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 282,
+        "y": 446,
+        "w": 36,
+        "h": 10
+      },
+      "rectangle": {
+        "x": 175,
+        "y": 243,
+        "w": 36,
+        "h": 10
+      }
+    },
+    {
+      "from": "hud_lives_label",
+      "to": "hud.label.lives.0",
+      "oldSize": [
+        36,
+        10
+      ],
+      "size": [
+        36,
+        10
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 0,
+      "duration": 1000,
+      "operations": [],
+      "sourceRectangle": {
+        "x": 322,
+        "y": 446,
+        "w": 36,
+        "h": 10
+      },
+      "rectangle": {
+        "x": 213,
+        "y": 243,
+        "w": 36,
+        "h": 10
+      }
+    },
+    {
+      "from": "ambient.sky_0",
+      "to": "ambient.sky.0",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 500,
+      "duration": 500,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 516,
+        "y": 2,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 251,
+        "y": 243,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.sky_1",
+      "to": "ambient.sky.1",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 500,
+      "duration": 500,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 840,
+        "y": 2,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 573,
+        "y": 243,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.sky_2",
+      "to": "ambient.sky.2",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 500,
+      "duration": 500,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 1164,
+        "y": 2,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 1,
+        "y": 485,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.sky_3",
+      "to": "ambient.sky.3",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 500,
+      "duration": 500,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 1488,
+        "y": 2,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 323,
+        "y": 485,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.drift_0",
+      "to": "ambient.drift.0",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 120,
+      "duration": 120,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 516,
+        "y": 246,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 645,
+        "y": 485,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.drift_1",
+      "to": "ambient.drift.1",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 120,
+      "duration": 120,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 840,
+        "y": 246,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 1,
+        "y": 727,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.drift_2",
+      "to": "ambient.drift.2",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 240,
+      "duration": 240,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 1164,
+        "y": 246,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 323,
+        "y": 727,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.drift_3",
+      "to": "ambient.drift.3",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 2520,
+      "duration": 2520,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 1488,
+        "y": 246,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 645,
+        "y": 727,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.signal_0",
+      "to": "ambient.signal.0",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 250,
+      "duration": 250,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 516,
+        "y": 490,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 1,
+        "y": 969,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.signal_1",
+      "to": "ambient.signal.1",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 250,
+      "duration": 250,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 840,
+        "y": 490,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 323,
+        "y": 969,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.signal_2",
+      "to": "ambient.signal.2",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 250,
+      "duration": 250,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 1164,
+        "y": 490,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 645,
+        "y": 969,
+        "w": 320,
+        "h": 240
+      }
+    },
+    {
+      "from": "ambient.signal_3",
+      "to": "ambient.signal.3",
+      "oldSize": [
+        320,
+        240
+      ],
+      "size": [
+        320,
+        240
+      ],
+      "oldAnchor": [
+        0,
+        0
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "oldDuration": 250,
+      "duration": 250,
+      "operations": [
+        "clip to contract HUD/gutters/jump exclusion"
+      ],
+      "sourceRectangle": {
+        "x": 1488,
+        "y": 490,
+        "w": 320,
+        "h": 240
+      },
+      "rectangle": {
+        "x": 1,
+        "y": 1211,
+        "w": 320,
+        "h": 240
+      }
+    }
+  ],
+  "sourceAnimations": {
+    "cosmonaut.emerge": {
+      "frames": [
+        "cosmonaut_emerge_0",
+        "cosmonaut_emerge_1",
+        "cosmonaut_emerge_2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crouch": {
+      "frames": [
+        "cosmonaut_crouch"
+      ],
+      "loop": false
+    },
+    "cosmonaut.takeoff": {
+      "frames": [
+        "cosmonaut_takeoff"
+      ],
+      "loop": false
+    },
+    "cosmonaut.airborne_rising": {
+      "frames": [
+        "cosmonaut_rise"
+      ],
+      "loop": true
+    },
+    "cosmonaut.airborne_apex": {
+      "frames": [
+        "cosmonaut_apex"
+      ],
+      "loop": true
+    },
+    "cosmonaut.airborne_falling": {
+      "frames": [
+        "cosmonaut_descend"
+      ],
+      "loop": true
+    },
+    "cosmonaut.land": {
+      "frames": [
+        "cosmonaut_land_squash",
+        "cosmonaut_land_recover",
+        "cosmonaut_crouch",
+        "cosmonaut_takeoff"
+      ],
+      "loop": false
+    },
+    "cosmonaut.fall": {
+      "frames": [
+        "cosmonaut_fall_0",
+        "cosmonaut_fall_1",
+        "cosmonaut_fall_2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.board": {
+      "frames": [
+        "cosmonaut_board_0",
+        "cosmonaut_board_1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.idle": {
+      "frames": [
+        "cosmonaut_idle"
+      ],
+      "loop": true
+    },
+    "bridge.idle": {
+      "frames": [
+        "bridge_idle"
+      ],
+      "loop": true
+    },
+    "bridge.move_left": {
+      "frames": [
+        "bridge_move_left",
+        "bridge_idle"
+      ],
+      "loop": false
+    },
+    "bridge.move_right": {
+      "frames": [
+        "bridge_move_right",
+        "bridge_idle"
+      ],
+      "loop": false
+    },
+    "bridge.bounce": {
+      "frames": [
+        "bridge_dip",
+        "bridge_recover",
+        "bridge_idle"
+      ],
+      "loop": false
+    },
+    "rocket.closed": {
+      "frames": [
+        "rocket_closed"
+      ],
+      "loop": true
+    },
+    "rocket.open": {
+      "frames": [
+        "rocket_open"
+      ],
+      "loop": true
+    },
+    "rover.closed_idle": {
+      "frames": [
+        "rover_closed_0",
+        "rover_closed_1"
+      ],
+      "loop": true
+    },
+    "rover.open_idle": {
+      "frames": [
+        "rover_open_0",
+        "rover_open_1"
+      ],
+      "loop": true
+    },
+    "ambient.sky": {
+      "frames": [
+        "ambient.sky_0",
+        "ambient.sky_1",
+        "ambient.sky_2",
+        "ambient.sky_3"
+      ],
+      "loop": true
+    },
+    "ambient.drift": {
+      "frames": [
+        "ambient.drift_0",
+        "ambient.drift_1",
+        "ambient.drift_2",
+        "ambient.drift_3"
+      ],
+      "loop": true
+    },
+    "ambient.signal": {
+      "frames": [
+        "ambient.signal_0",
+        "ambient.signal_1",
+        "ambient.signal_2",
+        "ambient.signal_3"
+      ],
+      "loop": true
+    }
+  },
+  "animations": {
+    "cosmonaut.emerge": {
+      "frames": [
+        "cosmonaut.emerge.0",
+        "cosmonaut.emerge.1",
+        "cosmonaut.emerge.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crouch": {
+      "frames": [
+        "cosmonaut.crouch.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.takeoff": {
+      "frames": [
+        "cosmonaut.takeoff.0"
+      ],
+      "loop": false
+    },
+    "cosmonaut.rise": {
+      "frames": [
+        "cosmonaut.rise.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.apex": {
+      "frames": [
+        "cosmonaut.apex.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.descend": {
+      "frames": [
+        "cosmonaut.descend.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.land": {
+      "frames": [
+        "cosmonaut.land.0",
+        "cosmonaut.land.1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crater_fall": {
+      "frames": [
+        "cosmonaut.crater_fall.0",
+        "cosmonaut.crater_fall.1",
+        "cosmonaut.crater_fall.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.board": {
+      "frames": [
+        "cosmonaut.board.0",
+        "cosmonaut.board.1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.idle": {
+      "frames": [
+        "cosmonaut.idle.0"
+      ],
+      "loop": true
+    },
+    "plate.idle": {
+      "frames": [
+        "plate.idle.0"
+      ],
+      "loop": true
+    },
+    "plate.move": {
+      "frames": [
+        "plate.move.0",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "plate.move_right": {
+      "frames": [
+        "plate.move.1",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "plate.dip": {
+      "frames": [
+        "plate.dip.0",
+        "plate.dip.1",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "rocket.door_closed": {
+      "frames": [
+        "rocket.door_closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.door_open": {
+      "frames": [
+        "rocket.door_open.0"
+      ],
+      "loop": false
+    },
+    "rover.idle": {
+      "frames": [
+        "rover.idle.0",
+        "rover.idle.1"
+      ],
+      "loop": true
+    },
+    "rover.door_open": {
+      "frames": [
+        "rover.door_open.0",
+        "rover.door_open.1"
+      ],
+      "loop": false
+    },
+    "ambient.sky": {
+      "frames": [
+        "ambient.sky.0",
+        "ambient.sky.1",
+        "ambient.sky.2",
+        "ambient.sky.3"
+      ],
+      "loop": true
+    },
+    "ambient.drift": {
+      "frames": [
+        "ambient.drift.0",
+        "ambient.drift.1",
+        "ambient.drift.2",
+        "ambient.drift.3"
+      ],
+      "loop": true
+    },
+    "ambient.signal": {
+      "frames": [
+        "ambient.signal.0",
+        "ambient.signal.1",
+        "ambient.signal.2",
+        "ambient.signal.3"
+      ],
+      "loop": true
+    },
+    "crater.idle": {
+      "frames": [
+        "crater.idle.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.score": {
+      "frames": [
+        "hud.icon.score.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.life": {
+      "frames": [
+        "hud.icon.life.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.life_empty": {
+      "frames": [
+        "hud.icon.life_empty.0"
+      ],
+      "loop": true
+    },
+    "button.left.idle": {
+      "frames": [
+        "button.left.idle.0"
+      ],
+      "loop": true
+    },
+    "button.left.pressed": {
+      "frames": [
+        "button.left.pressed.0"
+      ],
+      "loop": true
+    },
+    "button.right.idle": {
+      "frames": [
+        "button.right.idle.0"
+      ],
+      "loop": true
+    },
+    "button.right.pressed": {
+      "frames": [
+        "button.right.pressed.0"
+      ],
+      "loop": true
+    }
+  },
+  "sourceMeta": {
+    "schema": "space-bridge-atlas-1",
+    "image": "desert-expedition.png",
+    "size": {
+      "w": 2048,
+      "h": 1024
+    },
+    "scale": 1,
+    "canvas": {
+      "w": 320,
+      "h": 240
+    },
+    "theme": "desert-expedition",
+    "unlockBestScore": 500,
+    "alpha": "straight; binary 0/255",
+    "anchorUnits": "pixels from frame top-left; draw top-left = world position minus anchor",
+    "durationUnits": "milliseconds; 0 means hold until state changes",
+    "sampling": "nearest-neighbor; no mipmaps",
+    "palette": [
+      "#251C29",
+      "#49313B",
+      "#704348",
+      "#9C5549",
+      "#C97550",
+      "#E89B61",
+      "#F5C781",
+      "#FFE6B0",
+      "#FFF4DA",
+      "#173F49",
+      "#28606A",
+      "#47908D",
+      "#80B8A5",
+      "#B8D4BC",
+      "#BD3C38",
+      "#F16A42"
+    ],
+    "ambientContent": {
+      "sky": "heat shimmer over foreground sand",
+      "drift": "rising rocket smoke",
+      "signal": "dust devil"
+    }
+  },
+  "meta": {
+    "contract": 1,
+    "theme": "desert-expedition",
+    "image": "desert-expedition.png",
+    "size": {
+      "w": 1024,
+      "h": 1452
+    },
+    "palette": [
+      "#251C29",
+      "#49313B",
+      "#704348",
+      "#9C5549",
+      "#C97550",
+      "#E89B61",
+      "#F5C781",
+      "#FFE6B0",
+      "#FFF4DA",
+      "#173F49",
+      "#28606A",
+      "#47908D",
+      "#80B8A5",
+      "#B8D4BC",
+      "#BD3C38",
+      "#F16A42"
+    ]
+  },
+  "removedTopLevelFields": [
+    "layout",
+    "drawOrder"
+  ],
+  "placements": {
+    "ambient.sky": {
+      "x": 0,
+      "y": 0
+    },
+    "ambient.drift": {
+      "x": 0,
+      "y": 0
+    },
+    "ambient.signal": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "sourcePngSha256": "f839b4e9d5064e70dae11cbc12529336bac66f2d1d3a70d8d4c30c5aca17612a",
+  "pngSha256": "7e2773ed250d43c7a8a96ea468653dcdff9fc2fba693e2fdb8fc8fe77b930fd6"
+}

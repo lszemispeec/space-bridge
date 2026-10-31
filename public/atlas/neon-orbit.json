@@ -1,0 +1,791 @@
+{
+  "meta": {
+    "contract": 1,
+    "theme": "neon-orbit",
+    "image": "neon-orbit.png",
+    "size": {
+      "w": 1024,
+      "h": 1452
+    },
+    "palette": [
+      "#080C24",
+      "#141B42",
+      "#252457",
+      "#3C2871",
+      "#64358C",
+      "#9747A6",
+      "#D454BB",
+      "#FF76CA",
+      "#103C58",
+      "#15687A",
+      "#27A6AE",
+      "#55E7DE",
+      "#B7FFF0",
+      "#A6B846",
+      "#E3EE72",
+      "#FFF8CB"
+    ]
+  },
+  "frames": {
+    "background": {
+      "x": 1,
+      "y": 1,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "cosmonaut.emerge.0": {
+      "x": 323,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 80
+    },
+    "cosmonaut.emerge.1": {
+      "x": 337,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 80
+    },
+    "cosmonaut.emerge.2": {
+      "x": 351,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 80
+    },
+    "cosmonaut.crouch.0": {
+      "x": 365,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 80
+    },
+    "cosmonaut.takeoff.0": {
+      "x": 379,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 60
+    },
+    "cosmonaut.rise.0": {
+      "x": 393,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 100
+    },
+    "cosmonaut.apex.0": {
+      "x": 407,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 80
+    },
+    "cosmonaut.descend.0": {
+      "x": 421,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 100
+    },
+    "cosmonaut.land.0": {
+      "x": 435,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 80
+    },
+    "cosmonaut.land.1": {
+      "x": 449,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 80
+    },
+    "cosmonaut.crater_fall.0": {
+      "x": 463,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 100
+    },
+    "cosmonaut.crater_fall.1": {
+      "x": 477,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 100
+    },
+    "cosmonaut.crater_fall.2": {
+      "x": 491,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 140
+    },
+    "cosmonaut.board.0": {
+      "x": 505,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 100
+    },
+    "cosmonaut.board.1": {
+      "x": 519,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 100
+    },
+    "cosmonaut.idle.0": {
+      "x": 533,
+      "y": 1,
+      "w": 12,
+      "h": 16,
+      "ax": 6,
+      "ay": 16,
+      "duration": 1000
+    },
+    "rocket.door_closed.0": {
+      "x": 547,
+      "y": 1,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.door_open.0": {
+      "x": 582,
+      "y": 1,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rover.idle.0": {
+      "x": 617,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "rover.door_open.0": {
+      "x": 652,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "rover.idle.1": {
+      "x": 687,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "rover.door_open.1": {
+      "x": 722,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "plate.idle.0": {
+      "x": 757,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 1000
+    },
+    "plate.move.0": {
+      "x": 785,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "plate.move.1": {
+      "x": 813,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "plate.dip.0": {
+      "x": 841,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "plate.dip.1": {
+      "x": 869,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "crater.idle.0": {
+      "x": 897,
+      "y": 1,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.0": {
+      "x": 923,
+      "y": 1,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "hud.icon.life.0": {
+      "x": 949,
+      "y": 1,
+      "w": 12,
+      "h": 12,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.icon.score.0": {
+      "x": 963,
+      "y": 1,
+      "w": 12,
+      "h": 12,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.icon.life_empty.0": {
+      "x": 977,
+      "y": 1,
+      "w": 12,
+      "h": 12,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.0": {
+      "x": 991,
+      "y": 1,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.1": {
+      "x": 1001,
+      "y": 1,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.2": {
+      "x": 1011,
+      "y": 1,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.3": {
+      "x": 1,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.4": {
+      "x": 11,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.5": {
+      "x": 21,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.6": {
+      "x": 31,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.7": {
+      "x": 41,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.8": {
+      "x": 51,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.9": {
+      "x": 61,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.left.idle.0": {
+      "x": 71,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.left.pressed.0": {
+      "x": 97,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.right.idle.0": {
+      "x": 123,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.right.pressed.0": {
+      "x": 149,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.label.score.0": {
+      "x": 175,
+      "y": 243,
+      "w": 36,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.label.lives.0": {
+      "x": 213,
+      "y": 243,
+      "w": 36,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ambient.sky.0": {
+      "x": 251,
+      "y": 243,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.sky.1": {
+      "x": 573,
+      "y": 243,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.sky.2": {
+      "x": 1,
+      "y": 485,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.sky.3": {
+      "x": 323,
+      "y": 485,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.drift.0": {
+      "x": 645,
+      "y": 485,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 120
+    },
+    "ambient.drift.1": {
+      "x": 1,
+      "y": 727,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 120
+    },
+    "ambient.drift.2": {
+      "x": 323,
+      "y": 727,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 240
+    },
+    "ambient.drift.3": {
+      "x": 645,
+      "y": 727,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 2520
+    },
+    "ambient.signal.0": {
+      "x": 1,
+      "y": 969,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    },
+    "ambient.signal.1": {
+      "x": 323,
+      "y": 969,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    },
+    "ambient.signal.2": {
+      "x": 645,
+      "y": 969,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    },
+    "ambient.signal.3": {
+      "x": 1,
+      "y": 1211,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    }
+  },
+  "animations": {
+    "cosmonaut.emerge": {
+      "frames": [
+        "cosmonaut.emerge.0",
+        "cosmonaut.emerge.1",
+        "cosmonaut.emerge.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crouch": {
+      "frames": [
+        "cosmonaut.crouch.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.takeoff": {
+      "frames": [
+        "cosmonaut.takeoff.0"
+      ],
+      "loop": false
+    },
+    "cosmonaut.rise": {
+      "frames": [
+        "cosmonaut.rise.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.apex": {
+      "frames": [
+        "cosmonaut.apex.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.descend": {
+      "frames": [
+        "cosmonaut.descend.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.land": {
+      "frames": [
+        "cosmonaut.land.0",
+        "cosmonaut.land.1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crater_fall": {
+      "frames": [
+        "cosmonaut.crater_fall.0",
+        "cosmonaut.crater_fall.1",
+        "cosmonaut.crater_fall.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.board": {
+      "frames": [
+        "cosmonaut.board.0",
+        "cosmonaut.board.1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.idle": {
+      "frames": [
+        "cosmonaut.idle.0"
+      ],
+      "loop": true
+    },
+    "plate.idle": {
+      "frames": [
+        "plate.idle.0"
+      ],
+      "loop": true
+    },
+    "plate.move": {
+      "frames": [
+        "plate.move.0",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "plate.move_right": {
+      "frames": [
+        "plate.move.1",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "plate.dip": {
+      "frames": [
+        "plate.dip.0",
+        "plate.dip.1",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "rocket.door_closed": {
+      "frames": [
+        "rocket.door_closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.door_open": {
+      "frames": [
+        "rocket.door_open.0"
+      ],
+      "loop": false
+    },
+    "rover.idle": {
+      "frames": [
+        "rover.idle.0",
+        "rover.idle.1"
+      ],
+      "loop": true
+    },
+    "rover.door_open": {
+      "frames": [
+        "rover.door_open.0",
+        "rover.door_open.1"
+      ],
+      "loop": false
+    },
+    "ambient.sky": {
+      "frames": [
+        "ambient.sky.0",
+        "ambient.sky.1",
+        "ambient.sky.2",
+        "ambient.sky.3"
+      ],
+      "loop": true
+    },
+    "ambient.drift": {
+      "frames": [
+        "ambient.drift.0",
+        "ambient.drift.1",
+        "ambient.drift.2",
+        "ambient.drift.3"
+      ],
+      "loop": true
+    },
+    "ambient.signal": {
+      "frames": [
+        "ambient.signal.0",
+        "ambient.signal.1",
+        "ambient.signal.2",
+        "ambient.signal.3"
+      ],
+      "loop": true
+    },
+    "crater.idle": {
+      "frames": [
+        "crater.idle.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.score": {
+      "frames": [
+        "hud.icon.score.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.life": {
+      "frames": [
+        "hud.icon.life.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.life_empty": {
+      "frames": [
+        "hud.icon.life_empty.0"
+      ],
+      "loop": true
+    },
+    "button.left.idle": {
+      "frames": [
+        "button.left.idle.0"
+      ],
+      "loop": true
+    },
+    "button.left.pressed": {
+      "frames": [
+        "button.left.pressed.0"
+      ],
+      "loop": true
+    },
+    "button.right.idle": {
+      "frames": [
+        "button.right.idle.0"
+      ],
+      "loop": true
+    },
+    "button.right.pressed": {
+      "frames": [
+        "button.right.pressed.0"
+      ],
+      "loop": true
+    }
+  },
+  "placements": {
+    "ambient.sky": {
+      "x": 0,
+      "y": 0
+    },
+    "ambient.drift": {
+      "x": 0,
+      "y": 0
+    },
+    "ambient.signal": {
+      "x": 0,
+      "y": 0
+    }
+  }
+}
