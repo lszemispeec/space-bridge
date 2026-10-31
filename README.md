@@ -10,7 +10,7 @@ Cosmonauts jump from the rocket to the rover across a road with four craters. Yo
 - **Touch**: tap the left or right half of the screen. Every press moves the plate one crater, in order.
 - **T**: cycle unlocked themes (title screen). **M**: mute. On touch, tap the THEME and SOUND buttons on the title screen, or the SND / MUTE box in the HUD.
 - Game A is slower. Game B starts faster and climbs higher. Each mode keeps its own high score.
-- Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (reaction margin, one press per crater) is in `src/config/difficulty.ts` and shrinks with the speed curve.
+- Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (a reaction margin, then one press interval per extra crater) is in `src/config/difficulty.ts`. It shrinks with the speed curve, and the curve is tuned so a good player (0.22 s reaction, 0.15 s per press) can follow the longest trip, from crater 4 back to crater 1, at the top speed of both modes.
 - Themes unlock with your best score: Desert Expedition at 500, Neon Orbit at 1000.
 
 ## Run
@@ -22,7 +22,10 @@ npm install
 npm run dev        # http://localhost:5173, also reachable on the LAN for phones
 npm run check      # typecheck, lint, test, build
 npm run measure    # how far bots of different skill get, for tuning unlock targets
+npm run shots      # 4x screenshots of every theme, title and play, from a running preview (needs Chrome)
 ```
+
+For `npm run shots`, build and start the preview first: `npm run build && npm run preview -- --port 4173`. The images land in `shots/`.
 
 ## Stack
 
@@ -45,10 +48,13 @@ src/
   config/     layout, themes, difficulty (data)
   game/       pure rules: step(), positions, save, unlocks, rng
   platform/   loop, input, canvas scaling, storage
-  render/     placeholder renderer, bitmap font, atlas contract
+  render/     atlas renderer and playback, bitmap font, atlas contract
   audio/      audio event API (engine arrives on a separate issue)
   app.ts      wires everything together
+assets/       art masters per theme, with previews and change reports
+public/atlas/ the sheets and atlases the game loads
+scripts/      screenshot tool
 docs/         contracts for art and audio
 ```
 
-Art is placeholder rectangles until the sprite atlases land.
+The renderer draws everything from the theme's atlas. A theme's sheet loads when it is unlocked or selected; the title screen shows LOADING until the first sheet is decoded.

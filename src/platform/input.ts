@@ -3,18 +3,31 @@
  * and handed over as one InputFrame per step. Plate presses go into a queue,
  * so three presses in one frame are three moves, in order.
  *
- * Touch: a tap on one of the on-screen buttons is that button. Any other tap
- * is a plate press: the left half of the viewport is left, the right half is
- * right. The drawn gutters are the visual hint; the hit area is the whole
- * side so thumbs never miss on a phone, and the letterbox counts too.
+ * Touch: a tap on one of the on-screen buttons is that button. Its hit area
+ * is the drawn button grown to at least MIN_TAP_CSS_PX on the screen, so a
+ * thumb near the button toggles it instead of moving the plate. Any other
+ * tap is a plate press: the left half of the viewport is left, the right
+ * half is right. The drawn gutters are the visual hint; the hit area is the
+ * whole side so thumbs never miss on a phone, and the letterbox counts too.
  */
-import { inRect, SCREEN_H, SCREEN_W, TAP_TARGETS } from '../config/layout';
+import {
+  hitRect,
+  inRect,
+  MIN_TAP_CSS_PX,
+  SCREEN_H,
+  SCREEN_W,
+  TAP_TARGETS,
+  type TapTargetId,
+} from '../config/layout';
 import type { Point } from '../game/jump';
 import { NO_INPUT, type InputFrame, type Phase, type PlateMove } from '../game/types';
 
+/** Buttons currently held, for drawing their pressed states. */
 export interface HeldButtons {
   left: boolean;
   right: boolean;
+  theme: boolean;
+  mute: boolean;
 }
 
 export interface InputSource {
@@ -67,16 +80,45 @@ export function toGamePoint(clientX: number, clientY: number, box: CanvasBox): P
   return { x, y };
 }
 
-/** What a tap means on the current screen. */
-export function tapAction(phase: Phase, point: Point | null, side: PlateMove): Action {
-  if (point) {
-    if (inRect(TAP_TARGETS.hudMute, point.x, point.y)) return 'mute';
-    if (phase === 'title') {
-      if (inRect(TAP_TARGETS.titleTheme, point.x, point.y)) return 'theme';
-      if (inRect(TAP_TARGETS.titleMute, point.x, point.y)) return 'mute';
+const TARGET_ACTIONS: Record<TapTargetId, Action> = {
+  titleTheme: 'theme',
+  titleMute: 'mute',
+  hudMute: 'mute',
+};
+
+function targetsOn(phase: Phase): TapTargetId[] {
+  return phase === 'title' ? ['hudMute', 'titleTheme', 'titleMute'] : ['hudMute'];
+}
+
+/** Game pixels per CSS pixel, from the canvas box on the page. */
+export function minHitSize(canvasCssWidth: number): number {
+  if (canvasCssWidth <= 0) return 0;
+  return (MIN_TAP_CSS_PX * SCREEN_W) / canvasCssWidth;
+}
+
+/**
+ * The button a tap hits, or null. Hit areas are grown to `minHit` game
+ * pixels; when grown areas overlap, the button whose centre is nearest wins.
+ */
+export function tapTarget(phase: Phase, point: Point, minHit = 0): TapTargetId | null {
+  let best: TapTargetId | null = null;
+  let bestDistance = Infinity;
+  for (const id of targetsOn(phase)) {
+    const r = TAP_TARGETS[id];
+    if (!inRect(hitRect(r, minHit), point.x, point.y)) continue;
+    const distance = Math.hypot(point.x - (r.x + r.w / 2), point.y - (r.y + r.h / 2));
+    if (distance < bestDistance) {
+      best = id;
+      bestDistance = distance;
     }
   }
-  return side;
+  return best;
+}
+
+/** What a tap means on the current screen. */
+export function tapAction(phase: Phase, point: Point | null, side: PlateMove, minHit = 0): Action {
+  const target = point ? tapTarget(phase, point, minHit) : null;
+  return target ? TARGET_ACTIONS[target] : side;
 }
 
 function isMove(action: Action): action is PlateMove {
@@ -87,7 +129,7 @@ export function createInput(options: InputOptions): InputSource {
   let moves: PlateMove[] = [];
   let pending = { start: false, theme: false, mute: false };
   const heldKeys = new Set<string>();
-  const pointers = new Map<number, PlateMove | null>();
+  const pointers = new Map<number, Action>();
   let gestureSeen = false;
 
   const gesture = (): void => {
@@ -119,9 +161,11 @@ export function createInput(options: InputOptions): InputSource {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
     e.preventDefault();
     gesture();
-    const point = toGamePoint(e.clientX, e.clientY, options.canvas.getBoundingClientRect());
-    const action = tapAction(options.getPhase(), point, sideForPointer(e.clientX, window.innerWidth));
-    pointers.set(e.pointerId, isMove(action) ? action : null);
+    const box = options.canvas.getBoundingClientRect();
+    const point = toGamePoint(e.clientX, e.clientY, box);
+    const side = sideForPointer(e.clientX, window.innerWidth);
+    const action = tapAction(options.getPhase(), point, side, minHitSize(box.width));
+    pointers.set(e.pointerId, action);
     queue(action);
   };
 
@@ -146,8 +190,9 @@ export function createInput(options: InputOptions): InputSource {
   window.addEventListener('blur', onBlur);
   window.addEventListener('contextmenu', onContextMenu);
 
-  const keyHeld = (action: PlateMove): boolean =>
+  const keyHeld = (action: Action): boolean =>
     Object.entries(KEY_BINDINGS).some(([code, a]) => a === action && heldKeys.has(code));
+  const isHeld = (action: Action): boolean => keyHeld(action) || [...pointers.values()].includes(action);
 
   return {
     consume() {
@@ -157,11 +202,7 @@ export function createInput(options: InputOptions): InputSource {
       return frame;
     },
     held() {
-      const sides = new Set(pointers.values());
-      return {
-        left: keyHeld('left') || sides.has('left'),
-        right: keyHeld('right') || sides.has('right'),
-      };
+      return { left: isHeld('left'), right: isHeld('right'), theme: isHeld('theme'), mute: isHeld('mute') };
     },
     dispose() {
       window.removeEventListener('keydown', onKeyDown);

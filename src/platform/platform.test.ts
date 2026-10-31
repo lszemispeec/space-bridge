@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { defaultSave } from '../game/save';
 import { cssSize, fitScale } from './canvas';
-import { sideForPointer, tapAction, toGamePoint } from './input';
+import { minHitSize, sideForPointer, tapAction, tapTarget, toGamePoint } from './input';
 import { accumulateSteps, STEP_SECONDS } from './loop';
 import { loadSave, memoryStore, writeSave } from './storage';
 
@@ -65,6 +65,36 @@ describe('tapAction', () => {
   it('treats everything else, including the letterbox, as a plate press', () => {
     expect(tapAction('title', { x: 20, y: 120 }, 'left')).toBe('left');
     expect(tapAction('playing', null, 'right')).toBe('right');
+  });
+
+  it('grows the hit area around the drawn button without moving its centre', () => {
+    // 16 px tall art, 44 px hit area: 14 px above and below.
+    expect(tapAction('playing', { x: 150, y: 30 }, 'left', 44)).toBe('mute');
+    expect(tapAction('playing', { x: 150, y: 35 }, 'left', 44)).toBe('left');
+    expect(tapAction('title', { x: 128, y: 180 }, 'left', 44)).toBe('theme');
+    expect(tapAction('title', { x: 128, y: 219 }, 'left', 44)).toBe('theme');
+    expect(tapAction('title', { x: 128, y: 221 }, 'left', 44)).toBe('left');
+    expect(tapAction('title', { x: 128, y: 180 }, 'left')).toBe('left');
+  });
+
+  it('gives an overlap between grown hit areas to the nearest button', () => {
+    expect(tapTarget('title', { x: 158, y: 198 }, 80)).toBe('titleTheme');
+    expect(tapTarget('title', { x: 162, y: 198 }, 80)).toBe('titleMute');
+  });
+});
+
+describe('minHitSize', () => {
+  it('is 44 game pixels when one game pixel is one CSS pixel', () => {
+    expect(minHitSize(320)).toBe(44);
+  });
+
+  it('shrinks in game pixels as the canvas grows on the screen', () => {
+    expect(minHitSize(1280)).toBe(11);
+    expect(minHitSize(320 * (4 / 3))).toBe(33);
+  });
+
+  it('is zero without a canvas box', () => {
+    expect(minHitSize(0)).toBe(0);
   });
 });
 
