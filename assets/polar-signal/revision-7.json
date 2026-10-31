@@ -1,0 +1,157 @@
+{
+  "addedFrames": [
+    "background.window"
+  ],
+  "changedFrames": [
+    "ui.lever.l.idle.0",
+    "ui.lever.l.pull.0",
+    "ui.lever.l.pull.1",
+    "ui.lever.l.pull.2",
+    "ui.lever.l.pull.3",
+    "ui.lever.r.idle.0",
+    "ui.lever.r.pull.0",
+    "ui.lever.r.pull.1",
+    "ui.lever.r.pull.2",
+    "ui.lever.r.pull.3",
+    "frame.room.landscape.0",
+    "frame.room.portrait.0"
+  ],
+  "unchanged": "All pre-room scenery, actors, eyes, vehicles and old background pixels; all animation sequences and durations.",
+  "sheetSize": {
+    "w": 1024,
+    "h": 2287
+  },
+  "operatorRoom": {
+    "background": "background.window",
+    "landscape": {
+      "size": {
+        "w": 352,
+        "h": 320
+      },
+      "frame": "frame.room.landscape.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 352,
+        "h": 68
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 240
+        },
+        "r": {
+          "x": 304,
+          "y": 240
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 308,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerCut": 20
+    },
+    "portrait": {
+      "size": {
+        "w": 288,
+        "h": 344
+      },
+      "frame": "frame.room.portrait.0",
+      "scene": {
+        "sx": 32,
+        "sy": 0,
+        "w": 256,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 288,
+        "h": 92
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 240
+        },
+        "r": {
+          "x": 240,
+          "y": 240
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 244,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerCut": 20,
+      "controlStrip": {
+        "x": 16,
+        "y": 288,
+        "w": 256,
+        "h": 56
+      }
+    },
+    "hud": {
+      "scoreIcon": {
+        "x": 56,
+        "y": 262
+      },
+      "digits": {
+        "x": 72,
+        "y": 262,
+        "pitch": 8,
+        "count": 4
+      },
+      "modeLabel": {
+        "x": 112,
+        "y": 266
+      },
+      "lives": {
+        "x": 80,
+        "y": 290,
+        "pitch": 20
+      },
+      "sound": {
+        "x": 188,
+        "y": 260,
+        "w": 36,
+        "h": 16
+      },
+      "lights": {
+        "x": 152,
+        "y": 298
+      }
+    }
+  },
+  "paletteUnchanged": true
+}

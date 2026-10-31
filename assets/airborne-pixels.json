@@ -11,10 +11,10 @@
   "description": "Ten independent hand-drawn ink maps. S suit, M midtone, B shadow, V visor, C glass, A equipment, dot transparent. Export adds a one-pixel dark contour around ink. No rotation, mirroring or resampling.",
   "themeIndices": {
     "polar-signal": {
-      "S": 8,
-      "M": 6,
-      "B": 3,
-      "V": 0,
+      "S": 2,
+      "M": 10,
+      "B": 9,
+      "V": 8,
       "C": 12,
       "A": 13
     },
