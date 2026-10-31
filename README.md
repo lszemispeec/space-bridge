@@ -49,7 +49,7 @@ src/
   game/       pure rules: step(), positions, save, unlocks, rng
   platform/   loop, input, canvas scaling, storage
   render/     atlas renderer and playback, bitmap font, atlas contract
-  audio/      audio event API (engine arrives on a separate issue)
+  audio/      chiptune engine, SFX, theme music and the audio event API
   app.ts      wires everything together
 assets/       art masters per theme, with previews and change reports
 public/atlas/ the sheets and atlases the game loads

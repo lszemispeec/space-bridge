@@ -74,6 +74,7 @@ export function createApp(options: AppOptions): App {
     if (event.type === 'save_changed') writeSave(store, state.save);
     if (isAudioEvent(event.type)) audio.play(event.type);
     if (event.type === 'mute_changed') audio.setMuted(event.muted);
+    if (event.type === 'round_start') audio.music(state.save.settings.theme);
     if (event.type === 'theme_changed') {
       ensureArt(event.theme);
       audio.music(event.theme);

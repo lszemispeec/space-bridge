@@ -13,7 +13,7 @@ interface AudioSink {
 }
 ```
 
-The engine implements `AudioSink`. The app installs it with `app.setAudio(engine)` (see `src/app.ts`). Until then `nullAudio` is in place and the game is silent.
+The engine is `audio` in `src/audio/index.ts`. `src/main.ts` installs it with `createApp({ canvas, audio })`; `app.setAudio(engine)` swaps it at run time. Without an engine, `nullAudio` keeps the app silent, which the tests use.
 
 ## Events
 
@@ -33,7 +33,7 @@ The engine implements `AudioSink`. The app installs it with `app.setAudio(engine
 
 ## Music
 
-- `music(themeId)` is called on the first user gesture with the saved theme, and again on `theme_changed`.
+- `music(themeId)` is called on the first user gesture with the saved theme, on every `round_start`, and on `theme_changed`. Asking for the theme that is already playing is a no-op, so the loop does not restart between rounds. After `game_over`, the engine plays a jingle and returns to the loop by itself; the `round_start` call cuts the jingle short if the player restarts at once.
 - Theme ids: `polar-signal`, `desert-expedition`, `neon-orbit`. The config in `src/config/themes.ts` also carries a `music` field per theme for the engine's own track names.
 - `setMuted` is called on start-up with the saved value and whenever the player toggles mute (key `M`). Persisting the flag is the game's job; the engine only applies it.
 
