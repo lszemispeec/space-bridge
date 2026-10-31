@@ -4,6 +4,8 @@ import { ACT_SECONDS, createCreatures, creatureAnimation, creatureAt, stepCreatu
 
 const QUIET: CreatureScene = { plateSlot: 1, nextLandingSlot: null, falls: [] };
 const DT = 1 / 60;
+/** The plate parks on each crater in turn, a few seconds at a time, as in play. */
+const plateTour = (t: number): CreatureScene => ({ ...QUIET, plateSlot: CRATER_SLOTS[Math.floor(t / 7) % CRATER_SLOTS.length] ?? 1 });
 
 function play(seed: number, seconds: number, scene: CreatureScene | ((t: number) => CreatureScene)) {
   let state = createCreatures(seed);
@@ -33,7 +35,7 @@ describe('crater creatures', () => {
   });
 
   it('shows one pair of eyes at a time, in every crater over a few minutes', () => {
-    const { seen, acts, visits } = play(3, 180, QUIET);
+    const { seen, acts, visits } = play(3, 180, plateTour);
     for (const slot of CRATER_SLOTS) {
       for (const act of ['peek', 'watch', 'blink', 'hide'] as const) expect(seen[slot]?.has(act), `${act} in crater ${slot}`).toBe(true);
     }
@@ -67,10 +69,79 @@ describe('crater creatures', () => {
     }
   });
 
-  it('cuts a reach short when the plate arrives at that crater', () => {
+  it('cuts a reach short when the next landing needs that crater', () => {
     let state = withActive(resting(3, 'reach', 0.2, 1.2));
-    state = stepCreatures(state, DT, { plateSlot: 3, nextLandingSlot: null, falls: [] });
+    state = stepCreatures(state, DT, { plateSlot: 1, nextLandingSlot: 3, falls: [] });
     expect(state.active?.act).toBe('hide');
+  });
+
+  describe('under the plate', () => {
+    const over = (slot: number): CreatureScene => ({ ...QUIET, plateSlot: slot });
+
+    it.each(['peek', 'watch', 'blink', 'look_l', 'look_r', 'hide', 'reach'] as const)('%s eyes vanish at once when the plate arrives', (act) => {
+      let state = withActive(resting(3, act, 0.5, 2));
+      state = stepCreatures(state, DT, over(3));
+      expect(state.active).toBeNull();
+      expect(creatureAt(state, 3)).toBeNull();
+      expect(state.lastSlot).toBe(3);
+      expect(state.rest).toBeGreaterThanOrEqual(ACT_SECONDS.quiet[0]);
+    });
+
+    it('vanishing eyes do not cut the rest a grab already owes', () => {
+      let state = { ...withActive(resting(3, 'watch')), rest: 3.5 };
+      state = stepCreatures(state, DT, over(3));
+      expect(state.rest).toBeGreaterThanOrEqual(3.5);
+    });
+
+    it('never starts a peek in the crater under the plate', () => {
+      let state: Creatures = { ...withActive(null), rest: 0.001, lastSlot: 2 };
+      for (let i = 0; i < 20; i++) {
+        state = stepCreatures(state, DT, over(3));
+        expect(state.active?.slot).not.toBe(3);
+        state = { ...state, active: null, rest: 0.001 };
+      }
+    });
+
+    it('never shows eyes under the plate in a seeded run where the plate tours every crater', () => {
+      const { acts, seen } = play(21, 600, plateTour);
+      for (const a of acts) {
+        if (a.slot !== null) expect(a.slot, `${a.act} at ${a.t.toFixed(2)}s`).not.toBe(plateTour(a.t).plateSlot);
+      }
+      for (const slot of CRATER_SLOTS) expect(seen[slot]?.has('peek'), `crater ${slot} gets eyes once the plate leaves`).toBe(true);
+    });
+
+    it('gives the crater eyes again on the normal schedule after the plate leaves', () => {
+      let state = withActive(resting(2, 'watch'));
+      state = stepCreatures(state, DT, over(2));
+      expect(state.active).toBeNull();
+      const rest = state.rest;
+      expect(rest).toBeLessThanOrEqual(ACT_SECONDS.quiet[1]);
+      let t = 0;
+      while (!state.active) {
+        state = stepCreatures(state, DT, { ...QUIET, plateSlot: 1, nextLandingSlot: null });
+        t += DT;
+      }
+      expect(t).toBeCloseTo(rest, 1);
+      expect(state.active.act).toBe('peek');
+      expect(state.active.slot).not.toBe(2);
+      let state2: Creatures = { ...state, active: null, rest: 0.001, lastSlot: 1, rng: { seed: 9 } };
+      // After a different crater was last, crater 2 is a candidate again.
+      const slots = new Set<number>();
+      for (let i = 0; i < 40; i++) {
+        state2 = stepCreatures(state2, DT, over(4));
+        if (state2.active) slots.add(state2.active.slot);
+        state2 = { ...state2, active: null, rest: 0.001 };
+      }
+      expect(slots.has(2)).toBe(true);
+      expect(slots.has(4)).toBe(false);
+    });
+
+    it('leaves the grab of a falling cosmonaut alone when the plate moves over its crater', () => {
+      let state = withActive(null);
+      state = stepCreatures(state, DT, { ...QUIET, plateSlot: 2, falls: [{ slot: 2, progress: 0.4 }] });
+      expect(creatureAt(state, 2)).toMatchObject({ slot: 2, act: 'grab', t: 0.4 });
+      expect(state.active).toBeNull();
+    });
   });
 
   it('grabs a falling cosmonaut with the fall progress, the eyes dive, then everything rests', () => {
