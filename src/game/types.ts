@@ -5,8 +5,8 @@ import type { Rng } from './rng';
 export type Phase = 'title' | 'playing' | 'life_lost' | 'game_over';
 
 /**
- * `crouch` is every stand on a slot: the emerge wait at the rocket door and
- * the squash on the plate. The slot tells which one it is.
+ * `crouch` is every stand on a slot: the emerge wait on the ledge outside the
+ * hatch and the squash on the plate. The slot tells which one it is.
  */
 export type CosmonautState = 'crouch' | 'air' | 'fall' | 'board';
 
@@ -100,6 +100,7 @@ export type GameEvent =
   | { type: 'plate_move' }
   | { type: 'save' }
   | { type: 'fall' }
+  | { type: 'grab' }
   | { type: 'life_lost' }
   | { type: 'unlock'; theme: ThemeId }
   | { type: 'game_over' }

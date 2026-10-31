@@ -3,7 +3,7 @@ import { AUDIO_EVENTS } from '../audio/api';
 import { DIFFICULTY } from '../config/difficulty';
 import { ROCKET_SLOT } from '../config/layout';
 import { STEP_SECONDS } from '../platform/loop';
-import { bestScore, canLeaveGameOver, musicTempo, step } from './rules';
+import { bestScore, canLeaveGameOver, currentDensity, musicTempo, step } from './rules';
 import { defaultSave } from './save';
 import { createBot, instantBotOptions } from './bot';
 import { move, playBot, press, run, runUntil, startGame, titleState, types } from './testing';
@@ -130,13 +130,38 @@ describe('spawning and jumping', () => {
     expect(tumbles.some((h) => h.spin > 0) && tumbles.some((h) => h.spin < 0)).toBe(true);
   });
 
-  it('never has more cosmonauts than the mode allows', () => {
-    let s = startGame(titleState(), 'B');
-    for (let i = 0; i < 60 * 20; i++) {
-      s = step(s, NO_INPUT, STEP_SECONDS).state;
-      expect(s.cosmonauts.length).toBeLessThanOrEqual(DIFFICULTY.modes.B.maxOnScreen);
-      if (s.phase === 'game_over') break;
+  it('never has more cosmonauts than the density ramp allows at the score', () => {
+    for (const mode of ['A', 'B'] as const) {
+      let s = startGame(titleState(), mode);
+      const bot = createBot(instantBotOptions());
+      let most = 0;
+      for (let i = 0; i < 60 * 120; i++) {
+        s = step(s, bot.input(s), STEP_SECONDS).state;
+        expect(s.cosmonauts.length).toBeLessThanOrEqual(currentDensity(s).maxOnScreen);
+        most = Math.max(most, s.cosmonauts.length);
+        if (s.phase === 'game_over') break;
+      }
+      expect(most).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  it('starts a round calm: at most two cosmonauts before the first hundred points', () => {
+    let s = startGame(titleState(), 'B');
+    const bot = createBot(instantBotOptions());
+    while (s.score < 100 && s.phase === 'playing') {
+      s = step(s, bot.input(s), STEP_SECONDS).state;
+      expect(s.cosmonauts.length).toBeLessThanOrEqual(2);
+    }
+    expect(s.score).toBeGreaterThanOrEqual(100);
+  });
+
+  it('drops from the ledge to crater 1 in the drop time, then hops in the jump time', () => {
+    const jumped = runUntil(startGame(titleState()), 'jump').state;
+    expect(jumped.cosmonauts[0]?.duration).toBe(DIFFICULTY.timing.drop);
+    const bounced = runUntil(jumped, 'bounce').state;
+    const hopped = runUntil(bounced, 'jump').state;
+    expect(hopped.cosmonauts[0]?.slot).toBe(1);
+    expect(hopped.cosmonauts[0]?.duration).toBe(DIFFICULTY.timing.jump);
   });
 });
 
@@ -312,7 +337,7 @@ describe('purity', () => {
   });
 
   it('only emits sound events that the audio API knows', () => {
-    const soundLike = ['footstep', 'jump', 'bounce', 'plate_move', 'save', 'fall', 'life_lost', 'unlock', 'game_over'];
+    const soundLike = ['footstep', 'jump', 'bounce', 'plate_move', 'save', 'fall', 'grab', 'life_lost', 'unlock', 'game_over'];
     for (const name of soundLike) expect(AUDIO_EVENTS).toContain(name);
   });
 });

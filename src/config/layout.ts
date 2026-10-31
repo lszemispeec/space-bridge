@@ -30,6 +30,12 @@ export const SLOT_X: readonly number[] = [82, 106, 146, 186, 226, 252];
 
 /** Vehicle hulls. The art anchors are their bottom-left corners. */
 export const ROCKET = { x: 43, y: 80, w: 33, h: 89 } as const;
+/**
+ * Feet position of a cosmonaut on the ledge outside the hatch, about two
+ * thirds of the way up the rocket. The atlas may move it with a
+ * `rocket.ledge` placement; this is the default when it has none.
+ */
+export const ROCKET_LEDGE = { x: 82, y: 110 } as const;
 export const ROVER = { x: 248, y: 142, w: 33, h: 38 } as const;
 
 /** Crater frames are centred here, so the back rim straddles the ground line. */
@@ -116,5 +122,10 @@ export function hitRect(r: Rect, minSize: number): Rect {
  * the arcs are tall and narrow and three or four are in the air at once.
  */
 export const JUMP_HEIGHT = 90;
+/**
+ * Lift of the first arc, from the ledge down to crater 1. The ledge is already
+ * high, so a small lift rises a little above it and then drops to the ground.
+ */
+export const DROP_HEIGHT = 36;
 /** How far below the ground a fallen cosmonaut sinks. */
 export const FALL_DEPTH = 18;
