@@ -9,8 +9,6 @@ import {
   CRATER_SLOTS,
   CRATER_Y,
   PLATE_Y,
-  PLAY_X0,
-  PLAY_X1,
   ROCKET,
   ROCKET_LEDGE,
   ROCKET_SLOT,
@@ -185,9 +183,10 @@ function drawLoading(ctx: CanvasRenderingContext2D, theme: Theme): void {
   drawTextCentered(ctx, 'LOADING', CENTER_X, 116, theme.palette.text, 2);
 }
 
+/** Dims the whole scene under the title and game-over text: the window shows the scene edge to edge. */
 function drawOverlay(ctx: CanvasRenderingContext2D, p: ThemePalette): void {
   ctx.globalAlpha = 0.8;
-  fill(ctx, { x: PLAY_X0, y: 30, w: PLAY_X1 - PLAY_X0, h: SCREEN_H - 30 }, p.overlay);
+  fill(ctx, { x: 0, y: 0, w: SCREEN_W, h: SCREEN_H }, p.overlay);
   ctx.globalAlpha = 1;
 }
 
