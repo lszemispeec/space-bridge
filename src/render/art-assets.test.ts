@@ -19,6 +19,9 @@ describe('production art handoff', () => {
         expect(frame.duration, name).toBeGreaterThan(0);
         if (name.startsWith('cosmonaut.') || name.startsWith('plate.')) {
           expect([frame.ax, frame.ay], name).toEqual([frame.w / 2, frame.h]);
+          if (name.startsWith('cosmonaut.')) {
+            expect([frame.w, frame.h, frame.ax, frame.ay], name).toEqual([20, 22, 10, 22]);
+          }
         } else if (name.startsWith('rocket.') || name.startsWith('rover.')) {
           expect([frame.ax, frame.ay], name).toEqual([0, frame.h]);
         } else if (name.startsWith('hud.') || name.startsWith('button.')) {

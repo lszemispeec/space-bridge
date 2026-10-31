@@ -10,7 +10,27 @@
         1452
       ],
       "palette": 16,
-      "backgroundSpecklePixelsConsolidated": 1142
+      "backgroundSpecklePixelsConsolidated": 1142,
+      "cosmonautCell": [
+        20,
+        22
+      ],
+      "cosmonautAnchor": [
+        10,
+        22
+      ],
+      "visibleCosmonautHeight": [
+        16,
+        20
+      ],
+      "lifeIconCell": [
+        14,
+        16
+      ],
+      "lifeIconAnchor": [
+        0,
+        0
+      ]
     },
     "desert-expedition": {
       "frames": 61,
@@ -20,7 +40,27 @@
         1452
       ],
       "palette": 16,
-      "backgroundSpecklePixelsConsolidated": 2026
+      "backgroundSpecklePixelsConsolidated": 2026,
+      "cosmonautCell": [
+        20,
+        22
+      ],
+      "cosmonautAnchor": [
+        10,
+        22
+      ],
+      "visibleCosmonautHeight": [
+        16,
+        20
+      ],
+      "lifeIconCell": [
+        14,
+        16
+      ],
+      "lifeIconAnchor": [
+        0,
+        0
+      ]
     },
     "neon-orbit": {
       "frames": 61,
@@ -30,7 +70,28 @@
         1452
       ],
       "palette": 16,
-      "backgroundSpecklePixelsConsolidated": 2423
+      "backgroundSpecklePixelsConsolidated": 2423,
+      "cosmonautCell": [
+        20,
+        22
+      ],
+      "cosmonautAnchor": [
+        10,
+        22
+      ],
+      "visibleCosmonautHeight": [
+        16,
+        20
+      ],
+      "lifeIconCell": [
+        14,
+        16
+      ],
+      "lifeIconAnchor": [
+        0,
+        0
+      ]
     }
-  }
+  },
+  "revision": 2
 }

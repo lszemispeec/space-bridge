@@ -35,6 +35,21 @@ def audit(theme):
         check(crop.getbbox() is not None or name == "ambient.drift.3", f"empty: {name}")
         if name.startswith("cosmonaut."):
             check(crop.getbbox()[3] == h, f"feet registration: {name}")
+            check((w, h, frame['ax'], frame['ay']) == (20, 22, 10, 22), f"actor cell: {name}")
+            visible_height = crop.getbbox()[3] - crop.getbbox()[1]
+            check(16 <= visible_height <= 20, f"visible actor height: {name}")
+            outline = tuple(bytes.fromhex(atlas['meta']['palette'][0][1:]))
+            for yy in range(h):
+                for xx in range(w):
+                    pixel = crop.getpixel((xx, yy))
+                    if not pixel[3]:
+                        continue
+                    boundary = any(
+                        nx < 0 or nx >= w or ny < 0 or ny >= h or not crop.getpixel((nx, ny))[3]
+                        for nx, ny in ((xx-1, yy), (xx+1, yy), (xx, yy-1), (xx, yy+1))
+                    )
+                    if boundary:
+                        check(pixel[:3] == outline, f"continuous dark contour: {name} {xx},{yy}")
         if name.startswith("ambient."):
             for yy in range(h):
                 for xx in range(w):
@@ -49,6 +64,13 @@ def audit(theme):
     used = {p[:3] for p in image.getdata() if p[3]}
     check(used == palette, "sheet must use exactly its 16 declared colours")
     check(set(crops["background"].getchannel("A").getdata()) == {255}, "opaque background")
+    corridor = crops['background'].crop((76, 130, 248, 168))
+    check(len(set(corridor.getdata())) == 1, 'quiet actor corridor')
+    gutter = crops['background'].getpixel((4, 152))
+    for side in ('left', 'right'):
+        check(crops[f'button.{side}.idle.0'].getpixel((0, 0)) == gutter, f'panel-free {side} gutter')
+    for name in ('hud.icon.life.0', 'hud.icon.life_empty.0'):
+        check(crops[name].size == (14, 16), f'life icon size: {name}')
 
     # Full-screen previews must be an exact integer enlargement, with no new colours.
     native = Image.open(directory / "previews/screen-1x.png").convert("RGBA")
@@ -56,6 +78,8 @@ def audit(theme):
     check(native.size == (320, 240), "native screen size")
     check(large.size == (1280, 960), "4x screen size")
     check(native.resize(large.size, Image.Resampling.NEAREST).tobytes() == large.tobytes(), "4x nearest-neighbour")
+    air_crop = Image.open(directory / 'previews/cosmonaut-air-1x.png').convert('RGBA')
+    check(air_crop.tobytes() == native.crop((122, 118, 170, 182)).tobytes(), 'unscaled airborne crop')
     for file in (directory / "previews").glob("*.png"):
         for pixel in Image.open(file).convert("RGBA").getdata():
             check(pixel[3] in (0, 255), f"preview alpha: {file.name}")
