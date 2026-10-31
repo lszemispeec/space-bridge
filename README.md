@@ -2,7 +2,7 @@
 
 A retro pixel-art browser game in TypeScript. It is inspired by the Elektronika IM-09 "Космический мост" handheld from the 1980s.
 
-Cosmonauts jump from the rocket to the rover across a road with four craters. You move the bridge plate under each landing. If you miss, the cosmonaut falls into the crater. Three misses end the game.
+Cosmonauts climb out of a hatch high on the rocket, drop from its ledge to the first crater, and hop on to the rover across a road with four craters. You move the bridge plate under each landing. If you miss, the cosmonaut falls into the crater, and whatever lives in there grabs it. Three misses end the game.
 
 ## Play
 
@@ -10,7 +10,9 @@ Cosmonauts jump from the rocket to the rover across a road with four craters. Yo
 - **Touch**: tap the left or right half of the screen. Every press moves the plate one crater, in order.
 - **T**: cycle unlocked themes (title screen). **M**: mute. On touch, tap the THEME and SOUND buttons on the title screen, or the SND / MUTE box in the HUD.
 - Game A is slower. Game B starts faster and climbs higher. Each mode keeps its own high score.
-- Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (a reaction margin, then one press interval per extra crater) is in `src/config/difficulty.ts`. It shrinks with the speed curve, and the curve is tuned so a good player (0.22 s reaction, 0.15 s per press) can follow the longest trip, from crater 4 back to crater 1, at the top speed of both modes.
+- Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (a reaction margin, then one press interval per extra crater) is in `src/config/difficulty.ts`. It shrinks with the speed curve, and the curve is tuned so a good player (0.22 s reaction, 0.15 s per press) can follow the longest trip, from crater 4 back to crater 1, at the top speed of both modes, and still has the reaction margin at the top of Game B.
+- A round starts calm, with one or two cosmonauts, and fills up with the score: the density ramp in `src/config/difficulty.ts` raises the cap and shortens the spawn gaps until four or five are on screen at the top of the curve. The scheduler promise holds all the way up.
+- The crater creatures (eyes, blinks, looks, a rare tentacle) are cosmetic: `src/game/creatures.ts`, stepped by the renderer with its own seeded RNG.
 - Themes unlock with your best score: Desert Expedition at 350, Neon Orbit at 700.
 
 ## Run
