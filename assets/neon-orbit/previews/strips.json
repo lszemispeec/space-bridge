@@ -491,8 +491,6 @@
     "loop": false,
     "durations": [
       50,
-      50,
-      50,
       50
     ]
   },
@@ -501,8 +499,6 @@
     "file": "ui.lever.l.release-strip.png",
     "loop": false,
     "durations": [
-      50,
-      50,
       50,
       1000
     ]
@@ -521,8 +517,6 @@
     "loop": false,
     "durations": [
       50,
-      50,
-      50,
       50
     ]
   },
@@ -531,8 +525,6 @@
     "file": "ui.lever.r.release-strip.png",
     "loop": false,
     "durations": [
-      50,
-      50,
       50,
       1000
     ]
@@ -558,10 +550,10 @@
     "file": "frame.lights-strip.png",
     "loop": true,
     "durations": [
-      300,
-      300,
-      300,
-      300
+      600,
+      600,
+      600,
+      600
     ]
   },
   {

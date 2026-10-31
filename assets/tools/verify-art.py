@@ -1,5 +1,7 @@
 """Read-only pixel audit. Run from any directory with Python 3 and Pillow."""
 import json
+import io
+import subprocess
 from pathlib import Path
 from PIL import Image, ImageSequence
 
@@ -155,18 +157,24 @@ def audit(theme):
         check(surround.size == size, f'{orientation} outer dimensions')
         scene = layout['scene']
         window = (scene['dx'], scene['dy'], scene['dx']+scene['w'], scene['dy']+scene['h'])
-        # The only permitted intrusions are the two new upper chamfers and ten glint pixels.
+        # The glass stays clear except for the two upper chamfers.
         glass = surround.crop(window)
         allowed = {(x,y) for y in range(20) for i in range(20-y) for x in (i,glass.width-1-i)}
-        allowed.update((26+i,8+i) for i in range(6))
-        allowed.update((24+i,13+i) for i in range(4))
         visible = {(x,y) for y in range(glass.height) for x in range(glass.width) if glass.getpixel((x,y))[3]}
         check(visible <= allowed, f'{orientation} clear gameplay window outside chamfers/glints')
         check((0,0) in visible and (19,0) in visible, 'angled upper mullion')
         check(scene['dy']+scene['h'] == layout['console']['y'], 'console below scene')
         taps = layout['leverTapZones']
         check(taps == ({'l':{'x':20,'y':164,'w':24,'h':48},'r':{'x':308,'y':164,'w':24,'h':48}} if orientation=='landscape' else {'l':{'x':20,'y':292,'w':24,'h':48},'r':{'x':244,'y':292,'w':24,'h':48}}), 'tap zones frozen')
-        check(layout['levers']['l']['y'] == layout['levers']['r']['y'] == 240, 'deck-mounted lever art')
+        check(layout['levers']['l']['y'] == layout['levers']['r']['y'] == 270, 'deck-mounted lever art')
+        boxes = list(room['recesses'].values()) + [dict(pos, w=24, h=40) for pos in layout['levers'].values()]
+        for i, a in enumerate(boxes):
+            check(a['y'] >= layout['console']['y'] and a['y']+a['h'] <= size[1] and 0 <= a['x'] < a['x']+a['w'] <= size[0], 'control inside deck')
+            for b in boxes[i+1:]:
+                check(a['x']+a['w'] <= b['x'] or b['x']+b['w'] <= a['x'] or a['y']+a['h'] <= b['y'] or b['y']+b['h'] <= a['y'], 'no overlapping controls')
+        for scale in (1, 4):
+            before = Image.open(directory / f'previews/console-before-{orientation}-{scale}x.png')
+            check(before.size == (size[0]*scale,size[1]*scale), 'before comparison geometry')
         small = Image.open(directory / f'previews/operator-{orientation}-1x.png').convert('RGBA')
         big = Image.open(directory / f'previews/operator-{orientation}-4x.png').convert('RGBA')
         check(small.size == size, 'operator preview size')
@@ -175,10 +183,45 @@ def audit(theme):
         check(small.crop((snd['x'],snd['y'],snd['x']+snd['w'],snd['y']+snd['h'])).tobytes() == crops['ui.hud_sound.idle.0'].tobytes(), 'console sound target')
     for side in ('l', 'r'):
         frames = [f'ui.lever.{side}.idle.0'] + atlas['animations'][f'ui.lever.{side}.pull']['frames']
-        check(len(frames) == 5 and len({crops[n].tobytes() for n in frames}) == 5, 'five distinct lever poses')
+        check(len(frames) == 3 and len({crops[n].tobytes() for n in frames}) == 3, 'idle and two distinct pull poses')
         for name in frames:
             f = atlas['frames'][name]
-            check((f['w'],f['h'],f['ax'],f['ay']) == (40,64,0,0), 'larger native lever art')
+            check((f['w'],f['h'],f['ax'],f['ay']) == (24,40,0,0), 'small native lever art')
+    # Preserve every unrelated production frame exactly against the pinned handoff.
+    revision = json.loads((directory / 'revision-9.json').read_text())
+    def baseline_blob(name):
+        return subprocess.check_output(['git', 'show', f"{revision['baseline']}:assets/{theme}/{name}"], cwd=ROOT)
+    previous = json.loads(baseline_blob(f'{theme}.json'))
+    previous_sheet = Image.open(io.BytesIO(baseline_blob(f'{theme}.png'))).convert('RGBA')
+    check(atlas['meta']['palette'] == previous['meta']['palette'], 'palette unchanged')
+    changed = set(revision['changedFrames']) | set(revision['removedFrames'])
+    check(set(previous['frames']) - set(atlas['frames']) == set(revision['removedFrames']), 'only redundant pull poses removed')
+    for name, f in previous['frames'].items():
+        if name in changed:
+            continue
+        check(atlas['frames'][name] == f, f'preserved frame metadata: {name}')
+        old = previous_sheet.crop((f['x'],f['y'],f['x']+f['w'],f['y']+f['h']))
+        check(crops[name].tobytes() == old.tobytes(), f'preserved frame pixels: {name}')
+    for side in ('l', 'r'):
+        check(atlas['animations'][f'ui.lever.{side}.release']['frames'] == [f'ui.lever.{side}.pull.0', f'ui.lever.{side}.idle.0'], 'release through intermediate to idle')
+        poses = [crops[f'ui.lever.{side}.{state}'] for state in ('idle.0','pull.0','pull.1')]
+        check(len({im.crop((0,29,24,40)).tobytes() for im in poses}) == 1, 'stationary lever base')
+    for i in range(4):
+        check(crops[f'frame.lights.{i}'].size == (6,6), 'single small status lamp')
+    recesses = room['recesses']
+    check(set(recesses) == {'scoreMode','lives','sound','menu','status'}, 'only required readouts have recesses')
+    for a,b in [('scoreMode','sound'),('sound','menu'),('lives','status')]:
+        check(recesses[b]['x'] - recesses[a]['x'] - recesses[a]['w'] == 4, 'four pixel horizontal gaps')
+    check(recesses['lives']['y'] - recesses['scoreMode']['y'] - recesses['scoreMode']['h'] == 4, 'four pixel row gap')
+    def inside(inner, outer):
+        return outer['x'] < inner['x'] and outer['y'] < inner['y'] and inner['x']+inner['w'] < outer['x']+outer['w'] and inner['y']+inner['h'] < outer['y']+outer['h']
+    for name, contents in {
+        'scoreMode': [dict(room['hud']['scoreIcon'],w=12,h=12),dict(room['hud']['digits'],w=32,h=10),dict(room['hud']['modeLabel'],w=23,h=5)],
+        'lives': [dict(room['hud']['lives'],w=54,h=16)],
+        'sound': [room['hud']['sound']], 'menu': [room['menu']], 'status': [dict(room['hud']['lights'],w=6,h=6)],
+    }.items():
+        for content in contents:
+            check(inside(content,recesses[name]), f'readout fits its own recess: {name}')
     # Full-open eyes have circular 3/5/5/5/3 whites, including their dark pupil.
     eye = crops['crater.eyes.peek.2']
     eye_white = tuple(bytes.fromhex(atlas['meta']['palette'][15 if theme == 'neon-orbit' else 8][1:]))
@@ -191,10 +234,10 @@ def audit(theme):
         check(suit.getpixel((9,8))[:3] == tuple(bytes.fromhex('3F7068')), 'dark Polar suit')
         check(suit.getpixel((10,5))[:3] == tuple(bytes.fromhex('FFFAE8')), 'light Polar visor')
     lever_loop = Image.open(directory / 'previews/levers-cycle-4x.gif')
-    check(lever_loop.n_frames == 9 and lever_loop.info.get('loop') == 0, 'complete lever cycle')
+    check(lever_loop.n_frames == 5 and lever_loop.info.get('loop') == 0, 'complete lever cycle')
     cycle = []
-    for frame, duration in zip(ImageSequence.Iterator(lever_loop), [300,50,50,50,250,50,50,50,100]):
-        check(frame.size == (416,288) and frame.info['duration'] == duration, 'lever cycle geometry/timing')
+    for frame, duration in zip(ImageSequence.Iterator(lever_loop), [300,50,250,50,100]):
+        check(frame.size == (256,192) and frame.info['duration'] == duration, 'lever cycle geometry/timing')
         check(set(frame.convert('RGB').getdata()) <= palette, 'lever cycle palette')
         cycle.append(frame.convert('RGBA').tobytes())
     check(cycle == list(reversed(cycle)), 'lever release returns through authored poses')

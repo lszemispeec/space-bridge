@@ -1,0 +1,237 @@
+{
+  "baseline": "4a4ab1c050eb2b984429d14f85bfddd5ed331a1a",
+  "removedFrames": [
+    "ui.lever.l.pull.2",
+    "ui.lever.l.pull.3",
+    "ui.lever.r.pull.2",
+    "ui.lever.r.pull.3"
+  ],
+  "changedFrames": [
+    "ui.lever.l.idle.0",
+    "ui.lever.l.pull.0",
+    "ui.lever.l.pull.1",
+    "ui.lever.r.idle.0",
+    "ui.lever.r.pull.0",
+    "ui.lever.r.pull.1",
+    "frame.room.landscape.0",
+    "frame.room.portrait.0",
+    "frame.lights.0",
+    "frame.lights.1",
+    "frame.lights.2",
+    "frame.lights.3"
+  ],
+  "operatorRoom": {
+    "background": "background.window",
+    "landscape": {
+      "size": {
+        "w": 352,
+        "h": 320
+      },
+      "frame": "frame.room.landscape.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 352,
+        "h": 68
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 270
+        },
+        "r": {
+          "x": 320,
+          "y": 270
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 308,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerCut": 20
+    },
+    "portrait": {
+      "size": {
+        "w": 288,
+        "h": 344
+      },
+      "frame": "frame.room.portrait.0",
+      "scene": {
+        "sx": 32,
+        "sy": 0,
+        "w": 256,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 288,
+        "h": 92
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 270
+        },
+        "r": {
+          "x": 256,
+          "y": 270
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 244,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerCut": 20,
+      "controlStrip": {
+        "x": 16,
+        "y": 288,
+        "w": 256,
+        "h": 56
+      }
+    },
+    "hud": {
+      "scoreIcon": {
+        "x": 52,
+        "y": 265
+      },
+      "digits": {
+        "x": 68,
+        "y": 265,
+        "pitch": 8,
+        "count": 4
+      },
+      "modeLabel": {
+        "x": 116,
+        "y": 268
+      },
+      "lives": {
+        "x": 52,
+        "y": 289,
+        "pitch": 20
+      },
+      "sound": {
+        "x": 166,
+        "y": 263,
+        "w": 36,
+        "h": 16
+      },
+      "lights": {
+        "x": 122,
+        "y": 288
+      }
+    },
+    "revision": 9,
+    "menu": {
+      "x": 210,
+      "y": 263,
+      "w": 36,
+      "h": 16
+    },
+    "recesses": {
+      "scoreMode": {
+        "x": 48,
+        "y": 260,
+        "w": 112,
+        "h": 22
+      },
+      "sound": {
+        "x": 164,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "menu": {
+        "x": 208,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "lives": {
+        "x": 48,
+        "y": 286,
+        "w": 68,
+        "h": 22
+      },
+      "status": {
+        "x": 120,
+        "y": 286,
+        "w": 10,
+        "h": 10
+      }
+    },
+    "leverMotion": {
+      "pivot": {
+        "x": 12,
+        "y": 30
+      },
+      "shaftEndpoints": [
+        {
+          "x": 12,
+          "y": 12
+        },
+        {
+          "x": 15,
+          "y": 12
+        },
+        {
+          "x": 18,
+          "y": 12
+        }
+      ],
+      "maxAngleDegrees": 18.4,
+      "mirrorForLeft": true
+    }
+  },
+  "palette": [
+    "#173B3A",
+    "#285552",
+    "#3F7068",
+    "#5E8D7A",
+    "#83A792",
+    "#ABC3A6",
+    "#D1DCC0",
+    "#F0EED5",
+    "#FFFAE8",
+    "#233A46",
+    "#426573",
+    "#6C929A",
+    "#9BB8B7",
+    "#C8493B",
+    "#E67B59",
+    "#F1B683"
+  ],
+  "paletteUnchanged": true,
+  "unchanged": "All other frame pixels, rectangles, anchors, durations, animations, sockets and scene geometry.",
+  "integration": "Art-only handoff. Runtime layout, MENU/SND targets and lever timing require Forge integration. Previews are offline compositions."
+}
