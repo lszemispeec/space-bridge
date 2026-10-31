@@ -2,7 +2,7 @@
  * A short play recording with sound, from a built preview, in headless Chrome.
  *
  *   npm run build && npm run preview -- --port 4173 &
- *   npm run record       # or: node scripts/record.mjs http://localhost:4173/ shots/space-bridge.webm
+ *   npm run record       # or: node scripts/record.mjs http://localhost:4173/ shots/space-bridge.webm [A|B]
  *
  * Needs Google Chrome and, for the MP4 copy, ffmpeg on the PATH. Drives Chrome
  * over the DevTools protocol with Node's built-in WebSocket. The page records
@@ -10,15 +10,17 @@
  * the game's AudioContext is tapped before the engine connects to it, so the
  * MediaRecorder gets the same mix the speakers would.
  *
- * The clip: the title screen cycles through the three themes, then Game B
- * runs with a bot on the plate, the bot stops, and the game-over jingle ends
- * the clip.
+ * The clip, 16-19.5 s: the title screen in Polar Signal, then a Game A round
+ * (or Game B with the third argument) with a bot on the plate. Near the end
+ * the bot stops, so one cosmonaut falls into a crater, and the clip ends on
+ * the life-lost pause.
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
-const [url = 'http://localhost:4173/', outFile = 'shots/space-bridge.webm'] = process.argv.slice(2);
+const [url = 'http://localhost:4173/', outFile = 'shots/space-bridge.webm', mode = 'A'] = process.argv.slice(2);
+if (mode !== 'A' && mode !== 'B') throw new Error(`Mode must be A or B, not ${mode}`);
 const THEMES = ['polar-signal', 'desert-expedition', 'neon-orbit'];
 const CHROME =
   process.env.CHROME ??
@@ -27,7 +29,16 @@ const PORT = 9334;
 const WIDTH = 1280;
 const HEIGHT = 960;
 const SCALE = 4;
-const PLAY_MS = 12_000;
+/** Title screen time after the music starts. */
+const TITLE_MS = 1_500;
+/** How long the bot plays before it lets a cosmonaut fall. */
+const PLAY_MS = 11_500;
+/** Longest wait for the fall after the bot stops. */
+const FALL_MAX_MS = 4_500;
+/** Time after the fall, stretched or cut so the clip stays within the bounds. */
+const OUTRO_MS = 2_000;
+const CLIP_MIN_MS = 16_000;
+const CLIP_MAX_MS = 19_500;
 
 const chrome = spawn(
   CHROME,
@@ -44,6 +55,8 @@ const chrome = spawn(
 );
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const t0 = Date.now();
+const log = (text) => console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${text}`);
 
 async function waitForChrome() {
   for (let i = 0; i < 50; i++) {
@@ -64,6 +77,8 @@ function connect(wsUrl) {
   const pending = new Map();
   ws.addEventListener('message', (m) => {
     const msg = JSON.parse(m.data);
+    if (msg.method === 'Inspector.targetCrashed') throw new Error('The page crashed');
+    if (msg.method === 'Runtime.exceptionThrown') console.error('page exception:', JSON.stringify(msg.params.exceptionDetails));
     if (msg.id && pending.has(msg.id)) {
       const { resolve, reject } = pending.get(msg.id);
       pending.delete(msg.id);
@@ -89,7 +104,7 @@ function bootstrap(theme) {
     version: 1,
     highScores: { A: 0, B: 0 },
     unlocked: THEMES,
-    settings: { theme, muted: false, mode: 'B' },
+    settings: { theme, muted: false, mode },
   };
   return `
     localStorage.setItem(${JSON.stringify(SAVE_KEY)}, ${JSON.stringify(JSON.stringify(save))});
@@ -143,7 +158,7 @@ const START_RECORDING = `(() => {
   return { tracks: stream.getTracks().map((t) => t.kind), state: recorder.state };
 })()`;
 
-/** Keeps the plate under the cosmonauts while window.__follow is true. */
+/** Keeps the plate under the next landing while window.__follow is true. */
 const BOT = `(() => {
   const key = (code) => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code, bubbles: true }));
@@ -155,26 +170,29 @@ const BOT = `(() => {
   const tick = () => {
     const s = app.getState();
     if (s.phase === 'playing' && window.__follow) {
-      const flying = s.cosmonauts.find((c) => c.state === 'air' && c.slot <= 3);
+      const flying = s.cosmonauts
+        .filter((c) => c.state === 'air' && c.slot <= 3)
+        .sort((a, b) => (a.duration - a.t) - (b.duration - b.t))[0];
       if (flying && flying.slot + 1 !== s.plateSlot) key(flying.slot + 1 < s.plateSlot ? 'ArrowLeft' : 'ArrowRight');
     }
-    if (s.phase !== 'over') requestAnimationFrame(tick);
+    if (s.phase !== 'game_over') requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
   return true;
 })()`;
 
-const WAIT_GAME_OVER = `new Promise((resolve) => {
+/** Resolves with the score at the next life lost, or -1 if none comes in time. */
+const WAIT_LIFE_LOST = `new Promise((resolve) => {
   const app = window.spaceBridge;
-  if (app.getState().phase === 'over') return resolve(app.getState().score);
   const off = app.onEvent((event, state) => {
-    if (event.type === 'game_over') { off(); resolve(state.score); }
+    if (event.type === 'life_lost') { off(); resolve(state.score); }
   });
-  setTimeout(() => { off(); resolve(-1); }, 30000);
+  setTimeout(() => { off(); resolve(-1); }, ${FALL_MAX_MS});
 })`;
 
 const KEYS = {
   KeyT: { key: 't', code: 'KeyT', windowsVirtualKeyCode: 84 },
+  ArrowLeft: { key: 'ArrowLeft', code: 'ArrowLeft', windowsVirtualKeyCode: 37 },
   ArrowRight: { key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39 },
 };
 
@@ -198,31 +216,35 @@ async function record() {
   await cdp.open;
   await cdp.send('Page.enable');
   await cdp.send('Runtime.enable');
+  await cdp.send('Inspector.enable');
   await cdp.send('Emulation.setDeviceMetricsOverride', { width: WIDTH, height: HEIGHT, deviceScaleFactor: 1, mobile: false });
-  await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: bootstrap(THEMES[0]) });
+  // The save starts on the last theme, so the first gesture cycles to the first.
+  await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: bootstrap(THEMES[THEMES.length - 1]) });
   await cdp.send('Page.navigate', { url });
   await sleep(2000);
 
-  // First gesture: creates the AudioContext, starts the music, cycles to theme 2.
+  // First gesture: creates the AudioContext, starts the music, cycles to Polar Signal.
   await press(cdp, 'KeyT');
   await sleep(400);
   const started = await evaluate(cdp, START_RECORDING);
-  console.log(`recording: tracks ${started.tracks.join('+')}, ${started.state}`);
-  await sleep(3000);
-  await press(cdp, 'KeyT');
-  await sleep(3000);
-  await press(cdp, 'KeyT');
-  await sleep(2500);
+  const recordingSince = Date.now();
+  log(`recording: tracks ${started.tracks.join('+')}, ${started.state}`);
+  await sleep(TITLE_MS);
 
-  await press(cdp, 'ArrowRight');
+  // Left starts Game A, right starts Game B.
+  await press(cdp, mode === 'A' ? 'ArrowLeft' : 'ArrowRight');
   await evaluate(cdp, BOT);
+  log(`game ${mode} started, phase ${await evaluate(cdp, 'window.spaceBridge.getState().phase')}`);
   await sleep(PLAY_MS);
   await evaluate(cdp, 'window.__follow = false');
-  const score = await evaluate(cdp, WAIT_GAME_OVER, true);
-  console.log(`game over at score ${score}`);
-  await sleep(4500);
+  log('bot stopped');
+  const score = await evaluate(cdp, WAIT_LIFE_LOST, true);
+  log(score < 0 ? 'no fall in time; the clip ends here' : `life lost at score ${score}`);
+  const elapsed = Date.now() - recordingSince;
+  await sleep(Math.max(0, Math.min(Math.max(OUTRO_MS, CLIP_MIN_MS - elapsed), CLIP_MAX_MS - elapsed)));
 
   const data = await evaluate(cdp, 'window.__stopRecording()', true);
+  log('recording stopped');
   await writeFile(outFile, Buffer.from(data, 'base64'));
   console.log(outFile);
   cdp.close();
