@@ -69,10 +69,10 @@ describe('landingsFit', () => {
 
   it('rejects a gap too short for the plate to travel', () => {
     const from = { slot: 1, at: 2 };
-    const to = { slot: 4, at: 2.55 };
-    expect(travelTime(from, to, timing, cfg)).toBeCloseTo(0.6);
+    const to = { slot: 4, at: 2.45 };
+    expect(travelTime(from, to, timing, cfg)).toBeCloseTo(0.5);
     expect(landingsFit([from, to], timing, cfg)).toBe(false);
-    expect(landingsFit([from, { slot: 4, at: 2.6 }], timing, cfg)).toBe(true);
+    expect(landingsFit([from, { slot: 4, at: 2.5 }], timing, cfg)).toBe(true);
   });
 
   it('counts the travel from a landing that already happened', () => {
@@ -80,7 +80,7 @@ describe('landingsFit', () => {
       landingsFit(
         [
           { slot: 4, at: -0.05 },
-          { slot: 1, at: 0.5 },
+          { slot: 1, at: 0.4 },
         ],
         timing,
         cfg,

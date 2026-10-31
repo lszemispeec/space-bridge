@@ -52,15 +52,23 @@ export interface TimingConfig {
 /**
  * What the player is promised about landings. A spawn is delayed until every
  * pair of consecutive landings on the road keeps these gaps, so a player who
- * reacts within `reactionMargin` and presses once per `pressTime` never has
- * to be in two places at once.
+ * reacts within `reactionMargin` and then presses once per `pressTime` never
+ * has to be in two places at once.
+ *
+ * The plate travel budget between two landings `n` craters apart is
+ * `squash + reactionMargin + (n - 1) * pressTime`: one reaction, then one
+ * press interval for every crater after the first. A human plays in real
+ * seconds, so the budget must still be enough at the top of the speed curve.
+ * The longest trip is the return from crater 4 to crater 1 (n = 3); the same
+ * budget must fit between a spawn and its first landing (`emerge + jump`),
+ * because the spawn is the first thing the player can react to.
  */
 export interface SchedulerConfig {
   /** Smallest gap between any two landings. */
   minSeparation: number;
-  /** Time the plate needs for one press, so for one crater of travel. */
+  /** Time the plate gets for every press after the first. */
   pressTime: number;
-  /** Reaction time the player gets after a take-off before the first press counts. */
+  /** Time the player gets, after a landing or a spawn, before the first press counts. */
   reactionMargin: number;
 }
 
@@ -74,7 +82,7 @@ export interface DifficultyConfig {
 export const DIFFICULTY: DifficultyConfig = {
   lives: 3,
   timing: {
-    emerge: 0.45,
+    emerge: 0.74,
     squash: 0.12,
     jump: 0.7,
     fall: 0.6,
@@ -84,8 +92,8 @@ export const DIFFICULTY: DifficultyConfig = {
   },
   scheduler: {
     minSeparation: 0.5,
-    pressTime: 0.18,
-    reactionMargin: 0.34,
+    pressTime: 0.42,
+    reactionMargin: 0.48,
   },
   modes: {
     A: {
