@@ -69,8 +69,8 @@ export const TAP_TARGETS = {
   titleMute: { x: 164, y: 190, w: 56, h: 16 },
 } as const satisfies Record<string, Rect>;
 
-/** `hudMute` is the sound readout on the console; see `CONSOLE_HUD`. */
-export type TapTargetId = keyof typeof TAP_TARGETS | 'hudMute';
+/** `hudMute` is the sound readout on the console (`CONSOLE_HUD`); `hudMenu` is the MENU button (`CONSOLE_MENU_BUTTON`). */
+export type TapTargetId = keyof typeof TAP_TARGETS | 'hudMute' | 'hudMenu';
 
 /**
  * The operator room: the player looks at the scene through the windshield of
@@ -166,6 +166,14 @@ export const CONSOLE_HUD = {
   sound: { x: 188, y: 260, w: 36, h: 16 },
   lights: { x: 152, y: 298 },
 } as const;
+
+/**
+ * The MENU button on the console, in room pixels, right of the sound
+ * readout. The renderer draws it with the bitmap font in the console style;
+ * it is not part of the atlas's `hud` table. It opens the pause menu, and
+ * closes it while the menu is open.
+ */
+export const CONSOLE_MENU_BUTTON: Rect = { x: 232, y: 260, w: 36, h: 16 };
 
 /**
  * The title's button row: both buttons and the gap between them. A tap in

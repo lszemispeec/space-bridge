@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { CONSOLE_HUD, PLAY_W, PLAY_X0, PORTRAIT_STRIP, roomLayout, SCREEN_H, SCREEN_W, TAP_TARGETS } from '../config/layout';
+import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, PLAY_W, PLAY_X0, PORTRAIT_STRIP, roomLayout, SCREEN_H, SCREEN_W, TAP_TARGETS } from '../config/layout';
+import { menuRowRect } from '../game/menu';
 import { defaultSave } from '../game/save';
-import { minHitSize, sideForPointer, tapAction, tapTarget, toRoomPoint } from './input';
+import { createCrtPass, webgl2Available } from './crt';
+import { menuTapAction, minHitSize, sideForPointer, tapAction, tapTarget, toRoomPoint } from './input';
 import { accumulateSteps, STEP_SECONDS } from './loop';
 import { loadSave, memoryStore, writeSave } from './storage';
 import { canvasToFrame, CANVAS_SIZE, chooseViewport, composition, fitScale } from './viewport';
@@ -147,6 +149,19 @@ describe('tapAction', () => {
     expect(tapAction('life_lost', { x: 186, y: 207 }, 'landscape', 'right')).toBe('right');
   });
 
+  it('opens the menu from the console MENU button in every phase and orientation', () => {
+    const menu = CONSOLE_MENU_BUTTON;
+    const onMenu = { x: menu.x + menu.w / 2, y: menu.y + menu.h / 2 };
+    expect(tapAction('title', onMenu, 'landscape', 'right')).toBe('pause');
+    expect(tapAction('playing', onMenu, 'landscape', 'right')).toBe('pause');
+    expect(tapAction('game_over', onMenu, 'portrait', 'right')).toBe('pause');
+    expect(menu.x + menu.w).toBeLessThanOrEqual(ROOM_P.w);
+    expect(menu.x).toBeGreaterThanOrEqual(sound.x + sound.w);
+    // Grown hit areas: the sound readout and the MENU button stay apart.
+    expect(tapAction('playing', { x: menu.x + 2, y: onMenu.y }, 'landscape', 'right', 44)).toBe('pause');
+    expect(tapAction('playing', { x: sound.x + sound.w - 2, y: onSound.y }, 'landscape', 'right', 44)).toBe('mute');
+  });
+
   it('finds the sound readout on the narrower portrait console too', () => {
     expect(sound.x + sound.w).toBeLessThanOrEqual(ROOM_P.w);
     expect(tapAction('playing', onSound, 'portrait', 'left')).toBe('mute');
@@ -182,6 +197,44 @@ describe('tapAction', () => {
   it('gives an overlap between grown hit areas to the nearest button', () => {
     expect(tapTarget('title', { x: 174, y: 210 }, 'landscape', 80)).toBe('titleTheme');
     expect(tapTarget('title', { x: 178, y: 210 }, 'landscape', 80)).toBe('titleMute');
+  });
+});
+
+describe('menuTapAction', () => {
+  const menu = CONSOLE_MENU_BUTTON;
+
+  it('closes the menu from the MENU button and hands window taps to the menu as scene points', () => {
+    expect(menuTapAction({ x: menu.x + 1, y: menu.y + 1 }, landscape)).toBe('back');
+    const row = menuRowRect(2);
+    const tap = menuTapAction({ x: row.x + WIN.x + 3, y: row.y + WIN.y + 3 }, landscape);
+    expect(tap).toEqual({ tap: { x: row.x + 3, y: row.y + 3 } });
+    const portraitTap = menuTapAction({ x: row.x - PLAY_X0 + 16 + 3, y: row.y + 12 + 3 }, portrait);
+    expect(portraitTap).toEqual({ tap: { x: row.x + 3, y: row.y + 3 } });
+  });
+
+  it('swallows taps on the console, the frame and off the canvas, so nothing moves the plate', () => {
+    expect(menuTapAction({ x: 100, y: ROOM_L.console.y + 10 }, landscape)).toBeNull();
+    expect(menuTapAction({ x: 4, y: 100 }, landscape)).toBeNull();
+    expect(menuTapAction(null, landscape)).toBeNull();
+  });
+});
+
+describe('crt pass without WebGL2', () => {
+  const noGl = {
+    getContext: () => null,
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+  } as unknown as HTMLCanvasElement;
+
+  it('reports WebGL2 as unavailable and creates no pass, so the 2D output stays', () => {
+    expect(webgl2Available(noGl)).toBe(false);
+    expect(createCrtPass(noGl, { onLost: () => undefined, onRestored: () => undefined })).toBeNull();
+  });
+
+  it('treats a throwing getContext as unavailable too', () => {
+    const throwing = { getContext: () => { throw new Error('blocked'); } } as unknown as HTMLCanvasElement;
+    expect(webgl2Available(throwing)).toBe(false);
+    expect(createCrtPass(throwing, { onLost: () => undefined, onRestored: () => undefined })).toBeNull();
   });
 });
 

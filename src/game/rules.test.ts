@@ -351,3 +351,93 @@ describe('purity', () => {
     for (const name of soundLike) expect(AUDIO_EVENTS).toContain(name);
   });
 });
+
+describe('pause menu', () => {
+  const paused = () => step(startGame(titleState()), press({ pause: true }), STEP_SECONDS).state;
+
+  it('toggles with the pause key and reports it', () => {
+    const r = step(startGame(titleState()), press({ pause: true }), STEP_SECONDS);
+    expect(r.state.paused).toBe(true);
+    expect(types(r.events)).toEqual(['pause_changed']);
+    const back = step(r.state, press({ pause: true }), STEP_SECONDS);
+    expect(back.state.paused).toBe(false);
+    expect(types(back.events)).toEqual(['pause_changed']);
+  });
+
+  it('freezes the round: no time, no spawns, no plate moves, no start', () => {
+    const s = paused();
+    const later = run(s, 5, move('right')).state;
+    expect(later.time).toBe(s.time);
+    expect(later.cosmonauts).toEqual(s.cosmonauts);
+    expect(later.plateSlot).toBe(s.plateSlot);
+    expect(later.spawnTimer).toBe(s.spawnTimer);
+    const title = step({ ...titleState(), paused: true }, press({ start: true }), STEP_SECONDS).state;
+    expect(title.phase).toBe('title');
+  });
+
+  it('resumes where it stopped', () => {
+    const before = run(startGame(titleState()), 2).state;
+    const stopped = step(before, press({ pause: true }), STEP_SECONDS).state;
+    const resumed = step(stopped, press({ commands: [{ type: 'resume' }] }), STEP_SECONDS).state;
+    expect(resumed.paused).toBe(false);
+    // The resuming step is the first one that runs again.
+    expect(resumed.time).toBeCloseTo(before.time + STEP_SECONDS);
+    expect(resumed.cosmonauts.length).toBe(before.cosmonauts.length);
+  });
+
+  it('only pauses, and only inside a round, on the hidden-tab command', () => {
+    const pause = press({ commands: [{ type: 'pause' }] });
+    expect(step(titleState(), pause, STEP_SECONDS).state.paused).toBe(false);
+    const inRound = step(startGame(titleState()), pause, STEP_SECONDS);
+    expect(inRound.state.paused).toBe(true);
+    expect(types(inRound.events)).toEqual(['pause_changed']);
+    const again = step(inRound.state, pause, STEP_SECONDS);
+    expect(again.state.paused).toBe(true);
+    expect(again.events).toEqual([]);
+  });
+
+  it('restarts the round in the same mode from the menu', () => {
+    const before = run(startGame(titleState(), 'B'), 20).state;
+    const s = step(before, press({ pause: true }), STEP_SECONDS).state;
+    const r = step(s, press({ commands: [{ type: 'restart' }] }), STEP_SECONDS);
+    expect(r.state).toMatchObject({ paused: false, phase: 'playing', mode: 'B', score: 0, cosmonauts: [] });
+    expect(types(r.events)).toEqual(['round_start', 'pause_changed']);
+    expect(step(titleState(), press({ commands: [{ type: 'restart' }] }), STEP_SECONDS).state.phase).toBe('title');
+  });
+
+  it('quits to the title from the menu and keeps the save', () => {
+    const before = run(startGame(titleState()), 20).state;
+    const s = step(before, press({ pause: true }), STEP_SECONDS).state;
+    const r = step(s, press({ commands: [{ type: 'quit' }] }), STEP_SECONDS);
+    expect(r.state).toMatchObject({ paused: false, phase: 'title', cosmonauts: [] });
+    expect(r.state.save).toEqual(before.save);
+  });
+
+  it('changes the theme from the menu, only to an unlocked one', () => {
+    const save = defaultSave();
+    save.unlocked = ['polar-signal', 'neon-orbit'];
+    const s = step(startGame(titleState(save)), press({ pause: true }), STEP_SECONDS).state;
+    const r = step(s, press({ commands: [{ type: 'theme', theme: 'neon-orbit' }] }), STEP_SECONDS);
+    expect(r.state.save.settings.theme).toBe('neon-orbit');
+    expect(types(r.events)).toEqual(['theme_changed', 'save_changed']);
+    const locked = step(s, press({ commands: [{ type: 'theme', theme: 'desert-expedition' }] }), STEP_SECONDS);
+    expect(locked.state.save.settings.theme).toBe('polar-signal');
+    expect(locked.events).toEqual([]);
+  });
+
+  it('sets the volumes and the display preset, persists them, and ignores no-ops', () => {
+    const s = paused();
+    const r = step(s, press({ commands: [{ type: 'volume', bus: 'music', value: 0.3 }, { type: 'shader', preset: 'crt' }] }), STEP_SECONDS);
+    expect(r.state.save.settings).toMatchObject({ music: 0.3, shader: 'crt' });
+    expect(types(r.events)).toEqual(['volume_changed', 'save_changed', 'shader_changed', 'save_changed']);
+    const same = step(r.state, press({ commands: [{ type: 'volume', bus: 'music', value: 0.3 }, { type: 'shader', preset: 'crt' }] }), STEP_SECONDS);
+    expect(same.events).toEqual([]);
+    expect(step(s, press({ commands: [{ type: 'volume', bus: 'sfx', value: 7 }] }), STEP_SECONDS).state.save.settings.sfx).toBe(1);
+  });
+
+  it('still toggles mute while paused', () => {
+    const r = step(paused(), press({ mute: 1 }), STEP_SECONDS);
+    expect(r.state.save.settings.muted).toBe(true);
+    expect(r.state.paused).toBe(true);
+  });
+});

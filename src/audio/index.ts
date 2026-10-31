@@ -35,6 +35,7 @@ class GameAudio implements AudioSink {
   private theme: ThemeId | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private tempo = 1;
+  private paused = false;
   private installed = false;
   private readonly listeners = new Set<(s: AudioSettings) => void>();
 
@@ -82,7 +83,11 @@ class GameAudio implements AudioSink {
     if (event === 'game_over') this.jingle('gameOver');
   }
 
-  /** Start a theme's loop, or stop music with `null`. Switching to the theme already playing is a no-op. */
+  /**
+   * Start a theme's loop, or stop music with `null`. Switching to the theme
+   * already playing is a no-op. While paused the request is remembered and
+   * starts at resume.
+   */
   music(theme: ThemeId | null): void {
     this.theme = theme;
     if (!this.engine || !this.ctx) return;
@@ -90,8 +95,38 @@ class GameAudio implements AudioSink {
       this.stopMusic();
       return;
     }
+    if (this.paused) return;
     if (this.current === theme && this.engine.sequencer.isPlaying) return;
     this.startSong(theme, THEME_SONGS[theme]);
+  }
+
+  /**
+   * The pause menu: the music stops where it is and no more notes are
+   * scheduled; it continues from there at resume. A theme chosen while
+   * paused starts at resume instead.
+   */
+  setPaused(paused: boolean): void {
+    if (this.paused === paused) return;
+    this.paused = paused;
+    const engine = this.engine;
+    const ctx = this.ctx;
+    if (!engine || !ctx) return;
+    if (paused) {
+      this.stopTicker();
+      engine.sequencer.pause(ctx.currentTime + SFX_LATENCY);
+      return;
+    }
+    if (this.theme && this.current !== this.theme) {
+      this.startSong(this.theme, THEME_SONGS[this.theme]);
+    } else if (engine.sequencer.isPaused) {
+      engine.sequencer.resume(ctx.currentTime + SONG_START_SEC);
+      this.startTicker();
+      this.tick();
+    }
+  }
+
+  isPaused(): boolean {
+    return this.paused;
   }
 
   /** Interrupt the music with a one-shot cue. The theme loop resumes when the cue ends. */
@@ -131,7 +166,7 @@ class GameAudio implements AudioSink {
     return this.settings.muted;
   }
 
-  /** Volume 0..1 for one bus. Volumes persist in localStorage. */
+  /** Volume 0..1 for one bus. The game save owns the music and SFX volumes and applies them at start-up. */
   setVolume(bus: 'master' | 'music' | 'sfx', value: number): void {
     this.update({ [bus]: Math.min(1, Math.max(0, value)) });
   }
@@ -153,7 +188,7 @@ class GameAudio implements AudioSink {
     const ctx = this.ctx;
     if (!ctx || ctx.state === 'running') return;
     void ctx.resume().then(() => {
-      if (this.engine?.sequencer.isPlaying) this.startTicker();
+      if (this.engine?.sequencer.isPlaying && !this.paused) this.startTicker();
     });
   }
 

@@ -28,11 +28,13 @@ import { tumbleFrame, type Point } from '../game/jump';
 import { cosmonautView, progressOf, slotPoint, type CosmonautView, type Hatches } from '../game/positions';
 import { bestScore, canLeaveGameOver } from '../game/rules';
 import { nextLanding } from '../game/schedule';
+import type { MenuCaps, MenuState } from '../game/menu';
 import type { Cosmonaut, GameState } from '../game/types';
 import type { HeldButtons } from '../platform/input';
 import type { Viewport } from '../platform/viewport';
 import type { Atlas, AtlasFrame } from './atlas';
 import { drawTextCentered } from './font';
+import { drawMenu } from './menu';
 import { LEVER_IDLE, leverPull, pullLever, settleLever, type Lever } from './lever';
 import { drawRoom, drawRoomLoading, leverPullMs, pad as padTo, soundState, type LeverPulls } from './room';
 import { drawFrame, drawFrameScaled, frameAt, frameByProgress, frameOf, hasAnimation, type Art } from './sprites';
@@ -103,8 +105,15 @@ export interface RenderTarget {
   present(): void;
 }
 
+/** The shell's part of what is on screen: the pause menu's cursor and what the shell can offer in it. */
+export interface Overlay {
+  menu: MenuState;
+  caps: MenuCaps;
+}
+
 export interface Renderer {
-  render(target: RenderTarget, s: GameState, held: HeldButtons, art: Art | null, nowMs: number): void;
+  /** Draws one frame. `nowMs` is the scene clock: it stops while the game is paused, so every loop freezes with it. */
+  render(target: RenderTarget, s: GameState, held: HeldButtons, art: Art | null, nowMs: number, overlay: Overlay): void;
   /** A plate press, so the lever on that side pulls. Queued presses pull in turn. */
   pull(side: PlateSide): void;
 }
@@ -392,7 +401,7 @@ export function createRenderer(): Renderer {
     pull(side) {
       pendingPulls.push(side);
     },
-    render(target, s, held, art, nowMs) {
+    render(target, s, held, art, nowMs, overlay) {
       const ctx = target.scene;
       const room = roomLayout(target.viewport.orientation);
       if (!art) {
@@ -414,6 +423,7 @@ export function createRenderer(): Renderer {
 
       if (s.phase === 'title') drawTitle(ctx, s, held, art, nowMs);
       if (s.phase === 'game_over') drawGameOver(ctx, s);
+      if (s.paused) drawMenu(ctx, s, overlay.menu, overlay.caps);
 
       target.present();
       drawRoom(target.room, room, s, held, stepLevers(held, atlas, nowMs), art, nowMs);
