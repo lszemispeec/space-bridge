@@ -13,6 +13,7 @@ import {
   PLAY_X0,
   PLAY_X1,
   ROCKET,
+  ROCKET_LEDGE,
   ROCKET_SLOT,
   ROVER,
   SCREEN_H,
@@ -22,9 +23,11 @@ import {
   type Rect,
 } from '../config/layout';
 import { getTheme, type Theme, type ThemePalette } from '../config/themes';
-import { tumbleFrame } from '../game/jump';
+import { createCreatures, creatureAnimation, stepCreatures, type Creatures } from '../game/creatures';
+import { tumbleFrame, type Point } from '../game/jump';
 import { cosmonautView, progressOf, slotPoint, type CosmonautView } from '../game/positions';
 import { bestScore, canLeaveGameOver } from '../game/rules';
+import { nextLanding } from '../game/schedule';
 import type { Cosmonaut, GameState } from '../game/types';
 import type { HeldButtons } from '../platform/input';
 import type { Atlas, AtlasFrame } from './atlas';
@@ -56,6 +59,17 @@ const FLAIL_SWAP_MS = 160;
 const FALL_FLAIL_SHARE = 0.5;
 /** Ambient loops drawn over the vehicles instead of behind them. */
 const AMBIENT_FRONT = 'ambient.signal';
+/**
+ * The hatch high on the rocket and the poses on its ledge. Optional until the
+ * art lands in every theme: without them the hull stays closed and the old
+ * door poses play on the ledge.
+ */
+const HATCH_OPEN = 'rocket.hatch.open';
+const HATCH_CLOSE = 'rocket.hatch.close';
+const LEDGE_STAND = 'cosmonaut.ledge.stand';
+const LEDGE_CROUCH = 'cosmonaut.ledge.crouch';
+/** Longest real gap between two frames that the creatures advance by; a hidden tab does not fast-forward them. */
+const MAX_CREATURE_STEP = 0.1;
 
 export interface Renderer {
   render(ctx: CanvasRenderingContext2D, s: GameState, held: HeldButtons, art: Art | null, nowMs: number): void;
@@ -80,9 +94,9 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
   const p = view.progress;
   switch (view.pose) {
     case 'emerge':
-      return frameByProgress(atlas, 'cosmonaut.emerge', p * 2);
+      return frameByProgress(atlas, hasAnimation(atlas, LEDGE_STAND) ? LEDGE_STAND : 'cosmonaut.emerge', p * 2);
     case 'crouch':
-      return frameAt(atlas, 'cosmonaut.crouch', nowMs);
+      return frameAt(atlas, hasAnimation(atlas, LEDGE_CROUCH) ? LEDGE_CROUCH : 'cosmonaut.crouch', nowMs);
     case 'rise':
       if (p < TAKEOFF_SHARE) return frameByProgress(atlas, 'cosmonaut.takeoff', p / TAKEOFF_SHARE);
       return airFrame(atlas, view, nowMs);
@@ -102,6 +116,35 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
 export function soundState(muted: boolean, pressed: boolean): string {
   if (muted) return pressed ? 'muted_pressed' : 'muted';
   return pressed ? 'pressed' : 'idle';
+}
+
+/** The rim of the `index`-th crater: its own shape when the atlas has one, else the shared rim. */
+export function craterAnimation(atlas: Atlas, index: number): string {
+  const own = `crater.${index}`;
+  return hasAnimation(atlas, own) ? own : 'crater.idle';
+}
+
+/** The front lip that covers a fallen cosmonaut, or null when the atlas has none. */
+export function craterFrontFrame(atlas: Atlas, index: number): AtlasFrame | null {
+  for (const name of [`crater.front.${index}`, 'crater.front.0']) {
+    const frame = atlas.frames[name];
+    if (frame) return frame;
+  }
+  return null;
+}
+
+/** Feet position on the ledge: the atlas's `rocket.ledge` placement, else the layout's. */
+export function ledgePoint(atlas: Atlas): Point {
+  return atlas.placements?.['rocket.ledge'] ?? ROCKET_LEDGE;
+}
+
+/** Where the hatch frames are drawn: the atlas's `rocket.hatch` placement, else the rocket's own anchor. */
+export function hatchPoint(atlas: Atlas): Point {
+  return atlas.placements?.['rocket.hatch'] ?? { x: ROCKET.x, y: ROCKET.y + ROCKET.h };
+}
+
+function craterIndex(slot: number): number {
+  return Math.max(0, (CRATER_SLOTS as readonly number[]).indexOf(slot));
 }
 
 function fill(ctx: CanvasRenderingContext2D, r: Rect, color: string): void {
@@ -132,6 +175,25 @@ export function createRenderer(): Renderer {
   let lastPlateSlot: number | null = null;
   let plateMovedAt = -Infinity;
   let plateMoveAnimation = 'plate.move';
+  let ledgeBusy = false;
+  let hatchLeftAt = -Infinity;
+  let creatures: Creatures | null = null;
+  let creaturesSteppedAt = 0;
+
+  const stepScene = (s: GameState, nowMs: number): Creatures => {
+    if (!creatures) {
+      creatures = createCreatures(s.rng.seed);
+      creaturesSteppedAt = nowMs;
+    }
+    const dt = Math.min(MAX_CREATURE_STEP, Math.max(0, (nowMs - creaturesSteppedAt) / 1000));
+    creaturesSteppedAt = nowMs;
+    creatures = stepCreatures(creatures, dt, {
+      plateSlot: s.plateSlot,
+      nextLandingSlot: nextLanding(s.cosmonauts, DIFFICULTY.timing)?.slot ?? null,
+      falls: s.cosmonauts.filter((c) => c.state === 'fall').map((c) => ({ slot: c.slot, progress: progressOf(c) })),
+    });
+    return creatures;
+  };
 
   const trackPlate = (s: GameState, atlas: Atlas, nowMs: number): void => {
     if (lastPlateSlot !== null && s.plateSlot !== lastPlateSlot && s.phase !== 'title') {
@@ -149,21 +211,27 @@ export function createRenderer(): Renderer {
     return frameAt(atlas, 'plate.idle', nowMs);
   };
 
-  const drawAmbient = (ctx: CanvasRenderingContext2D, art: Art, nowMs: number, front: boolean): void => {
+  const drawAmbient = (ctx: CanvasRenderingContext2D, art: Art, nowMs: number, front: boolean, hidden: readonly string[]): void => {
     const placements = art.atlas.placements ?? {};
     for (const [name, at] of Object.entries(placements)) {
       if (!name.startsWith('ambient.') || (name === AMBIENT_FRONT) !== front || !hasAnimation(art.atlas, name)) continue;
+      if (hidden.includes(name)) continue;
       drawFrame(ctx, art, frameAt(art.atlas, name, nowMs), at.x, at.y);
     }
   };
 
   const drawVehicles = (ctx: CanvasRenderingContext2D, s: GameState, art: Art, nowMs: number): void => {
     const { atlas } = art;
-    const emerging = s.cosmonauts.find((c) => c.state === 'crouch' && c.slot === ROCKET_SLOT);
-    const rocket = emerging
-      ? frameByProgress(atlas, 'rocket.door_open', progressOf(emerging))
-      : frameAt(atlas, 'rocket.door_closed', nowMs);
-    drawFrame(ctx, art, rocket, ROCKET.x, ROCKET.y + ROCKET.h);
+    drawFrame(ctx, art, frameAt(atlas, 'rocket.door_closed', nowMs), ROCKET.x, ROCKET.y + ROCKET.h);
+    // The hatch opens while a cosmonaut is on the ledge and closes on the clock after the take-off.
+    const onLedge = s.cosmonauts.find((c) => c.state === 'crouch' && c.slot === ROCKET_SLOT);
+    if (ledgeBusy && !onLedge) hatchLeftAt = nowMs;
+    ledgeBusy = onLedge !== undefined;
+    if (hasAnimation(atlas, HATCH_OPEN) && hasAnimation(atlas, HATCH_CLOSE)) {
+      const hatch = onLedge ? frameByProgress(atlas, HATCH_OPEN, progressOf(onLedge) * 2) : frameAt(atlas, HATCH_CLOSE, nowMs - hatchLeftAt);
+      const at = hatchPoint(atlas);
+      drawFrame(ctx, art, hatch, at.x, at.y);
+    }
 
     // Boarding cosmonauts walk into the rover, so the hull covers them.
     for (const c of s.cosmonauts) if (c.state === 'board') drawCosmonaut(ctx, c, art, nowMs);
@@ -175,7 +243,7 @@ export function createRenderer(): Renderer {
   };
 
   const drawCosmonaut = (ctx: CanvasRenderingContext2D, c: Cosmonaut, art: Art, nowMs: number): void => {
-    const view = cosmonautView(c);
+    const view = cosmonautView(c, ledgePoint(art.atlas));
     const frame = cosmonautFrame(art.atlas, view, nowMs);
     // Air frames are anchored at the body centre, the rest at the feet; keep the cell's bottom on the feet position.
     const y = view.pos.y - (frame.h - frame.ay);
@@ -183,14 +251,35 @@ export function createRenderer(): Renderer {
       drawFrame(ctx, art, frame, view.pos.x, y);
       return;
     }
+    // The tentacle wraps the cosmonaut, so the grab is drawn over it, under the same clip.
+    const crater = slotPoint(c.slot);
     ctx.save();
     ctx.beginPath();
     ctx.rect(0, 0, SCREEN_W, CRATER_BOTTOM_Y);
     ctx.clip();
     drawFrame(ctx, art, frame, view.pos.x, y);
+    const grab = creatures?.creatures.find((k) => k.slot === c.slot && k.act === 'grab');
+    const grabAnimation = grab ? creatureAnimation(grab) : null;
+    if (grabAnimation && hasAnimation(art.atlas, grabAnimation.name)) {
+      drawFrame(ctx, art, frameByProgress(art.atlas, grabAnimation.name, grabAnimation.progress), crater.x, CRATER_Y);
+    }
     ctx.restore();
-    if ('crater.front.0' in art.atlas.frames) {
-      drawFrame(ctx, art, frameOf(art.atlas, 'crater.front.0'), slotPoint(c.slot).x, CRATER_Y);
+    const front = craterFrontFrame(art.atlas, craterIndex(c.slot));
+    if (front) drawFrame(ctx, art, front, crater.x, CRATER_Y);
+  };
+
+  /** The rims, then whatever peeks out of them. The grab is drawn with the falling cosmonaut instead. */
+  const drawCraters = (ctx: CanvasRenderingContext2D, s: GameState, art: Art, nowMs: number): void => {
+    const { atlas } = art;
+    const scene = stepScene(s, nowMs);
+    for (const slot of CRATER_SLOTS) {
+      const index = craterIndex(slot);
+      drawFrame(ctx, art, frameAt(atlas, craterAnimation(atlas, index), nowMs), slotPoint(slot).x, CRATER_Y);
+    }
+    for (const creature of scene.creatures) {
+      const animation = creatureAnimation(creature);
+      if (!animation || creature.act === 'grab' || !hasAnimation(atlas, animation.name)) continue;
+      drawFrame(ctx, art, frameByProgress(atlas, animation.name, animation.progress), slotPoint(creature.slot).x, CRATER_Y);
     }
   };
 
@@ -258,13 +347,12 @@ export function createRenderer(): Renderer {
       const { atlas } = art;
       trackPlate(s, atlas, nowMs);
 
+      const hidden = getTheme(s.save.settings.theme).hiddenAmbient ?? [];
       drawFrame(ctx, art, frameOf(atlas, 'background'), 0, 0);
-      drawAmbient(ctx, art, nowMs, false);
+      drawAmbient(ctx, art, nowMs, false, hidden);
       drawVehicles(ctx, s, art, nowMs);
-      drawAmbient(ctx, art, nowMs, true);
-      for (const slot of CRATER_SLOTS) {
-        drawFrame(ctx, art, frameAt(atlas, 'crater.idle', nowMs), slotPoint(slot).x, CRATER_Y);
-      }
+      drawAmbient(ctx, art, nowMs, true, hidden);
+      drawCraters(ctx, s, art, nowMs);
       drawFrame(ctx, art, plateFrame(s, atlas, nowMs), slotPoint(s.plateSlot).x, PLATE_Y);
       for (const c of s.cosmonauts) if (c.state !== 'board') drawCosmonaut(ctx, c, art, nowMs);
 

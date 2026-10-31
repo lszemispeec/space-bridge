@@ -26,6 +26,12 @@ export interface Theme {
   /** Music track id for the audio engine. */
   music: string;
   palette: ThemePalette;
+  /**
+   * Ambient loops of this theme's atlas that the game does not draw. Polar's
+   * aurora (`ambient.sky`) was retired on the reporter's request; the frames
+   * may stay in the sheet until the art drops them.
+   */
+  hiddenAmbient?: readonly string[];
 }
 
 export const THEMES: readonly Theme[] = [
@@ -36,6 +42,7 @@ export const THEMES: readonly Theme[] = [
     atlas: 'atlas/polar-signal.json',
     music: 'polar-signal',
     palette: { text: '#FFFAE8', accent: '#E67B59', overlay: '#173B3A' },
+    hiddenAmbient: ['ambient.sky'],
   },
   {
     id: 'desert-expedition',
