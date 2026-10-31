@@ -4,14 +4,15 @@
  */
 import { describe, it } from 'vitest';
 import { curveEnd, DIFFICULTY, type GameMode } from '../config/difficulty';
-import { createBot, limitBotOptions, type BotOptions } from './bot';
+import { createBot, goodHumanOptions, limitBotOptions, type BotOptions } from './bot';
 import { defaultSave } from './save';
 import { playWithBot, startGame, titleState } from './testing';
 
 const PLAYERS: Record<string, BotOptions> = {
   'limit (scheduler promise)': limitBotOptions(),
   'sharp human 0.15s/0.12s': { reaction: 0.15, pressInterval: 0.12, beatSeconds: false },
-  'good human 0.22s/0.15s': { reaction: 0.22, pressInterval: 0.15, beatSeconds: false },
+  'good human 0.22s/0.15s': goodHumanOptions(),
+  'good human with jitter 0.25s/0.18s': { reaction: 0.25, pressInterval: 0.18, beatSeconds: false },
   'casual human 0.30s/0.20s': { reaction: 0.3, pressInterval: 0.2, beatSeconds: false },
 };
 const SEEDS = [11, 22, 33, 44, 55];

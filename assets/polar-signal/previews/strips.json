@@ -331,5 +331,150 @@
     "durations": [
       1000
     ]
+  },
+  {
+    "animation": "cosmonaut.air.spin",
+    "file": "cosmonaut.air.spin-strip.png",
+    "loop": true,
+    "durations": [
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.air.flail",
+    "file": "cosmonaut.air.flail-strip.png",
+    "loop": true,
+    "durations": [
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "rocket.hatch.closed",
+    "file": "rocket.hatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.hatch.opening",
+    "file": "rocket.hatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90,
+      90,
+      90
+    ]
+  },
+  {
+    "animation": "rocket.hatch.open",
+    "file": "rocket.hatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.hatch.closing",
+    "file": "rocket.hatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90,
+      90,
+      90
+    ]
+  },
+  {
+    "animation": "cosmonaut.ledge.stand",
+    "file": "cosmonaut.ledge.stand-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "cosmonaut.ledge.crouch",
+    "file": "cosmonaut.ledge.crouch-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "crater.eyes.peek",
+    "file": "crater.eyes.peek-strip.png",
+    "loop": false,
+    "durations": [
+      120,
+      120,
+      300
+    ]
+  },
+  {
+    "animation": "crater.eyes.blink",
+    "file": "crater.eyes.blink-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80,
+      160
+    ]
+  },
+  {
+    "animation": "crater.eyes.look.l",
+    "file": "crater.eyes.look.l-strip.png",
+    "loop": true,
+    "durations": [
+      400
+    ]
+  },
+  {
+    "animation": "crater.eyes.look.r",
+    "file": "crater.eyes.look.r-strip.png",
+    "loop": true,
+    "durations": [
+      400
+    ]
+  },
+  {
+    "animation": "crater.eyes.hide",
+    "file": "crater.eyes.hide-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      100,
+      160
+    ]
+  },
+  {
+    "animation": "crater.tentacle.reach",
+    "file": "crater.tentacle.reach-strip.png",
+    "loop": false,
+    "durations": [
+      120,
+      160,
+      240,
+      160
+    ]
+  },
+  {
+    "animation": "crater.tentacle.grab",
+    "file": "crater.tentacle.grab-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      120,
+      140,
+      140,
+      160
+    ]
   }
 ]

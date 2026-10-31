@@ -5,7 +5,7 @@
     "image": "polar-signal.png",
     "size": {
       "w": 1024,
-      "h": 1470
+      "h": 1619
     },
     "palette": [
       "#173B3A",
@@ -665,6 +665,429 @@
       "ax": 0,
       "ay": 0,
       "duration": 1000
+    },
+    "cosmonaut.air.spin.0": {
+      "x": 1,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.1": {
+      "x": 23,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.2": {
+      "x": 45,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.3": {
+      "x": 67,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.4": {
+      "x": 89,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.5": {
+      "x": 111,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.6": {
+      "x": 133,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.7": {
+      "x": 155,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.flail.0": {
+      "x": 177,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.flail.1": {
+      "x": 199,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "rocket.hatch.closed.0": {
+      "x": 1,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.hatch.opening.0": {
+      "x": 47,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.opening.1": {
+      "x": 93,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.opening.2": {
+      "x": 139,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.open.0": {
+      "x": 185,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.hatch.closing.0": {
+      "x": 231,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.closing.1": {
+      "x": 277,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.closing.2": {
+      "x": 323,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "cosmonaut.ledge.stand.0": {
+      "x": 369,
+      "y": 1495,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 1000
+    },
+    "cosmonaut.ledge.crouch.0": {
+      "x": 391,
+      "y": 1495,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 1000
+    },
+    "crater.0": {
+      "x": 413,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.1": {
+      "x": 439,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.1": {
+      "x": 465,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.2": {
+      "x": 491,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.2": {
+      "x": 517,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.3": {
+      "x": 543,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.3": {
+      "x": 569,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.eyes.peek.0": {
+      "x": 595,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 120
+    },
+    "crater.eyes.peek.1": {
+      "x": 621,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 120
+    },
+    "crater.eyes.peek.2": {
+      "x": 647,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 300
+    },
+    "crater.eyes.blink.0": {
+      "x": 673,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 80
+    },
+    "crater.eyes.blink.1": {
+      "x": 699,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 80
+    },
+    "crater.eyes.blink.2": {
+      "x": 725,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 160
+    },
+    "crater.eyes.look.l.0": {
+      "x": 751,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 400
+    },
+    "crater.eyes.look.r.0": {
+      "x": 777,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 400
+    },
+    "crater.eyes.hide.0": {
+      "x": 803,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 100
+    },
+    "crater.eyes.hide.1": {
+      "x": 829,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 100
+    },
+    "crater.eyes.hide.2": {
+      "x": 855,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 160
+    },
+    "crater.tentacle.reach.0": {
+      "x": 881,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 120
+    },
+    "crater.tentacle.reach.1": {
+      "x": 907,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 160
+    },
+    "crater.tentacle.reach.2": {
+      "x": 933,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 240
+    },
+    "crater.tentacle.reach.3": {
+      "x": 959,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 160
+    },
+    "crater.tentacle.grab.0": {
+      "x": 985,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 100
+    },
+    "crater.tentacle.grab.1": {
+      "x": 1,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 120
+    },
+    "crater.tentacle.grab.2": {
+      "x": 27,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 140
+    },
+    "crater.tentacle.grab.3": {
+      "x": 53,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 140
+    },
+    "crater.tentacle.grab.4": {
+      "x": 79,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 160
     }
   },
   "animations": {
@@ -922,6 +1345,121 @@
         "ui.hud_sound.muted_pressed.0"
       ],
       "loop": true
+    },
+    "cosmonaut.air.spin": {
+      "frames": [
+        "cosmonaut.air.spin.0",
+        "cosmonaut.air.spin.1",
+        "cosmonaut.air.spin.2",
+        "cosmonaut.air.spin.3",
+        "cosmonaut.air.spin.4",
+        "cosmonaut.air.spin.5",
+        "cosmonaut.air.spin.6",
+        "cosmonaut.air.spin.7"
+      ],
+      "loop": true
+    },
+    "cosmonaut.air.flail": {
+      "frames": [
+        "cosmonaut.air.flail.0",
+        "cosmonaut.air.flail.1"
+      ],
+      "loop": true
+    },
+    "rocket.hatch.closed": {
+      "frames": [
+        "rocket.hatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.hatch.opening": {
+      "frames": [
+        "rocket.hatch.opening.0",
+        "rocket.hatch.opening.1",
+        "rocket.hatch.opening.2"
+      ],
+      "loop": false
+    },
+    "rocket.hatch.open": {
+      "frames": [
+        "rocket.hatch.open.0"
+      ],
+      "loop": true
+    },
+    "rocket.hatch.closing": {
+      "frames": [
+        "rocket.hatch.closing.0",
+        "rocket.hatch.closing.1",
+        "rocket.hatch.closing.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.ledge.stand": {
+      "frames": [
+        "cosmonaut.ledge.stand.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.ledge.crouch": {
+      "frames": [
+        "cosmonaut.ledge.crouch.0"
+      ],
+      "loop": true
+    },
+    "crater.eyes.peek": {
+      "frames": [
+        "crater.eyes.peek.0",
+        "crater.eyes.peek.1",
+        "crater.eyes.peek.2"
+      ],
+      "loop": false
+    },
+    "crater.eyes.blink": {
+      "frames": [
+        "crater.eyes.blink.0",
+        "crater.eyes.blink.1",
+        "crater.eyes.blink.2"
+      ],
+      "loop": false
+    },
+    "crater.eyes.look.l": {
+      "frames": [
+        "crater.eyes.look.l.0"
+      ],
+      "loop": true
+    },
+    "crater.eyes.look.r": {
+      "frames": [
+        "crater.eyes.look.r.0"
+      ],
+      "loop": true
+    },
+    "crater.eyes.hide": {
+      "frames": [
+        "crater.eyes.hide.0",
+        "crater.eyes.hide.1",
+        "crater.eyes.hide.2"
+      ],
+      "loop": false
+    },
+    "crater.tentacle.reach": {
+      "frames": [
+        "crater.tentacle.reach.0",
+        "crater.tentacle.reach.1",
+        "crater.tentacle.reach.2",
+        "crater.tentacle.reach.3"
+      ],
+      "loop": false
+    },
+    "crater.tentacle.grab": {
+      "frames": [
+        "crater.tentacle.grab.0",
+        "crater.tentacle.grab.1",
+        "crater.tentacle.grab.2",
+        "crater.tentacle.grab.3",
+        "crater.tentacle.grab.4"
+      ],
+      "loop": false
     }
   },
   "placements": {
@@ -936,6 +1474,16 @@
     "ambient.signal": {
       "x": 0,
       "y": 0
+    }
+  },
+  "retiredAnimations": [
+    "ambient.sky"
+  ],
+  "sockets": {
+    "rocketLedge": {
+      "frame": "rocket.hatch.open.0",
+      "x": 39,
+      "y": 30
     }
   }
 }

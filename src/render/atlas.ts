@@ -36,10 +36,28 @@ export interface AtlasMeta {
   contract: 1;
 }
 
+/** Screen position of an ambient loop's anchor. */
+export interface Placement {
+  x: number;
+  y: number;
+}
+
+/** Attachment point measured from a named frame's top-left corner. */
+export interface AtlasSocket {
+  frame: string;
+  x: number;
+  y: number;
+}
+
 export interface Atlas {
   meta: AtlasMeta;
   frames: Record<string, AtlasFrame>;
   animations: Record<string, AtlasAnimation>;
+  /** Where the game draws optional ambient animations, by animation name. */
+  placements?: Record<string, Placement>;
+  sockets?: Record<string, AtlasSocket>;
+  /** Compatibility animations with intentionally blank frames in this theme. */
+  retiredAnimations?: string[];
 }
 
 /** Animations the game plays by name. Every theme atlas must define these. */
@@ -52,6 +70,21 @@ export const REQUIRED_ANIMATIONS = [
   'cosmonaut.land',
   'cosmonaut.crater_fall',
   'cosmonaut.board',
+  'cosmonaut.air.spin',
+  'cosmonaut.air.flail',
+  'cosmonaut.ledge.stand',
+  'cosmonaut.ledge.crouch',
+  'rocket.hatch.closed',
+  'rocket.hatch.opening',
+  'rocket.hatch.open',
+  'rocket.hatch.closing',
+  'crater.eyes.peek',
+  'crater.eyes.blink',
+  'crater.eyes.look.l',
+  'crater.eyes.look.r',
+  'crater.eyes.hide',
+  'crater.tentacle.reach',
+  'crater.tentacle.grab',
   'plate.idle',
   'plate.move',
   'plate.dip',
@@ -81,6 +114,24 @@ export const REQUIRED_ANIMATIONS = [
 /** Single frames the game draws by name. */
 export const REQUIRED_FRAMES = [
   'background',
+  'crater.0',
+  'crater.1',
+  'crater.2',
+  'crater.3',
+  'crater.front.0',
+  'crater.front.1',
+  'crater.front.2',
+  'crater.front.3',
+  'cosmonaut.air.spin.0',
+  'cosmonaut.air.spin.1',
+  'cosmonaut.air.spin.2',
+  'cosmonaut.air.spin.3',
+  'cosmonaut.air.spin.4',
+  'cosmonaut.air.spin.5',
+  'cosmonaut.air.spin.6',
+  'cosmonaut.air.spin.7',
+  'cosmonaut.air.flail.0',
+  'cosmonaut.air.flail.1',
   'hud.digit.0',
   'hud.digit.1',
   'hud.digit.2',

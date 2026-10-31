@@ -14,10 +14,10 @@ audio.unlock();                // from the first user gesture
 audio.music('polar-signal');   // loops; remembered until unlock
 audio.play('jump');            // one of the AudioEvent names in api.ts
 audio.setMuted(true);          // the game save owns and persists the flag
+audio.setTempo(1.15);          // theme loop speed; the game sends the mode's tempo in a round
 
 // Extras, for the demo page or an options screen:
 audio.jingle('gameOver');      // interrupts the music; the theme loop resumes after
-audio.setTempo(1.15);          // Game B can push the music a little faster
 audio.setVolume('music', 0.4); // volumes persist in localStorage
 audio.onSettings((s) => icon.textContent = s.muted ? 'off' : 'on');
 ```

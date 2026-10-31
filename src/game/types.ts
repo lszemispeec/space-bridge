@@ -19,6 +19,13 @@ export interface Cosmonaut {
   t: number;
   /** Length of the current state, in the same unit as `t`. */
   duration: number;
+  /**
+   * Tumble of the current hop in signed turns: positive spins one way,
+   * negative the other, 0 when not in the air. Rolled at every take-off.
+   */
+  spin: number;
+  /** True while the current hop flails with spread limbs instead of tumbling. */
+  flail: boolean;
 }
 
 export interface HighScores {
@@ -61,24 +68,28 @@ export interface GameState {
 
 export type PlateMove = 'left' | 'right';
 
+/** Buttons that flip a setting on every press. */
+export type Toggle = 'theme' | 'mute';
+
 /**
  * One simulation step of player input. `moves` lists every plate press
  * since the last step in press order; each one moves the plate one crater.
- * The other flags are edge-triggered.
+ * `theme` and `mute` count presses, so two presses in one step are two
+ * toggles. `start` is edge-triggered.
  */
 export interface InputFrame {
   moves: readonly PlateMove[];
   /** Enter / space. */
   start: boolean;
-  theme: boolean;
-  mute: boolean;
+  theme: number;
+  mute: number;
 }
 
 export const NO_INPUT: InputFrame = {
   moves: [],
   start: false,
-  theme: false,
-  mute: false,
+  theme: 0,
+  mute: 0,
 };
 
 /** Events emitted by one step. Sound events share names with the audio API. */

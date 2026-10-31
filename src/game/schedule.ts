@@ -49,16 +49,22 @@ export function landingsOf(c: Cosmonaut, timing: TimingConfig): Landing[] {
 
 /** The landings of a cosmonaut that leaves the rocket now. */
 export function landingsOfNewSpawn(timing: TimingConfig): Landing[] {
-  return landingsOf({ id: 0, state: 'crouch', slot: 0, t: 0, duration: timing.emerge }, timing);
+  return landingsOf({ id: 0, state: 'crouch', slot: 0, t: 0, duration: timing.emerge, spin: 0, flail: false }, timing);
 }
 
 export function allLandings(cosmonauts: readonly Cosmonaut[], timing: TimingConfig): Landing[] {
   return cosmonauts.flatMap((c) => landingsOf(c, timing));
 }
 
-/** Beat seconds the plate needs from one landing to the next. */
+/**
+ * Beat seconds the plate needs from one landing to the next: the squash on
+ * the first one, one reaction, then one press interval per crater after the
+ * first. Two landings on the same slot need no press at all.
+ */
 export function travelTime(from: Landing, to: Landing, timing: TimingConfig, cfg: SchedulerConfig): number {
-  return timing.squash + Math.abs(to.slot - from.slot) * cfg.pressTime + cfg.reactionMargin;
+  const presses = Math.abs(to.slot - from.slot);
+  if (presses === 0) return timing.squash;
+  return timing.squash + cfg.reactionMargin + (presses - 1) * cfg.pressTime;
 }
 
 /**
