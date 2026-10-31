@@ -43,6 +43,20 @@ export async function renderSfx(
   return ctx.startRendering();
 }
 
+/** Render effects the game fires in one step, each after its own offset, as the player hears them. */
+export async function renderSfxStep(
+  createContext: OfflineContextFactory,
+  defs: readonly SfxDef[],
+  opts: RenderOptions = {},
+): Promise<AudioBuffer> {
+  const sampleRate = opts.sampleRate ?? 44100;
+  const end = Math.max(...defs.map((d) => d.offset + d.length));
+  const ctx = createContext(end + (opts.tailSec ?? 0.3), sampleRate);
+  const engine = new ChipEngine(ctx, RENDER_SETTINGS);
+  for (const d of defs) engine.playSfx(d, 0.01 + d.offset);
+  return ctx.startRendering();
+}
+
 /** Render several effects back to back with a gap, for one listening reel. */
 export async function renderSfxReel(
   createContext: OfflineContextFactory,

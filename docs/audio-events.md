@@ -31,7 +31,7 @@ The engine is `audio` in `src/audio/index.ts`. `src/main.ts` installs it with `c
 | `unlock` | The score passes a theme's unlock target. |
 | `game_over` | The last life is gone. |
 
-`fall`, `grab` and `life_lost` arrive together, in that order. Play some of them, or layer them. The `grab` effect in `sfx.ts` is a placeholder shape for the composer to replace. The game never fires `game_over` in the same step as `fall`; it waits for the freeze to end.
+`fall`, `grab` and `life_lost` arrive together, in that order. The engine layers them: the fall whistle (pulse 1) and the creature's slurp and gurgle (pulse 2, triangle, noise) start at once, and `life_lost` waits for the grab to finish (its `offset` in `sfx.ts`, 0.66 s like the grab animation). The game never fires `game_over` in the same step as `fall`; it waits for the freeze to end.
 
 ## Music
 

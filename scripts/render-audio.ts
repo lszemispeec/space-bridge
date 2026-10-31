@@ -3,13 +3,14 @@
  * the PATH) using the real engine on an offline context.
  *
  *   npm run audio:render            → renders/*.wav + renders/*.mp3
+ *   (sfx-fall-step is the miss as the player hears it: fall, grab, then life_lost)
  *   npm run audio:render -- --loops 1
  */
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { OfflineAudioContext } from 'node-web-audio-api';
-import { encodeWav, renderSfx, renderSfxReel, renderSong } from '../src/audio/render';
+import { encodeWav, renderSfx, renderSfxReel, renderSfxStep, renderSong } from '../src/audio/render';
 import { SFX } from '../src/audio/sfx';
 import { JINGLE_SONGS, THEME_SONGS } from '../src/audio/songs/index';
 import { AUDIO_EVENTS } from '../src/audio/types';
@@ -57,6 +58,7 @@ async function main(): Promise<void> {
     save(`sfx-${ev}`, await renderSfx(createContext, SFX[ev], { sampleRate: SAMPLE_RATE }), mp3);
   }
   save('sfx-reel', await renderSfxReel(createContext, AUDIO_EVENTS.map((e) => SFX[e]), 0.7, SAMPLE_RATE), mp3);
+  save('sfx-fall-step', await renderSfxStep(createContext, [SFX.fall, SFX.grab, SFX.life_lost], { sampleRate: SAMPLE_RATE }), mp3);
 }
 
 main().catch((err: unknown) => {
