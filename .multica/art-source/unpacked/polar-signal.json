@@ -1,0 +1,1045 @@
+{
+  "meta": {
+    "schema": "space-bridge-atlas-1",
+    "image": "polar-signal.png",
+    "size": {
+      "w": 2048,
+      "h": 1024
+    },
+    "scale": 1,
+    "canvas": {
+      "w": 320,
+      "h": 240
+    },
+    "theme": "polar-signal",
+    "unlockBestScore": 0,
+    "alpha": "straight; binary 0/255",
+    "anchorUnits": "pixels from frame top-left; draw top-left = world position minus anchor",
+    "durationUnits": "milliseconds; 0 means hold until state changes",
+    "sampling": "nearest-neighbor; no mipmaps",
+    "palette": [
+      "#173B3A",
+      "#285552",
+      "#3F7068",
+      "#5E8D7A",
+      "#83A792",
+      "#ABC3A6",
+      "#D1DCC0",
+      "#F0EED5",
+      "#FFFAE8",
+      "#233A46",
+      "#426573",
+      "#6C929A",
+      "#9BB8B7",
+      "#C8493B",
+      "#E67B59",
+      "#F1B683"
+    ],
+    "ambientContent": {
+      "sky": "aurora shimmer",
+      "drift": "passing snow flurry",
+      "signal": "rocket antenna beacon"
+    }
+  },
+  "frames": {
+    "background": {
+      "name": "background",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 2,
+      "y": 2
+    },
+    "cosmonaut_emerge_0": {
+      "name": "cosmonaut_emerge_0",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 80,
+      "x": 2,
+      "y": 246
+    },
+    "cosmonaut_emerge_1": {
+      "name": "cosmonaut_emerge_1",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 80,
+      "x": 30,
+      "y": 246
+    },
+    "cosmonaut_emerge_2": {
+      "name": "cosmonaut_emerge_2",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 80,
+      "x": 58,
+      "y": 246
+    },
+    "cosmonaut_crouch": {
+      "name": "cosmonaut_crouch",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 80,
+      "x": 86,
+      "y": 246
+    },
+    "cosmonaut_takeoff": {
+      "name": "cosmonaut_takeoff",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 60,
+      "x": 114,
+      "y": 246
+    },
+    "cosmonaut_rise": {
+      "name": "cosmonaut_rise",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 100,
+      "x": 142,
+      "y": 246
+    },
+    "cosmonaut_apex": {
+      "name": "cosmonaut_apex",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 80,
+      "x": 170,
+      "y": 246
+    },
+    "cosmonaut_descend": {
+      "name": "cosmonaut_descend",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 100,
+      "x": 198,
+      "y": 246
+    },
+    "cosmonaut_land_squash": {
+      "name": "cosmonaut_land_squash",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 80,
+      "x": 226,
+      "y": 246
+    },
+    "cosmonaut_land_recover": {
+      "name": "cosmonaut_land_recover",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 80,
+      "x": 254,
+      "y": 246
+    },
+    "cosmonaut_fall_0": {
+      "name": "cosmonaut_fall_0",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 100,
+      "x": 282,
+      "y": 246
+    },
+    "cosmonaut_fall_1": {
+      "name": "cosmonaut_fall_1",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 100,
+      "x": 310,
+      "y": 246
+    },
+    "cosmonaut_fall_2": {
+      "name": "cosmonaut_fall_2",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 140,
+      "x": 338,
+      "y": 246
+    },
+    "cosmonaut_board_0": {
+      "name": "cosmonaut_board_0",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 100,
+      "x": 366,
+      "y": 246
+    },
+    "cosmonaut_board_1": {
+      "name": "cosmonaut_board_1",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 100,
+      "x": 394,
+      "y": 246
+    },
+    "cosmonaut_idle": {
+      "name": "cosmonaut_idle",
+      "w": 24,
+      "h": 32,
+      "anchor": {
+        "x": 12,
+        "y": 30
+      },
+      "duration": 0,
+      "x": 422,
+      "y": 246
+    },
+    "rocket_closed": {
+      "name": "rocket_closed",
+      "w": 48,
+      "h": 96,
+      "anchor": {
+        "x": 24,
+        "y": 92
+      },
+      "duration": 0,
+      "x": 450,
+      "y": 246
+    },
+    "rocket_open": {
+      "name": "rocket_open",
+      "w": 48,
+      "h": 96,
+      "anchor": {
+        "x": 24,
+        "y": 92
+      },
+      "duration": 0,
+      "x": 2,
+      "y": 346
+    },
+    "rover_closed_0": {
+      "name": "rover_closed_0",
+      "w": 48,
+      "h": 40,
+      "anchor": {
+        "x": 24,
+        "y": 36
+      },
+      "duration": 420,
+      "x": 54,
+      "y": 346
+    },
+    "rover_open_0": {
+      "name": "rover_open_0",
+      "w": 48,
+      "h": 40,
+      "anchor": {
+        "x": 24,
+        "y": 36
+      },
+      "duration": 420,
+      "x": 106,
+      "y": 346
+    },
+    "rover_closed_1": {
+      "name": "rover_closed_1",
+      "w": 48,
+      "h": 40,
+      "anchor": {
+        "x": 24,
+        "y": 36
+      },
+      "duration": 420,
+      "x": 158,
+      "y": 346
+    },
+    "rover_open_1": {
+      "name": "rover_open_1",
+      "w": 48,
+      "h": 40,
+      "anchor": {
+        "x": 24,
+        "y": 36
+      },
+      "duration": 420,
+      "x": 210,
+      "y": 346
+    },
+    "bridge_idle": {
+      "name": "bridge_idle",
+      "w": 32,
+      "h": 12,
+      "anchor": {
+        "x": 16,
+        "y": 2
+      },
+      "duration": 0,
+      "contactOffsetY": 0,
+      "x": 262,
+      "y": 346
+    },
+    "bridge_move_left": {
+      "name": "bridge_move_left",
+      "w": 32,
+      "h": 12,
+      "anchor": {
+        "x": 16,
+        "y": 2
+      },
+      "duration": 80,
+      "contactOffsetY": 1,
+      "x": 298,
+      "y": 346
+    },
+    "bridge_move_right": {
+      "name": "bridge_move_right",
+      "w": 32,
+      "h": 12,
+      "anchor": {
+        "x": 16,
+        "y": 2
+      },
+      "duration": 80,
+      "contactOffsetY": 1,
+      "x": 334,
+      "y": 346
+    },
+    "bridge_dip": {
+      "name": "bridge_dip",
+      "w": 32,
+      "h": 12,
+      "anchor": {
+        "x": 16,
+        "y": 2
+      },
+      "duration": 80,
+      "contactOffsetY": 3,
+      "x": 370,
+      "y": 346
+    },
+    "bridge_recover": {
+      "name": "bridge_recover",
+      "w": 32,
+      "h": 12,
+      "anchor": {
+        "x": 16,
+        "y": 2
+      },
+      "duration": 80,
+      "contactOffsetY": 2,
+      "x": 406,
+      "y": 346
+    },
+    "crater_back": {
+      "name": "crater_back",
+      "w": 32,
+      "h": 16,
+      "anchor": {
+        "x": 16,
+        "y": 6
+      },
+      "duration": 0,
+      "x": 442,
+      "y": 346
+    },
+    "crater_front": {
+      "name": "crater_front",
+      "w": 32,
+      "h": 16,
+      "anchor": {
+        "x": 16,
+        "y": 6
+      },
+      "duration": 0,
+      "x": 478,
+      "y": 346
+    },
+    "hud_life": {
+      "name": "hud_life",
+      "w": 12,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 2,
+      "y": 446
+    },
+    "hud_score_icon": {
+      "name": "hud_score_icon",
+      "w": 12,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 18,
+      "y": 446
+    },
+    "hud_life_empty": {
+      "name": "hud_life_empty",
+      "w": 12,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 34,
+      "y": 446
+    },
+    "hud_digit_0": {
+      "name": "hud_digit_0",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 50,
+      "y": 446
+    },
+    "hud_digit_1": {
+      "name": "hud_digit_1",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 62,
+      "y": 446
+    },
+    "hud_digit_2": {
+      "name": "hud_digit_2",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 74,
+      "y": 446
+    },
+    "hud_digit_3": {
+      "name": "hud_digit_3",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 86,
+      "y": 446
+    },
+    "hud_digit_4": {
+      "name": "hud_digit_4",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 98,
+      "y": 446
+    },
+    "hud_digit_5": {
+      "name": "hud_digit_5",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 110,
+      "y": 446
+    },
+    "hud_digit_6": {
+      "name": "hud_digit_6",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 122,
+      "y": 446
+    },
+    "hud_digit_7": {
+      "name": "hud_digit_7",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 134,
+      "y": 446
+    },
+    "hud_digit_8": {
+      "name": "hud_digit_8",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 146,
+      "y": 446
+    },
+    "hud_digit_9": {
+      "name": "hud_digit_9",
+      "w": 8,
+      "h": 12,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 158,
+      "y": 446
+    },
+    "touch_left_idle": {
+      "name": "touch_left_idle",
+      "w": 24,
+      "h": 48,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 170,
+      "y": 446
+    },
+    "touch_left_pressed": {
+      "name": "touch_left_pressed",
+      "w": 24,
+      "h": 48,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 198,
+      "y": 446
+    },
+    "touch_right_idle": {
+      "name": "touch_right_idle",
+      "w": 24,
+      "h": 48,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 226,
+      "y": 446
+    },
+    "touch_right_pressed": {
+      "name": "touch_right_pressed",
+      "w": 24,
+      "h": 48,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 254,
+      "y": 446
+    },
+    "hud_score_label": {
+      "name": "hud_score_label",
+      "w": 36,
+      "h": 10,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 282,
+      "y": 446
+    },
+    "hud_lives_label": {
+      "name": "hud_lives_label",
+      "w": 36,
+      "h": 10,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 0,
+      "x": 322,
+      "y": 446
+    },
+    "ambient.sky_0": {
+      "name": "ambient.sky_0",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 500,
+      "x": 516,
+      "y": 2
+    },
+    "ambient.sky_1": {
+      "name": "ambient.sky_1",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 500,
+      "x": 840,
+      "y": 2
+    },
+    "ambient.sky_2": {
+      "name": "ambient.sky_2",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 500,
+      "x": 1164,
+      "y": 2
+    },
+    "ambient.sky_3": {
+      "name": "ambient.sky_3",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 500,
+      "x": 1488,
+      "y": 2
+    },
+    "ambient.drift_0": {
+      "name": "ambient.drift_0",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 120,
+      "x": 516,
+      "y": 246
+    },
+    "ambient.drift_1": {
+      "name": "ambient.drift_1",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 120,
+      "x": 840,
+      "y": 246
+    },
+    "ambient.drift_2": {
+      "name": "ambient.drift_2",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 240,
+      "x": 1164,
+      "y": 246
+    },
+    "ambient.drift_3": {
+      "name": "ambient.drift_3",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 2520,
+      "x": 1488,
+      "y": 246,
+      "intentionallyEmpty": true
+    },
+    "ambient.signal_0": {
+      "name": "ambient.signal_0",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 250,
+      "x": 516,
+      "y": 490
+    },
+    "ambient.signal_1": {
+      "name": "ambient.signal_1",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 250,
+      "x": 840,
+      "y": 490
+    },
+    "ambient.signal_2": {
+      "name": "ambient.signal_2",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 250,
+      "x": 1164,
+      "y": 490
+    },
+    "ambient.signal_3": {
+      "name": "ambient.signal_3",
+      "w": 320,
+      "h": 240,
+      "anchor": {
+        "x": 0,
+        "y": 0
+      },
+      "duration": 250,
+      "x": 1488,
+      "y": 490
+    }
+  },
+  "animations": {
+    "cosmonaut.emerge": {
+      "frames": [
+        "cosmonaut_emerge_0",
+        "cosmonaut_emerge_1",
+        "cosmonaut_emerge_2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crouch": {
+      "frames": [
+        "cosmonaut_crouch"
+      ],
+      "loop": false
+    },
+    "cosmonaut.takeoff": {
+      "frames": [
+        "cosmonaut_takeoff"
+      ],
+      "loop": false
+    },
+    "cosmonaut.airborne_rising": {
+      "frames": [
+        "cosmonaut_rise"
+      ],
+      "loop": true
+    },
+    "cosmonaut.airborne_apex": {
+      "frames": [
+        "cosmonaut_apex"
+      ],
+      "loop": true
+    },
+    "cosmonaut.airborne_falling": {
+      "frames": [
+        "cosmonaut_descend"
+      ],
+      "loop": true
+    },
+    "cosmonaut.land": {
+      "frames": [
+        "cosmonaut_land_squash",
+        "cosmonaut_land_recover",
+        "cosmonaut_crouch",
+        "cosmonaut_takeoff"
+      ],
+      "loop": false
+    },
+    "cosmonaut.fall": {
+      "frames": [
+        "cosmonaut_fall_0",
+        "cosmonaut_fall_1",
+        "cosmonaut_fall_2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.board": {
+      "frames": [
+        "cosmonaut_board_0",
+        "cosmonaut_board_1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.idle": {
+      "frames": [
+        "cosmonaut_idle"
+      ],
+      "loop": true
+    },
+    "bridge.idle": {
+      "frames": [
+        "bridge_idle"
+      ],
+      "loop": true
+    },
+    "bridge.move_left": {
+      "frames": [
+        "bridge_move_left",
+        "bridge_idle"
+      ],
+      "loop": false
+    },
+    "bridge.move_right": {
+      "frames": [
+        "bridge_move_right",
+        "bridge_idle"
+      ],
+      "loop": false
+    },
+    "bridge.bounce": {
+      "frames": [
+        "bridge_dip",
+        "bridge_recover",
+        "bridge_idle"
+      ],
+      "loop": false
+    },
+    "rocket.closed": {
+      "frames": [
+        "rocket_closed"
+      ],
+      "loop": true
+    },
+    "rocket.open": {
+      "frames": [
+        "rocket_open"
+      ],
+      "loop": true
+    },
+    "rover.closed_idle": {
+      "frames": [
+        "rover_closed_0",
+        "rover_closed_1"
+      ],
+      "loop": true
+    },
+    "rover.open_idle": {
+      "frames": [
+        "rover_open_0",
+        "rover_open_1"
+      ],
+      "loop": true
+    },
+    "ambient.sky": {
+      "frames": [
+        "ambient.sky_0",
+        "ambient.sky_1",
+        "ambient.sky_2",
+        "ambient.sky_3"
+      ],
+      "loop": true
+    },
+    "ambient.drift": {
+      "frames": [
+        "ambient.drift_0",
+        "ambient.drift_1",
+        "ambient.drift_2",
+        "ambient.drift_3"
+      ],
+      "loop": true
+    },
+    "ambient.signal": {
+      "frames": [
+        "ambient.signal_0",
+        "ambient.signal_1",
+        "ambient.signal_2",
+        "ambient.signal_3"
+      ],
+      "loop": true
+    }
+  },
+  "layout": {
+    "canvas": {
+      "w": 320,
+      "h": 240
+    },
+    "hud": {
+      "x": 0,
+      "y": 0,
+      "w": 320,
+      "h": 24
+    },
+    "playfield": {
+      "x": 24,
+      "y": 24,
+      "w": 272,
+      "h": 216
+    },
+    "rocket": {
+      "x": 50,
+      "y": 180
+    },
+    "rover": {
+      "x": 272,
+      "y": 180
+    },
+    "craters": [
+      {
+        "x": 104,
+        "y": 184
+      },
+      {
+        "x": 144,
+        "y": 184
+      },
+      {
+        "x": 184,
+        "y": 184
+      },
+      {
+        "x": 224,
+        "y": 184
+      }
+    ],
+    "bridgeY": 182,
+    "launch": {
+      "x": 78,
+      "y": 180
+    },
+    "boarding": {
+      "x": 272,
+      "y": 170
+    },
+    "touchLeft": {
+      "x": 0,
+      "y": 152,
+      "w": 24,
+      "h": 48
+    },
+    "touchRight": {
+      "x": 296,
+      "y": 152,
+      "w": 24,
+      "h": 48
+    },
+    "scoreIcon": {
+      "x": 28,
+      "y": 6
+    },
+    "scoreLabel": {
+      "x": 42,
+      "y": 7
+    },
+    "scoreDigits": {
+      "x": 82,
+      "y": 6,
+      "advance": 8
+    },
+    "livesLabel": {
+      "x": 208,
+      "y": 7
+    },
+    "lifeIcons": [
+      {
+        "x": 246,
+        "y": 6
+      },
+      {
+        "x": 260,
+        "y": 6
+      },
+      {
+        "x": 274,
+        "y": 6
+      }
+    ]
+  },
+  "drawOrder": [
+    "background",
+    "ambient.sky",
+    "ambient.drift",
+    "crater_back",
+    "rocket",
+    "rover",
+    "ambient.signal",
+    "bridge",
+    "cosmonaut",
+    "crater_front (falling actor only)",
+    "HUD",
+    "touch buttons"
+  ]
+}

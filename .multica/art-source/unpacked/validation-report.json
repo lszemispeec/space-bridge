@@ -1,0 +1,127 @@
+{
+  "themes": [
+    {
+      "theme": "polar-signal",
+      "frames": 61,
+      "sheet": "2048x1024",
+      "opaqueColors": 16,
+      "alpha": [
+        0,
+        255
+      ],
+      "matchingContract": true,
+      "nonemptyFramesExceptIntentionalRest": true,
+      "ambientClearOfHudControlsAndJumpCorridor": true,
+      "overlap": false,
+      "distinctAnimationStates": true,
+      "contacts": {
+        "bridge_idle": {
+          "centerSurfaceOffset": 0,
+          "declared": 0
+        },
+        "bridge_move_left": {
+          "centerSurfaceOffset": 1,
+          "declared": 1
+        },
+        "bridge_move_right": {
+          "centerSurfaceOffset": 1,
+          "declared": 1
+        },
+        "bridge_dip": {
+          "centerSurfaceOffset": 3,
+          "declared": 3
+        },
+        "bridge_recover": {
+          "centerSurfaceOffset": 2,
+          "declared": 2
+        }
+      }
+    },
+    {
+      "theme": "desert-expedition",
+      "frames": 61,
+      "sheet": "2048x1024",
+      "opaqueColors": 16,
+      "alpha": [
+        0,
+        255
+      ],
+      "matchingContract": true,
+      "nonemptyFramesExceptIntentionalRest": true,
+      "ambientClearOfHudControlsAndJumpCorridor": true,
+      "overlap": false,
+      "distinctAnimationStates": true,
+      "contacts": {
+        "bridge_idle": {
+          "centerSurfaceOffset": 0,
+          "declared": 0
+        },
+        "bridge_move_left": {
+          "centerSurfaceOffset": 1,
+          "declared": 1
+        },
+        "bridge_move_right": {
+          "centerSurfaceOffset": 1,
+          "declared": 1
+        },
+        "bridge_dip": {
+          "centerSurfaceOffset": 3,
+          "declared": 3
+        },
+        "bridge_recover": {
+          "centerSurfaceOffset": 2,
+          "declared": 2
+        }
+      }
+    },
+    {
+      "theme": "neon-orbit",
+      "frames": 61,
+      "sheet": "2048x1024",
+      "opaqueColors": 16,
+      "alpha": [
+        0,
+        255
+      ],
+      "matchingContract": true,
+      "nonemptyFramesExceptIntentionalRest": true,
+      "ambientClearOfHudControlsAndJumpCorridor": true,
+      "overlap": false,
+      "distinctAnimationStates": true,
+      "contacts": {
+        "bridge_idle": {
+          "centerSurfaceOffset": 0,
+          "declared": 0
+        },
+        "bridge_move_left": {
+          "centerSurfaceOffset": 1,
+          "declared": 1
+        },
+        "bridge_move_right": {
+          "centerSurfaceOffset": 1,
+          "declared": 1
+        },
+        "bridge_dip": {
+          "centerSurfaceOffset": 3,
+          "declared": 3
+        },
+        "bridge_recover": {
+          "centerSurfaceOffset": 2,
+          "declared": 2
+        }
+      }
+    }
+  ],
+  "gif": {
+    "logicalCanvas": [
+      320,
+      240
+    ],
+    "frames": 70,
+    "totalDurationMs": 6000
+  },
+  "limits": [
+    "Visual inspection of native-size compositions and animation contact frames.",
+    "No game-engine integration, live gameplay, mobile usability, or physical device testing."
+  ]
+}
