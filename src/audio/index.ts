@@ -4,7 +4,7 @@ import { loadSettings, saveSettings } from './settings';
 import { SFX } from './sfx';
 import { compileSong, type CompiledSong, type Song } from './song';
 import { JINGLE_SONGS, THEME_SONGS } from './songs/index';
-import type { AudioEvent, AudioSettings, JingleId, ThemeId } from './types';
+import { JINGLES, type AudioEvent, type AudioSettings, type JingleId, type ThemeId } from './types';
 
 export type { AudioEvent, AudioSettings, JingleId, ThemeId } from './types';
 export { AUDIO_EVENTS, JINGLES } from './types';
@@ -12,6 +12,8 @@ export { AUDIO_EVENTS, JINGLES } from './types';
 const LOOKAHEAD_SEC = 0.15;
 const TICK_MS = 40;
 const SFX_LATENCY = 0.005;
+/** Delay before a new song's first note, so the scheduler is never late for it. */
+const SONG_START_SEC = 0.05;
 const UNLOCK_EVENTS = ['pointerdown', 'touchend', 'keydown'] as const;
 
 type SongKey = ThemeId | JingleId;
@@ -104,10 +106,10 @@ class GameAudio implements AudioSink {
     this.stopTicker();
   }
 
-  /** Music tempo multiplier, for example 1.15 for Game B. Takes effect from the next step. */
+  /** Theme loop tempo multiplier, for example 1.15 for Game B. Jingles keep their own tempo. Takes effect from the next step. */
   setTempo(multiplier: number): void {
     this.tempo = Math.min(2, Math.max(0.5, multiplier));
-    if (this.engine) this.engine.sequencer.rate = this.tempo;
+    this.applyTempo();
   }
 
   getSettings(): Readonly<AudioSettings> {
@@ -154,6 +156,12 @@ class GameAudio implements AudioSink {
     });
   }
 
+  private applyTempo(): void {
+    if (!this.engine || this.current === null) return;
+    this.engine.sequencer.rate = isJingle(this.current) ? 1 : this.tempo;
+  }
+
+  /** The old song is cut at once; the new one starts after a short, silent gap. */
   private startSong(key: SongKey, song: Song): void {
     const engine = this.engine;
     const ctx = this.ctx;
@@ -163,9 +171,9 @@ class GameAudio implements AudioSink {
       compiled = compileSong(song);
       this.songs.set(key, compiled);
     }
-    engine.sequencer.rate = this.tempo;
-    engine.playSong(compiled, ctx.currentTime + 0.05);
+    engine.playSong(compiled, ctx.currentTime + SONG_START_SEC, ctx.currentTime + SFX_LATENCY);
     this.current = key;
+    this.applyTempo();
     this.startTicker();
     this.tick();
   }
@@ -193,6 +201,10 @@ class GameAudio implements AudioSink {
     this.stopTicker();
     if (ended !== null && ended !== this.theme && this.theme) this.startSong(this.theme, THEME_SONGS[this.theme]);
   }
+}
+
+function isJingle(key: SongKey): key is JingleId {
+  return (JINGLES as readonly string[]).includes(key);
 }
 
 export const audio = new GameAudio();

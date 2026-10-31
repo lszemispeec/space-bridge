@@ -40,8 +40,9 @@ export class ChipEngine {
     }
   }
 
-  playSong(song: CompiledSong, at: number): void {
-    this.sequencer.stop(at);
+  /** Start a song at `at`. Whatever was playing is cut at `cutAt`, by default at the same moment. */
+  playSong(song: CompiledSong, at: number, cutAt = at): void {
+    this.sequencer.stop(cutAt);
     this.sequencer.play(song, at);
   }
 

@@ -22,7 +22,7 @@ npm install
 npm run dev        # http://localhost:5173, also reachable on the LAN for phones
 npm run check      # typecheck, lint, test, build
 npm run measure    # how far bots of different skill get, for tuning unlock targets
-npm run shots      # 4x screenshots of every theme, title and play, from a running preview (needs Chrome)
+npm run shots      # 4x screenshots of every theme, title and play, plus portrait and landscape phone shots, from a running preview (needs Chrome)
 ```
 
 For `npm run shots`, build and start the preview first: `npm run build && npm run preview -- --port 4173`. The images land in `shots/`.
@@ -30,7 +30,7 @@ For `npm run shots`, build and start the preview first: `npm run build && npm ru
 ## Stack
 
 - Vite, strict TypeScript, Canvas 2D. No game engine.
-- 320×240 internal canvas, integer scaling, nearest-neighbour, letterboxed.
+- 320×240 internal frame, integer scaling in device pixels, nearest-neighbour, letterboxed. On a portrait screen the 256 px playfield is scaled to the width and the gutters with the side buttons move into a strip below it (`src/platform/viewport.ts`).
 - Fixed-timestep simulation at 60 Hz, rendering once per frame.
 - Game rules are pure modules in `src/game/` with Vitest tests. `src/platform/` and `src/render/` are thin adapters.
 - Content is config: `src/config/layout.ts`, `src/config/themes.ts`, `src/config/difficulty.ts`.

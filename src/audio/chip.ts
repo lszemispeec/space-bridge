@@ -112,7 +112,12 @@ export class ChipVoice {
   private readonly lfo: OscillatorNode;
   private readonly lfoDepth: GainNode;
   private lastSelector = -1;
-  private envelope: EnvelopeState = { start: 0, vol: 0, sustain: 0, decay: 0, end: 0, release: DEFAULT_RELEASE };
+  /**
+   * Every scheduled envelope in time order, so `levelAt` can read the one
+   * that is sounding at any time. The sequencer schedules notes ahead of
+   * the clock, so the newest envelope is often still in the future.
+   */
+  private envelopes: EnvelopeState[] = [];
 
   constructor(
     readonly ctx: BaseAudioContext,
@@ -201,7 +206,7 @@ export class ChipVoice {
     g.cancelScheduledValues(t);
     g.setValueAtTime(p.vol, t);
     if (p.decay) g.setTargetAtTime(sustain, t, p.decay);
-    this.envelope = { start: t, vol: p.vol, sustain, decay: p.decay ?? 0, end: t + dur, release };
+    this.remember({ start: t, vol: p.vol, sustain, decay: p.decay ?? 0, end: t + dur, release });
     const atEnd = this.levelAt(t + dur);
     g.setValueAtTime(atEnd, t + dur);
     g.setTargetAtTime(0, t + dur, release);
@@ -217,7 +222,17 @@ export class ChipVoice {
     g.cancelScheduledValues(t);
     g.setValueAtTime(level, t);
     g.setTargetAtTime(0, t, CUT_RELEASE);
-    this.envelope = { start: t, vol: level, sustain: level, decay: 0, end: t, release: CUT_RELEASE };
+    this.remember({ start: t, vol: level, sustain: level, decay: 0, end: t, release: CUT_RELEASE });
+  }
+
+  /**
+   * Records an envelope that starts at `e.start`. The automation it came
+   * with dropped everything scheduled from then on, so later envelopes go
+   * too; ones silent for a second before it are forgotten.
+   */
+  private remember(e: EnvelopeState): void {
+    this.envelopes = this.envelopes.filter((x) => x.start < e.start && x.end + 1 > e.start);
+    this.envelopes.push(e);
   }
 
   /**
@@ -226,9 +241,10 @@ export class ChipVoice {
    * `setValueAtTime` with this level so the curve is continuous; that is also
    * what keeps the offline Node renderer in step with browsers.
    */
-  private levelAt(t: number): number {
-    const e = this.envelope;
-    if (t <= e.start) return e.vol;
+  levelAt(t: number): number {
+    let e: EnvelopeState | undefined;
+    for (const x of this.envelopes) if (x.start <= t) e = x;
+    if (!e) return 0;
     const held = e.decay > 0 ? e.sustain + (e.vol - e.sustain) * Math.exp(-(Math.min(t, e.end) - e.start) / e.decay) : e.sustain;
     if (t <= e.end) return held;
     return held * Math.exp(-(t - e.end) / e.release);
