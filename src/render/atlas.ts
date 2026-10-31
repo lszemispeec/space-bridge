@@ -63,7 +63,7 @@ export interface OperatorLayout {
   scene: { sx: number; sy: number; w: number; h: number; dx: number; dy: number };
   console: Placement & { w: number; h: number };
   levers: { l: Placement; r: Placement };
-  /** Input geometry stays separate from the larger deck-mounted art. */
+  /** Input geometry stays separate from the deck-mounted art. */
   leverTapZones: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
   windowCornerCut: number;
   controlStrip?: Placement & { w: number; h: number };
@@ -81,6 +81,10 @@ export interface OperatorRoom {
     sound: Placement & { w: number; h: number };
     lights: Placement;
   };
+  /** The MENU button's rectangle; the renderer draws the button itself. */
+  menu?: Placement & { w: number; h: number };
+  /** The outer bezels the room plate draws around the readouts. */
+  recesses?: Record<string, Placement & { w: number; h: number }>;
 }
 
 export interface Atlas {

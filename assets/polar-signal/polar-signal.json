@@ -1092,8 +1092,8 @@
     "ui.lever.l.idle.0": {
       "x": 1,
       "y": 1620,
-      "w": 40,
-      "h": 64,
+      "w": 24,
+      "h": 40,
       "ax": 0,
       "ay": 0,
       "duration": 1000
@@ -1101,8 +1101,8 @@
     "ui.lever.l.pull.0": {
       "x": 43,
       "y": 1620,
-      "w": 40,
-      "h": 64,
+      "w": 24,
+      "h": 40,
       "ax": 0,
       "ay": 0,
       "duration": 50
@@ -1110,26 +1110,8 @@
     "ui.lever.l.pull.1": {
       "x": 85,
       "y": 1620,
-      "w": 40,
-      "h": 64,
-      "ax": 0,
-      "ay": 0,
-      "duration": 50
-    },
-    "ui.lever.l.pull.2": {
-      "x": 127,
-      "y": 1620,
-      "w": 40,
-      "h": 64,
-      "ax": 0,
-      "ay": 0,
-      "duration": 50
-    },
-    "ui.lever.l.pull.3": {
-      "x": 169,
-      "y": 1620,
-      "w": 40,
-      "h": 64,
+      "w": 24,
+      "h": 40,
       "ax": 0,
       "ay": 0,
       "duration": 50
@@ -1137,8 +1119,8 @@
     "ui.lever.r.idle.0": {
       "x": 211,
       "y": 1620,
-      "w": 40,
-      "h": 64,
+      "w": 24,
+      "h": 40,
       "ax": 0,
       "ay": 0,
       "duration": 1000
@@ -1146,8 +1128,8 @@
     "ui.lever.r.pull.0": {
       "x": 253,
       "y": 1620,
-      "w": 40,
-      "h": 64,
+      "w": 24,
+      "h": 40,
       "ax": 0,
       "ay": 0,
       "duration": 50
@@ -1155,26 +1137,8 @@
     "ui.lever.r.pull.1": {
       "x": 295,
       "y": 1620,
-      "w": 40,
-      "h": 64,
-      "ax": 0,
-      "ay": 0,
-      "duration": 50
-    },
-    "ui.lever.r.pull.2": {
-      "x": 337,
-      "y": 1620,
-      "w": 40,
-      "h": 64,
-      "ax": 0,
-      "ay": 0,
-      "duration": 50
-    },
-    "ui.lever.r.pull.3": {
-      "x": 379,
-      "y": 1620,
-      "w": 40,
-      "h": 64,
+      "w": 24,
+      "h": 40,
       "ax": 0,
       "ay": 0,
       "duration": 50
@@ -1200,38 +1164,38 @@
     "frame.lights.0": {
       "x": 291,
       "y": 1942,
-      "w": 20,
+      "w": 6,
       "h": 6,
       "ax": 0,
       "ay": 0,
-      "duration": 300
+      "duration": 600
     },
     "frame.lights.1": {
       "x": 313,
       "y": 1942,
-      "w": 20,
+      "w": 6,
       "h": 6,
       "ax": 0,
       "ay": 0,
-      "duration": 300
+      "duration": 600
     },
     "frame.lights.2": {
       "x": 335,
       "y": 1942,
-      "w": 20,
+      "w": 6,
       "h": 6,
       "ax": 0,
       "ay": 0,
-      "duration": 300
+      "duration": 600
     },
     "frame.lights.3": {
       "x": 357,
       "y": 1942,
-      "w": 20,
+      "w": 6,
       "h": 6,
       "ax": 0,
       "ay": 0,
-      "duration": 300
+      "duration": 600
     },
     "background.window": {
       "x": 379,
@@ -1677,16 +1641,12 @@
     "ui.lever.l.pull": {
       "frames": [
         "ui.lever.l.pull.0",
-        "ui.lever.l.pull.1",
-        "ui.lever.l.pull.2",
-        "ui.lever.l.pull.3"
+        "ui.lever.l.pull.1"
       ],
       "loop": false
     },
     "ui.lever.l.release": {
       "frames": [
-        "ui.lever.l.pull.2",
-        "ui.lever.l.pull.1",
         "ui.lever.l.pull.0",
         "ui.lever.l.idle.0"
       ],
@@ -1701,16 +1661,12 @@
     "ui.lever.r.pull": {
       "frames": [
         "ui.lever.r.pull.0",
-        "ui.lever.r.pull.1",
-        "ui.lever.r.pull.2",
-        "ui.lever.r.pull.3"
+        "ui.lever.r.pull.1"
       ],
       "loop": false
     },
     "ui.lever.r.release": {
       "frames": [
-        "ui.lever.r.pull.2",
-        "ui.lever.r.pull.1",
         "ui.lever.r.pull.0",
         "ui.lever.r.idle.0"
       ],
@@ -1852,11 +1808,11 @@
       "levers": {
         "l": {
           "x": 8,
-          "y": 240
+          "y": 270
         },
         "r": {
-          "x": 304,
-          "y": 240
+          "x": 320,
+          "y": 270
         }
       },
       "leverTapZones": {
@@ -1898,11 +1854,11 @@
       "levers": {
         "l": {
           "x": 8,
-          "y": 240
+          "y": 270
         },
         "r": {
-          "x": 240,
-          "y": 240
+          "x": 256,
+          "y": 270
         }
       },
       "leverTapZones": {
@@ -1929,34 +1885,95 @@
     },
     "hud": {
       "scoreIcon": {
-        "x": 56,
-        "y": 262
+        "x": 52,
+        "y": 265
       },
       "digits": {
-        "x": 72,
-        "y": 262,
+        "x": 68,
+        "y": 265,
         "pitch": 8,
         "count": 4
       },
       "modeLabel": {
-        "x": 112,
-        "y": 266
+        "x": 116,
+        "y": 268
       },
       "lives": {
-        "x": 80,
-        "y": 290,
+        "x": 52,
+        "y": 289,
         "pitch": 20
       },
       "sound": {
-        "x": 188,
-        "y": 260,
+        "x": 166,
+        "y": 263,
         "w": 36,
         "h": 16
       },
       "lights": {
-        "x": 152,
-        "y": 298
+        "x": 122,
+        "y": 288
       }
+    },
+    "revision": 9,
+    "menu": {
+      "x": 210,
+      "y": 263,
+      "w": 36,
+      "h": 16
+    },
+    "recesses": {
+      "scoreMode": {
+        "x": 48,
+        "y": 260,
+        "w": 112,
+        "h": 22
+      },
+      "sound": {
+        "x": 164,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "menu": {
+        "x": 208,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "lives": {
+        "x": 48,
+        "y": 286,
+        "w": 68,
+        "h": 22
+      },
+      "status": {
+        "x": 120,
+        "y": 286,
+        "w": 10,
+        "h": 10
+      }
+    },
+    "leverMotion": {
+      "pivot": {
+        "x": 12,
+        "y": 30
+      },
+      "shaftEndpoints": [
+        {
+          "x": 12,
+          "y": 12
+        },
+        {
+          "x": 15,
+          "y": 12
+        },
+        {
+          "x": 18,
+          "y": 12
+        }
+      ],
+      "maxAngleDegrees": 18.4,
+      "mirrorForLeft": true
     }
   },
   "retiredSockets": [

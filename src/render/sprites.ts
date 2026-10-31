@@ -27,6 +27,11 @@ export function hasAnimation(atlas: Atlas, name: string): boolean {
   return name in atlas.animations;
 }
 
+/** The frame names of an animation, in order. */
+export function animationFrames(atlas: Atlas, name: string): readonly string[] {
+  return animationOf(atlas, name).frames;
+}
+
 function totalDuration(atlas: Atlas, animation: AtlasAnimation): number {
   return animation.frames.reduce((sum, name) => sum + frameOf(atlas, name).duration, 0);
 }

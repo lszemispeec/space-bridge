@@ -2,8 +2,9 @@
  * The operator room around the scene: the windshield frame, the levers on
  * the console deck, the HUD readouts, and the blinking console lights. Drawn
  * on the page canvas after the scene is in the window, in the contract's
- * order: room plate, levers, readouts, lights. The MENU button beside the
- * sound readout is the engine's own, drawn with the bitmap font. The scene itself is drawn with
+ * order: room plate, levers, readouts, lamp. The MENU button beside the
+ * sound readout is the engine's own, drawn with the bitmap font in the
+ * recess the room art leaves for it. The scene itself is drawn with
  * the atlas's `operatorRoom.background` plate, which fills the glass edge to
  * edge; the old `background` plate would show its HUD band and gutters.
  */
@@ -15,18 +16,18 @@ import type { HeldButtons } from '../platform/input';
 import type { Atlas, AtlasFrame } from './atlas';
 import { drawText } from './font';
 import { drawConsoleButton } from './menu';
-import { animationMs, drawFrame, frameAt, frameByProgress, frameOf, hasAnimation, type Art } from './sprites';
+import { animationFrames, animationMs, drawFrame, frameAt, frameOf, hasAnimation, type Art } from './sprites';
 
 /** The full-room plate per orientation, with the window left transparent. */
 const ROOM_PLATE = { landscape: 'frame.room.landscape', portrait: 'frame.room.portrait' } as const;
 const LIGHTS = 'frame.lights';
 const LEVER = { left: 'ui.lever.l', right: 'ui.lever.r' } as const;
 /**
- * Longest real ms of a full pull or return. The art's pull is 200 ms; the
- * contract lets the engine compress it, and a press every 150 ms at the top
- * of Game B must still read as separate pulls.
+ * Longest real ms of a full pull or return. The art's pull is 100 ms; the
+ * contract lets the engine compress it, and a press every 220 ms, a good
+ * player's pace at the top of Game B, must still read as separate pulls.
  */
-export const LEVER_PULL_MAX_MS = 120;
+export const LEVER_PULL_MAX_MS = 80;
 
 export function pad(n: number, width: number): string {
   return String(Math.min(n, 10 ** width - 1)).padStart(width, '0');
@@ -44,14 +45,25 @@ export function leverPullMs(atlas: Atlas, side: PlateSide): number {
 }
 
 /**
+ * The pose of an animation at a progress 0..1: its frames spread evenly over
+ * the travel, whatever their durations. The lever sequences end on a long
+ * terminal hold, which would otherwise swallow the intermediate pose.
+ */
+function poseByProgress(atlas: Atlas, name: string, progress: number): AtlasFrame {
+  const frames = animationFrames(atlas, name);
+  const index = Math.min(frames.length - 1, Math.floor(Math.max(0, progress) * frames.length));
+  return frameOf(atlas, frames[index] ?? '');
+}
+
+/**
  * The lever frame for a pull amount 0..1: the idle loop at rest, the pull
- * one-shot on the way out, and the authored release sequence on the way back.
+ * poses on the way out, and the authored release sequence on the way back.
  */
 export function leverFrame(atlas: Atlas, side: PlateSide, pull: number, releasing: boolean, nowMs: number): AtlasFrame {
   const lever = LEVER[side];
   if (pull <= 0) return frameAt(atlas, `${lever}.idle`, nowMs);
-  if (releasing && hasAnimation(atlas, `${lever}.release`)) return frameByProgress(atlas, `${lever}.release`, 1 - pull);
-  return frameByProgress(atlas, `${lever}.pull`, pull);
+  if (releasing && hasAnimation(atlas, `${lever}.release`)) return poseByProgress(atlas, `${lever}.release`, 1 - pull);
+  return poseByProgress(atlas, `${lever}.pull`, pull);
 }
 
 /** How far each lever is pulled, 0..1, and whether it is on its way back. */

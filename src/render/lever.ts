@@ -17,8 +17,12 @@ export interface Lever {
 
 export const LEVER_IDLE: Lever = { phase: 'idle', from: 0, sinceMs: -Infinity };
 
-/** How long the handle stays pulled after a tap before it returns. */
-export const LEVER_HOLD_MS = 90;
+/**
+ * How long the handle stays pulled after a tap before it returns. Short, so
+ * that a pull, the hold and the return fit inside a good player's press
+ * interval of 220 ms and every press reads as its own pull.
+ */
+export const LEVER_HOLD_MS = 60;
 
 /** The pull amount, 0 idle to 1 pulled, at `nowMs`. `pullMs` is the time of a full pull. */
 export function leverPull(l: Lever, nowMs: number, pullMs: number): number {
