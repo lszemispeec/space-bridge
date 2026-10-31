@@ -47,9 +47,13 @@ audio.init();
 
 const sfxKeys: Record<string, AudioEvent> = {};
 AUDIO_EVENTS.forEach((ev, i) => {
-  sfxKeys[String(i + 1)] = ev;
-  button($('sfx'), `${i + 1} ${ev}`, () => { play(ev); });
+  const key = String((i + 1) % 10);
+  sfxKeys[key] = ev;
+  button($('sfx'), `${key} ${ev}`, () => { play(ev); });
 });
+/** The miss as the game fires it: three events in one step, ordered by their offsets. */
+const MISS: readonly AudioEvent[] = ['fall', 'grab', 'life_lost'];
+button($('sfx'), 'F miss (fall + grab + life_lost)', () => { MISS.forEach(play); });
 
 const themeButtons = new Map<ThemeId, HTMLButtonElement>();
 const themeKeys: Record<string, ThemeId> = { q: 'polar-signal', w: 'desert-expedition', e: 'neon-orbit' };
@@ -134,6 +138,7 @@ window.addEventListener('keydown', (e) => {
   const theme = themeKeys[k];
   if (sfx) play(sfx);
   else if (theme) music(theme);
+  else if (k === 'f') MISS.forEach(play);
   else if (k === 'g') jingle('gameOver');
   else if (k === 'm') toggleMute();
   else if (k === 's') music(null);

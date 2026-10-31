@@ -70,14 +70,15 @@ class GameAudio implements AudioSink {
   }
 
   /**
-   * One sound effect. `game_over` also plays the jingle on the music channels;
-   * the theme loop comes back by itself when the jingle ends.
+   * One sound effect, after its own offset. `game_over` also plays the jingle
+   * on the music channels; the theme loop comes back by itself when the jingle ends.
    */
   play(event: AudioEvent): void {
     const engine = this.engine;
     const ctx = this.ctx;
     if (!engine || ctx?.state !== 'running') return;
-    engine.playSfx(SFX[event], ctx.currentTime + SFX_LATENCY);
+    const def = SFX[event];
+    engine.playSfx(def, ctx.currentTime + SFX_LATENCY + def.offset);
     if (event === 'game_over') this.jingle('gameOver');
   }
 
