@@ -96,22 +96,38 @@ describe('spawning and jumping', () => {
     expect(jumped.cosmonauts[0]?.slot).toBe(ROCKET_SLOT);
   });
 
-  it('rolls a fresh tumble from the seeded RNG at every take-off', () => {
+  it('rolls a fresh tumble or flail from the seeded RNG at every take-off', () => {
     let s = runUntil(startGame(titleState()), 'footstep').state;
     expect(s.cosmonauts[0]?.spin).toBe(0);
+    expect(s.cosmonauts[0]?.flail).toBe(false);
     const bot = createBot(instantBotOptions());
-    const spins: number[] = [];
-    for (let i = 0; i < 60 * 30 && spins.length < 6; i++) {
+    const hops: { spin: number; flail: boolean }[] = [];
+    const seen = new Set<string>();
+    for (let i = 0; i < 60 * 120 && hops.length < 40; i++) {
       const r = step(s, bot.input(s), STEP_SECONDS);
       s = r.state;
-      if (r.events.some((e) => e.type === 'jump')) spins.push(...s.cosmonauts.filter((c) => c.state === 'air').map((c) => c.spin));
-      for (const c of s.cosmonauts) if (c.state !== 'air') expect(c.spin).toBe(0);
+      for (const c of s.cosmonauts) {
+        const key = `${c.id}:${c.slot}`;
+        if (c.state === 'air' && !seen.has(key)) {
+          seen.add(key);
+          hops.push({ spin: c.spin, flail: c.flail });
+        }
+        if (c.state !== 'air') {
+          expect(c.spin).toBe(0);
+          expect(c.flail).toBe(false);
+        }
+      }
     }
-    expect(spins.length).toBeGreaterThanOrEqual(6);
-    for (const spin of spins) expect(Math.abs(spin)).toBeGreaterThanOrEqual(0.5);
-    for (const spin of spins) expect(Math.abs(spin)).toBeLessThanOrEqual(1.5);
-    expect(new Set(spins).size).toBeGreaterThan(1);
-    expect(spins.some((v) => v > 0) && spins.some((v) => v < 0)).toBe(true);
+    expect(hops.length).toBeGreaterThanOrEqual(40);
+    const flails = hops.filter((h) => h.flail);
+    const tumbles = hops.filter((h) => !h.flail);
+    expect(flails.length).toBeGreaterThanOrEqual(3);
+    expect(tumbles.length).toBeGreaterThan(flails.length);
+    for (const h of flails) expect(h.spin).toBe(0);
+    for (const h of tumbles) expect(Math.abs(h.spin)).toBeGreaterThanOrEqual(0.5);
+    for (const h of tumbles) expect(Math.abs(h.spin)).toBeLessThanOrEqual(1.5);
+    expect(new Set(tumbles.map((h) => h.spin)).size).toBeGreaterThan(1);
+    expect(tumbles.some((h) => h.spin > 0) && tumbles.some((h) => h.spin < 0)).toBe(true);
   });
 
   it('never has more cosmonauts than the mode allows', () => {

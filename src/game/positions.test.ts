@@ -4,7 +4,7 @@ import { cosmonautView, slotPoint } from './positions';
 import type { Cosmonaut } from './types';
 
 function c(partial: Partial<Cosmonaut>): Cosmonaut {
-  return { id: 1, state: 'crouch', slot: 1, t: 0, duration: 1, spin: 0, ...partial };
+  return { id: 1, state: 'crouch', slot: 1, t: 0, duration: 1, spin: 0, flail: false, ...partial };
 }
 
 describe('cosmonautView', () => {
@@ -38,6 +38,13 @@ describe('cosmonautView', () => {
     expect(cosmonautView(c({ state: 'air', t: 0.3, spin: -1.25 })).spin).toBe(-1.25);
     expect(cosmonautView(c({ state: 'crouch', slot: 2, spin: -1.25 })).spin).toBe(0);
     expect(cosmonautView(c({ state: 'fall', slot: 2, spin: -1.25 })).spin).toBe(0);
+  });
+
+  it('carries the flail into the view only while airborne', () => {
+    expect(cosmonautView(c({ state: 'air', t: 0.3, flail: true })).flail).toBe(true);
+    expect(cosmonautView(c({ state: 'air', t: 0.3 })).flail).toBe(false);
+    expect(cosmonautView(c({ state: 'crouch', slot: 2, flail: true })).flail).toBe(false);
+    expect(cosmonautView(c({ state: 'fall', slot: 2, flail: true })).flail).toBe(false);
   });
 
   it('sinks into the crater when falling', () => {

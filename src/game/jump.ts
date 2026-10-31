@@ -34,6 +34,23 @@ export function rollSpin(rng: Rng): { value: number; rng: Rng } {
   return { value: direction.value < 0.5 ? -magnitude : magnitude, rng: direction.rng };
 }
 
+/** Share of hops that flail with spread limbs instead of tumbling. */
+export const FLAIL_SHARE = 0.25;
+
+export interface Hop {
+  /** Signed turns of the tumble; 0 for a flail hop. */
+  spin: number;
+  flail: boolean;
+}
+
+/** The look of one hop: about one in four flails for the whole arc, the rest tumble. */
+export function rollHop(rng: Rng): { value: Hop; rng: Rng } {
+  const flail = nextRandom(rng);
+  if (flail.value < FLAIL_SHARE) return { value: { spin: 0, flail: true }, rng: flail.rng };
+  const spin = rollSpin(flail.rng);
+  return { value: { spin: spin.value, flail: false }, rng: spin.rng };
+}
+
 /**
  * Which frame of a `frameCount`-step tumble cycle shows at `progress` 0..1 of
  * a hop that spins `spin` signed turns. Frame 0 is upright at take-off; the
