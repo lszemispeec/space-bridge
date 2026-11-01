@@ -26,6 +26,8 @@ Events and themes are the ones in `src/audio/api.ts` and `src/config/themes.ts`:
 
 SFX calls before the first user gesture are dropped; a `music()` call is remembered and starts at unlock.
 
+On a touch screen `pointerdown` is not user activation, so the context `unlock()` creates there stays suspended. `unlock.ts` finishes the job on the next `pointerup`, `touchend`, `click` or key, and re-arms whenever the context stops again (iOS `interrupted`, hidden tab); page visibility and `pageshow` also try a resume. iOS plays Web Audio under the silent switch through `navigator.audioSession.type = 'playback'`, or a silent `<audio>` element on older versions.
+
 ## Listen
 
 - `npm run dev`, then open `/audio-demo.html`. Buttons or keys `1`–`9`, `0` (SFX), `F` (the miss: fall, grab and life_lost as one step), `Q` `W` `E` `R` (themes), `G` (jingle), `M` (mute), `S` (stop). The page can also render WAVs in the browser.
@@ -43,6 +45,7 @@ SFX calls before the first user gesture are dropped; a `music()` call is remembe
 | `songs/` | Four themes and the jingle. `motif.ts` holds the shared four-bar motif ("A A E, D C, D E A"); each theme transposes and re-dresses it. |
 | `engine.ts` | Ties voices, sequencer and mixer together on any `BaseAudioContext`. |
 | `render.ts` | Offline rendering and a WAV encoder, used by the demo page and the render script. |
+| `unlock.ts` | Keeps the context running under autoplay rules: activation events, iOS interruptions, visibility, silent-switch handling. |
 | `index.ts` | The browser facade `audio`: the game's `AudioSink`, autoplay unlock and the scheduling timer. |
 
 Every `setTargetAtTime` is preceded by a `setValueAtTime` with the analytically computed envelope level. Browsers do not need that, but the Node renderer (`node-web-audio-api`) computes a future target event backwards without it, and keeping the two identical is what makes the renders trustworthy.
