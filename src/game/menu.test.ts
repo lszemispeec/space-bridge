@@ -92,6 +92,9 @@ describe('menuStep with keys', () => {
     const s = playing();
     expect(menuStep(at(6), 'right', s, caps).commands).toEqual([{ type: 'shader', preset: 'crt' }]);
     expect(menuStep(at(6), 'left', s, caps).commands).toEqual([{ type: 'shader', preset: 'full' }]);
+    // The Vector preset joins the cycle only once its theme is unlocked.
+    const withVector = { ...s, save: { ...s.save, unlocked: [...s.save.unlocked, 'vector' as const] } };
+    expect(menuStep(at(6), 'left', withVector, caps).commands).toEqual([{ type: 'shader', preset: 'vector' }]);
     expect(menuStep(at(6), 'confirm', s, caps).commands).toEqual([{ type: 'shader', preset: 'crt' }]);
     expect(menuStep(at(6), 'right', s, noShaders).commands).toEqual([]);
   });

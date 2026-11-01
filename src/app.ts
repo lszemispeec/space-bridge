@@ -101,6 +101,7 @@ export function createApp(options: AppOptions): App {
     if (event.type === 'theme_changed') {
       ensureArt(event.theme);
       audio.music(event.theme);
+      if (caps.shaders) pending.push({ type: 'theme_display' });
     }
     if (event.type === 'unlock') ensureArt(event.theme);
   });

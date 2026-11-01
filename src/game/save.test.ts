@@ -30,6 +30,22 @@ describe('parseSave', () => {
     expect(parseSave(JSON.stringify({ settings: { music: 'loud' } })).settings.music).toBe(0.6);
   });
 
+  it('refuses the Vector preset until its theme is unlocked', () => {
+    expect(parseSave(JSON.stringify({ settings: { shader: 'vector' } })).settings.shader).toBe('off');
+    expect(parseSave(JSON.stringify({ unlocked: ['vector'], settings: { shader: 'vector' } })).settings.shader).toBe('vector');
+  });
+
+  it('keeps the record of the one-time display switches, known themes only', () => {
+    expect(parseSave(JSON.stringify({ unlocked: ['vector'] })).displaySwitched).toEqual([]);
+    expect(parseSave(JSON.stringify({ displaySwitched: ['vector', 'bogus', 'vector'] })).displaySwitched).toEqual(['vector']);
+    const save = defaultSave();
+    save.unlocked = ['polar-signal', 'vector'];
+    save.displaySwitched = ['vector'];
+    save.settings.theme = 'vector';
+    save.settings.shader = 'vector';
+    expect(parseSave(serializeSave(save))).toEqual(save);
+  });
+
   it('drops unknown themes and keeps the default unlocked', () => {
     const parsed = parseSave(JSON.stringify({ unlocked: ['neon-orbit', 'bogus'] }));
     expect(parsed.unlocked).toEqual(['polar-signal', 'neon-orbit']);

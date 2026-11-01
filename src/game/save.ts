@@ -1,4 +1,4 @@
-import { DEFAULT_SHADER, isShaderPresetId } from '../config/display';
+import { availableShaderPresets, DEFAULT_SHADER, isShaderPresetId } from '../config/display';
 import { DEFAULT_THEME, THEMES, type ThemeId } from '../config/themes';
 import type { SaveData } from './types';
 
@@ -12,6 +12,7 @@ export function defaultSave(): SaveData {
     version: 1,
     highScores: { A: 0, B: 0 },
     unlocked: [DEFAULT_THEME],
+    displaySwitched: [],
     settings: { theme: DEFAULT_THEME, muted: false, mode: 'A', music: DEFAULT_VOLUMES.music, sfx: DEFAULT_VOLUMES.sfx, shader: DEFAULT_SHADER },
   };
 }
@@ -54,6 +55,9 @@ export function parseSave(raw: string | null | undefined): SaveData {
     const ids = obj.unlocked.filter(isThemeId);
     base.unlocked = Array.from(new Set([DEFAULT_THEME, ...ids]));
   }
+  if (Array.isArray(obj.displaySwitched)) {
+    base.displaySwitched = Array.from(new Set(obj.displaySwitched.filter(isThemeId)));
+  }
 
   const settings = (obj.settings ?? {}) as Record<string, unknown>;
   if (isThemeId(settings.theme) && base.unlocked.includes(settings.theme)) {
@@ -63,7 +67,9 @@ export function parseSave(raw: string | null | undefined): SaveData {
   if (settings.mode === 'A' || settings.mode === 'B') base.settings.mode = settings.mode;
   base.settings.music = asVolume(settings.music, DEFAULT_VOLUMES.music);
   base.settings.sfx = asVolume(settings.sfx, DEFAULT_VOLUMES.sfx);
-  if (isShaderPresetId(settings.shader)) base.settings.shader = settings.shader;
+  if (isShaderPresetId(settings.shader) && availableShaderPresets(base.unlocked).some((p) => p.id === settings.shader)) {
+    base.settings.shader = settings.shader;
+  }
 
   return base;
 }
