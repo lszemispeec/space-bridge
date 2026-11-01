@@ -1,17 +1,11 @@
 """Side-room handoff audit: preservation, native geometry and preview fidelity."""
-import io
 import json
-import subprocess
+import runpy
 from pathlib import Path
 from PIL import Image, ImageSequence
 
 ROOT = Path(__file__).resolve().parents[2]
-BASE = '4b0b641f86e02388d8b418565b25e83001af6fad'
 THEMES = ('polar-signal', 'desert-expedition', 'neon-orbit')
-
-
-def blob(path):
-    return subprocess.check_output(['git', 'show', f'{BASE}:{path}'], cwd=ROOT)
 
 
 def box(r):
@@ -30,27 +24,19 @@ def separate(a, b):
     return ar <= bx or br <= ax or ab <= by or bb <= ay
 
 
+audit = runpy.run_path(str(ROOT / 'assets/tools/verify-rounded.py'))['audit']
+
 reference = None
 for theme in THEMES:
     root = ROOT / 'assets' / theme
     a = json.loads((root / f'{theme}.json').read_text())
-    old = json.loads(blob(f'assets/{theme}/{theme}.json'))
     image = Image.open(root / f'{theme}.png').convert('RGBA')
-    old_image = Image.open(io.BytesIO(blob(f'assets/{theme}/{theme}.png'))).convert('RGBA')
-    # All pre-existing sheet pixels, frame metadata, animations and room data survive.
-    assert image.crop((0, 0, *old_image.size)).tobytes() == old_image.tobytes()
-    assert a['meta']['palette'] == old['meta']['palette']
-    assert {k: v for k, v in a['frames'].items() if k != 'frame.room.side.0'} == old['frames']
-    assert {k: v for k, v in a['animations'].items() if k != 'frame.room.side'} == old['animations']
-    assert {k: v for k, v in a['operatorRoom'].items() if k != 'side'} == old['operatorRoom']
-    for orientation in ('landscape', 'portrait'):
-        for scale in (1, 4):
-            path = f'assets/{theme}/previews/operator-{orientation}-{scale}x.png'
-            assert (ROOT / path).read_bytes() == blob(path), path
+    # The rounded viewport audit owns exact pixel/metadata preservation.
+    audit(theme)
     side = a['operatorRoom']['side']
     assert side['size'] == {'w': 448, 'h': 256}
     assert side['scene'] == {'sx': 0, 'sy': 0, 'w': 320, 'h': 240, 'dx': 64, 'dy': 8}
-    assert side['windowCornerCut'] == 20
+    assert side['windowCornerRadius'] == 20
     if reference is not None:
         assert side == reference['operatorRoom']['side']
         assert a['frames'] == reference['frames']
@@ -58,9 +44,6 @@ for theme in THEMES:
     reference = a
     f = a['frames'][side['frame']]
     assert (f['w'], f['h'], f['ax'], f['ay'], f['duration']) == (448, 256, 0, 0, 1000)
-    room = image.crop(box(f))
-    before = old_image.crop(box(old['frames'][old['operatorRoom']['landscape']['frame']]))
-    assert room.crop((48, 0, 400, 248)).tobytes() == before.crop((0, 4, 352, 252)).tobytes(), 'window, mullions and rails unchanged'
     window = {'x': 64, 'y': 8, 'w': 320, 'h': 240}
     boxes = list(side['recesses'].values()) + list(side['leverTapZones'].values())
     for i, rect in enumerate(boxes):
@@ -108,7 +91,7 @@ for theme in THEMES:
         assert set(frame.convert('RGB').getdata()) <= palette
         frames.append(frame.convert('RGBA').tobytes())
     assert frames == list(reversed(frames)), 'loop returns without jump'
-    print(f'{theme}: existing pixels/layouts preserved; side geometry, readouts, rails, native/4x and loop PASS')
+    print(f'{theme}: rounded frame; side geometry, readouts, controls, native/4x and loop PASS')
 
 pv = ROOT / 'assets/polar-signal/previews'
 mock = Image.open(pv / 'iphone16pro-landscape-mock.png').convert('RGBA')

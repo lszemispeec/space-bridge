@@ -79,15 +79,15 @@ export type TapTargetId = keyof typeof TAP_TARGETS | 'hudMute' | 'hudMenu';
  * canvas is larger than the scene. `bezel` is the frame thickness: struts at
  * the sides and a lintel on top. `consoleH` is the height of the console
  * deck per orientation; in portrait the deck also holds the lever strip.
- * `cornerCut` is the size of the slanted upper mullions, which cover the
- * scene's top corners where x + y < cornerCut. The atlas carries the same
+ * `windowCornerRadius` rounds all four glass corners in whole room pixels.
+ * Only the quarter-circle corner fills cover the scene. The atlas carries the same
  * numbers in its `operatorRoom` table; the art test checks that the two agree.
  * `SIDE_ROOM` is the third layout, with the console beside the window.
  */
 export const ROOM = {
   bezel: { side: 16, top: 12 },
   consoleH: { landscape: 68, portrait: 92 },
-  cornerCut: 20,
+  windowCornerRadius: 20,
   /** The deck-mounted lever art: 24x40 frames, wholly on the console, `drop` pixels below the window's bottom edge. */
   lever: { w: 24, h: 40, inset: 8, drop: 18 },
   /** The lever tap zones keep the gutters' old 24x48 button rectangles. */

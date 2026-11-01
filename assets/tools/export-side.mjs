@@ -25,7 +25,7 @@ const side = {
  panels:{l:{x:0,y:0,w:64,h:256},r:{x:384,y:0,w:64,h:256}},
  levers:{l:{x:14,y:180},r:{x:410,y:180}},
  leverTapZones:{l:{x:6,y:160,w:40,h:80},r:{x:402,y:160,w:40,h:80}},
- windowCornerCut:20,
+ windowCornerRadius:20,
  hud:{scoreIcon:{x:7,y:22},digits:{x:10,y:40,pitch:8,count:4},modeLabel:{x:21,y:26},
       lives:{x:5,y:61,pitch:14},sound:{x:404,y:21,w:36,h:16},lights:{x:419,y:72}},
  menu:{x:404,y:47,w:36,h:16},

@@ -65,7 +65,7 @@ export interface OperatorLayout {
   levers: { l: Placement; r: Placement };
   /** Input geometry stays separate from the deck-mounted art. */
   leverTapZones: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
-  windowCornerCut: number;
+  windowCornerRadius: number;
   controlStrip?: Placement & { w: number; h: number };
 }
 
@@ -86,7 +86,7 @@ export interface SideLayout {
   panels: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
   levers: { l: Placement; r: Placement };
   leverTapZones: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
-  windowCornerCut: number;
+  windowCornerRadius: number;
   hud: OperatorHud;
   menu: Placement & { w: number; h: number };
   recesses: Record<string, Placement & { w: number; h: number }>;

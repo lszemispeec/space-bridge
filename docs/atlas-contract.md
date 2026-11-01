@@ -41,10 +41,10 @@ art tests when wiring up selection, rendering and input.
 | Left lever tap zone | 6 | 160 | 40 | 80 | Lower half, contains every lever pose |
 | Right lever tap zone | 402 | 160 | 40 | 80 | Lower half, contains every lever pose |
 
-WindowCornerCut stays 20. The full glass and slanted mullions, and the 16px
-vertical rails, match the existing landscape frame exactly after translation
-(+48,-4). Four outer top rows are cropped to fit the 8px top; the bottom has
-8px trim. No panel, tap zone or readout crosses into the scene.
+`windowCornerRadius` is 20 room pixels in all three layouts, including side.
+The four inner corners use the same pixel-centre quarter-circle mask. The side
+layout retains its 16px vertical rails and 8px top/bottom trim. No panel, tap
+zone or readout crosses into the scene.
 
 At the reported 874×300 CSS px and DPR 3, integer device scale 3 gives a
 448×256 CSS room and a 320×240 CSS scene. Phone mocks are offline compositions
@@ -247,12 +247,14 @@ Both levers fit wholly inside the deck, ending at y310. The window ends at
 y252. **Tap zones stay exactly as before**, including the portrait strip and
 44 CSS pixel minimum target. Do not derive input from the smaller art.
 
-Keep the 16px side rails, 12px lintel and 20px upper corner chamfers
-(`windowCornerCut`). Four rail rivets replace the crowded screws. One short
-glint sits on each frame corner, outside the glass. The only opaque pixels
-inside the glass are the two existing 20px upper chamfers. Lighting comes
-from upper left; outlines use palette ink 0; bevels use the same theme inks
-on every recess. No decorative meters, spare boxes or light strips remain.
+Keep the 16px side rails and 12px lintel. All four inner glass corners have
+`windowCornerRadius: 20`, matching `ROOM.windowCornerRadius`. The rim and its
+short glints follow the curves; four rail rivets remain. The only opaque pixels
+inside the glass are the four quarter-circle corner fills. At local corner
+pixel (x,y), a fill is opaque when `(20-x-0.5)^2 + (20-y-0.5)^2 > 20^2`;
+mirror that mask at each corner. Everything outside the four 20×20 corner
+boxes stays transparent. Lighting comes from upper left; outlines use palette
+ink 0 and bevels retain the theme inks. No extra controls or decorations.
 
 Both orientations share `operatorRoom.hud` and `operatorRoom.menu`:
 
@@ -434,3 +436,26 @@ The renderer draws every `ambient.*` animation that has a placement, so you can 
 | Rover mouth floor | (256,172), from `roverHatch` |
 
 The slot positions come from `src/config/layout.ts`. If art needs them moved, say so on the issue and we change the config, not the art.
+
+## Rounded viewport export
+
+`assets/tools/export-rounded.mjs` is the final art export step, after the
+older operator, console and side exporters. It changes only the three room
+frames and the radius metadata. Frame names, atlas rectangles, anchors,
+durations, animations and controls retain their accepted contracts.
+`assets/<theme>/revision-11.json` records the baseline and complete hex palette.
+`python3 assets/tools/verify-rounded.py` audits all nine masks, gameplay
+clearance, palette/alpha, preserved controls and exact nearest-neighbour previews.
+
+The current `operator-{landscape,portrait,side}-{1,4}x.png` previews and room
+loops include the new rim. `viewport-corner-before-after-8x.png` in Polar
+Signal shows the old corner on the left and the rounded corner on the right.
+These are offline compositions, not browser captures.
+
+Frame ink hex values (all are existing theme palette entries):
+
+| Theme | Outline | Shadow | Body | Bevel shade | Bevel light | Glint |
+|---|---|---|---|---|---|---|
+| polar-signal | #173B3A | #285552 | #3F7068 | #5E8D7A | #ABC3A6 | #F0EED5 |
+| desert-expedition | #251C29 | #49313B | #704348 | #C97550 | #F5C781 | #FFF4DA |
+| neon-orbit | #080C24 | #141B42 | #252457 | #64358C | #27A6AE | #B7FFF0 |

@@ -1,0 +1,30 @@
+{
+  "baseline": "751cd3c72d2a9d77872b4f890898f572570c5e97",
+  "changedFrames": [
+    "frame.room.landscape.0",
+    "frame.room.portrait.0",
+    "frame.room.side.0"
+  ],
+  "windowCornerRadius": 20,
+  "palette": [
+    "#251C29",
+    "#49313B",
+    "#704348",
+    "#9C5549",
+    "#C97550",
+    "#E89B61",
+    "#F5C781",
+    "#FFE6B0",
+    "#FFF4DA",
+    "#173F49",
+    "#28606A",
+    "#47908D",
+    "#80B8A5",
+    "#B8D4BC",
+    "#BD3C38",
+    "#F16A42"
+  ],
+  "lighting": "Upper left; ink 0 outline; existing theme bevel inks; four rail rivets.",
+  "unchanged": "Frame rectangles, anchors, durations, animations, gameplay pixels, panels, controls, readouts and tap zones.",
+  "previews": "Offline compositions at native resolution and exact nearest-neighbour 4x. Corner comparison: before left, after right, 8x."
+}

@@ -135,7 +135,7 @@ describe('production art handoff', () => {
         expect(layout.scene.w + 32).toBe(layout.size.w);
         expect(layout.scene.h).toBe(240);
         expect(layout.scene.dx).toBe(16);
-        expect(layout.windowCornerCut).toBe(20);
+        expect(layout.windowCornerRadius).toBe(ROOM.windowCornerRadius);
         expect(layout.leverTapZones).toEqual(orientation === 'landscape'
           ? { l: { x: 20, y: 164, w: 24, h: 48 }, r: { x: 308, y: 164, w: 24, h: 48 } }
           : { l: { x: 20, y: 292, w: 24, h: 48 }, r: { x: 244, y: 292, w: 24, h: 48 } });
@@ -155,7 +155,7 @@ describe('production art handoff', () => {
       expect(sideArt.panels).toEqual({ l: sideRoom.panels?.left, r: sideRoom.panels?.right });
       expect(sideArt.levers).toEqual({ l: sideRoom.levers.left, r: sideRoom.levers.right });
       expect(sideArt.leverTapZones).toEqual({ l: sideRoom.leverTaps.left, r: sideRoom.leverTaps.right });
-      expect(sideArt.windowCornerCut).toBe(ROOM.cornerCut);
+      expect(sideArt.windowCornerRadius).toBe(ROOM.windowCornerRadius);
       expect(sideArt.hud).toEqual(sideRoom.hud);
       expect(sideArt.menu).toEqual(sideRoom.menu);
       const sidePlate = atlas.frames[sideArt.frame as 'frame.room.side.0'];

@@ -1843,7 +1843,7 @@
           "h": 48
         }
       },
-      "windowCornerCut": 20
+      "windowCornerRadius": 20
     },
     "portrait": {
       "size": {
@@ -1889,13 +1889,13 @@
           "h": 48
         }
       },
-      "windowCornerCut": 20,
       "controlStrip": {
         "x": 16,
         "y": 288,
         "w": 256,
         "h": 56
-      }
+      },
+      "windowCornerRadius": 20
     },
     "hud": {
       "scoreIcon": {
@@ -2041,7 +2041,6 @@
           "h": 80
         }
       },
-      "windowCornerCut": 20,
       "hud": {
         "scoreIcon": {
           "x": 7,
@@ -2110,7 +2109,8 @@
           "w": 10,
           "h": 10
         }
-      }
+      },
+      "windowCornerRadius": 20
     }
   },
   "retiredSockets": [
