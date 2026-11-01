@@ -5,7 +5,7 @@ import neon from '../../assets/neon-orbit/neon-orbit.json';
 import publishedPolar from '../../public/atlas/polar-signal.json';
 import publishedDesert from '../../public/atlas/desert-expedition.json';
 import publishedNeon from '../../public/atlas/neon-orbit.json';
-import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, ROCKET, ROCKET_HATCH, ROOM, ROOM_BACKGROUND, ROVER, ROVER_HATCH, roomLayout, type Rect } from '../config/layout';
+import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, ROCKET, ROCKET_HATCH, ROOM, ROOM_BACKGROUND, ROVER, ROVER_HATCH, roomLayout, SCREEN_H, SCREEN_W, type Rect } from '../config/layout';
 import { validateAtlas } from './atlas';
 
 const atlases = [polar, desert, neon];
@@ -147,6 +147,40 @@ describe('production art handoff', () => {
         expect(layout.levers.r.x + ROOM.lever.w).toBeLessThanOrEqual(layout.size.w);
         expect(recesses.menu.x + recesses.menu.w + 8).toBeLessThanOrEqual(layout.levers.r.x);
       }
+      // The side room: the whole scene between two panels, each with its own readouts.
+      const sideArt = atlas.operatorRoom.side;
+      const sideRoom = roomLayout('side');
+      expect(sideArt.size).toEqual({ w: sideRoom.w, h: sideRoom.h });
+      expect(sideArt.scene).toEqual({ sx: 0, sy: 0, w: SCREEN_W, h: SCREEN_H, dx: sideRoom.window.x, dy: sideRoom.window.y });
+      expect(sideArt.panels).toEqual({ l: sideRoom.panels?.left, r: sideRoom.panels?.right });
+      expect(sideArt.levers).toEqual({ l: sideRoom.levers.left, r: sideRoom.levers.right });
+      expect(sideArt.leverTapZones).toEqual({ l: sideRoom.leverTaps.left, r: sideRoom.leverTaps.right });
+      expect(sideArt.windowCornerCut).toBe(ROOM.cornerCut);
+      expect(sideArt.hud).toEqual(sideRoom.hud);
+      expect(sideArt.menu).toEqual(sideRoom.menu);
+      const sidePlate = atlas.frames[sideArt.frame as 'frame.room.side.0'];
+      expect([sidePlate.w, sidePlate.h, sidePlate.ax, sidePlate.ay]).toEqual([sideRoom.w, sideRoom.h, 0, 0]);
+      expect(atlas.animations['frame.room.side'].frames).toEqual([sideArt.frame]);
+      const sideHud = sideRoom.hud;
+      const sideRecesses = sideArt.recesses;
+      expect(inside({ ...sideHud.scoreIcon, w: 12, h: 12 }, sideRecesses.scoreMode)).toBe(true);
+      expect(inside({ x: sideHud.digits.x, y: sideHud.digits.y, w: sideHud.digits.pitch * sideHud.digits.count, h: 10 }, sideRecesses.scoreMode)).toBe(true);
+      expect(inside({ ...sideHud.modeLabel, w: 6 * 4 - 1, h: 5 }, sideRecesses.scoreMode)).toBe(true);
+      expect(inside({ x: sideHud.lives.x, y: sideHud.lives.y, w: sideHud.lives.pitch * 2 + 14, h: 16 }, sideRecesses.lives)).toBe(true);
+      expect(inside(sideHud.sound, sideRecesses.sound)).toBe(true);
+      expect(inside(sideRoom.menu, sideRecesses.menu)).toBe(true);
+      expect(inside({ ...sideHud.lights, w: 6, h: 6 }, sideRecesses.status)).toBe(true);
+      for (const a of Object.values(sideRecesses)) for (const b of Object.values(sideRecesses)) {
+        if (a === b) continue;
+        const apart = a.x + a.w + 4 <= b.x || b.x + b.w + 4 <= a.x || a.y + a.h + 4 <= b.y || b.y + b.h + 4 <= a.y;
+        expect(apart, JSON.stringify([a, b])).toBe(true);
+      }
+      // Nothing on a panel reaches the window, and the recesses clear the levers.
+      for (const r of [...Object.values(sideRecesses), sideArt.leverTapZones.l, sideArt.leverTapZones.r]) {
+        expect(r.x + r.w <= sideRoom.window.x || r.x >= sideRoom.window.x + sideRoom.window.w, JSON.stringify(r)).toBe(true);
+      }
+      expect(sideRecesses.lives.y + sideRecesses.lives.h).toBeLessThanOrEqual(sideArt.leverTapZones.l.y);
+      expect(sideRecesses.status.y + sideRecesses.status.h).toBeLessThanOrEqual(sideArt.leverTapZones.r.y);
     });
   }
 

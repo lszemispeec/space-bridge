@@ -1,7 +1,9 @@
 /**
  * Screenshots of every theme, title and play, at 4x, from a built preview,
- * plus the title and play on a portrait and a landscape phone, plus Polar
- * through every display preset and with the pause menu open.
+ * plus the title and play on a portrait phone and on an iPhone 16 Pro in
+ * landscape, in Safari and as a home-screen app, plus Polar through every
+ * display preset and with the pause menu open. Phone shots print the game
+ * canvas's size in CSS pixels.
  *
  *   npm run build && npm run preview -- --port 4173 &
  *   npm run shots        # or: node scripts/screenshot.mjs http://localhost:4173/ shots [all|themes|display]
@@ -26,11 +28,19 @@ const PORT = 9333;
 const WIDTH = 1408;
 const HEIGHT = 1280;
 const DESKTOP = { width: WIDTH, height: HEIGHT, deviceScaleFactor: 1, mobile: false };
-/** A 390x844 phone at 3x: 4x in both orientations since the portrait layout. */
+/**
+ * A 390x844 phone at 3x, portrait; an iPhone 16 Pro at 3x in landscape with
+ * Safari's toolbar (874x300 CSS px) and as a home-screen app (874x402). The
+ * emulation has no safe-area insets, so the shots show the whole viewport.
+ */
 const PHONES = {
   'phone-portrait': { width: 390, height: 844, deviceScaleFactor: 3, mobile: true },
-  'phone-landscape': { width: 844, height: 390, deviceScaleFactor: 3, mobile: true },
+  'phone-landscape': { width: 874, height: 300, deviceScaleFactor: 3, mobile: true },
+  'phone-landscape-app': { width: 874, height: 402, deviceScaleFactor: 3, mobile: true },
 };
+
+/** The game canvas's size on the page, in CSS pixels. */
+const CANVAS_SIZE = `(() => { const r = document.getElementById('game').getBoundingClientRect(); return Math.round(r.width) + 'x' + Math.round(r.height) + ' css px'; })()`;
 
 const chrome = spawn(
   CHROME,
@@ -163,9 +173,10 @@ async function openTab(theme, device, shader = 'off') {
 
 async function shoot(theme, device = DESKTOP, name = `${theme}-{shot}-4x`) {
   const tab = await openTab(theme, device);
-  await capture(tab.cdp, join(outDir, `${name.replace('{shot}', 'title')}.png`));
+  const size = device.mobile ? await tab.evaluate(CANVAS_SIZE) : '';
+  await capture(tab.cdp, join(outDir, `${name.replace('{shot}', 'title')}.png`), size);
   const score = await tab.evaluate(PLAY);
-  await capture(tab.cdp, join(outDir, `${name.replace('{shot}', 'play')}.png`), `score ${score}`);
+  await capture(tab.cdp, join(outDir, `${name.replace('{shot}', 'play')}.png`), [`score ${score}`, size].filter(Boolean).join(', '));
   await tab.close();
 }
 

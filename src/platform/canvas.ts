@@ -1,8 +1,13 @@
 /**
  * The screen: a fixed 320x240 scene the renderer draws into, and the page
  * canvas, which is the operator room around it (see viewport.ts). The page
- * canvas keeps a whole number of room pixels; CSS scales it by a whole
- * number of device pixels, so every pixel is one crisp block.
+ * canvas keeps a whole number of room pixels; CSS scales it to the viewport
+ * inside the safe area, by a whole number of device pixels on a dpr 1 screen.
+ *
+ * The layout follows the screen: a rotation, or Safari's toolbar coming and
+ * going, re-chooses the viewport. The room canvas is only reallocated when
+ * the room changes size, and the owner redraws at once through `onResize`,
+ * so neither case shows a blank frame.
  *
  * With a display preset on, a second canvas takes the page: the room canvas
  * is drawn through the WebGL2 CRT pass at device resolution (see crt.ts).
@@ -12,7 +17,7 @@
 import { getShaderPreset, needsShader, type ShaderPresetId } from '../config/display';
 import { SCREEN_H, SCREEN_W } from '../config/layout';
 import { createCrtPass, type CrtPass } from './crt';
-import { chooseViewport, composition, type Viewport } from './viewport';
+import { chooseViewport, composition, NO_INSETS, type Insets, type Viewport } from './viewport';
 
 export interface Screen {
   /** Draw target for the scene: the 320x240 frame. */
@@ -31,7 +36,31 @@ export interface Screen {
   shaders(): boolean;
   /** Chooses the display preset. Takes effect from the next frame. */
   setShader(preset: ShaderPresetId): void;
+  /** Called after the viewport changed, so the owner can redraw before the next paint. */
+  onResize(callback: () => void): void;
   dispose(): void;
+}
+
+/** The safe-area insets, from the custom properties index.html sets from `env(safe-area-inset-*)`. */
+export function readInsets(style: { getPropertyValue(name: string): string }): Insets {
+  const px = (name: string): number => {
+    const value = Number.parseFloat(style.getPropertyValue(`--safe-${name}`));
+    return Number.isFinite(value) && value > 0 ? value : 0;
+  };
+  return { top: px('top'), right: px('right'), bottom: px('bottom'), left: px('left') };
+}
+
+/** The viewport size in CSS pixels: the visual viewport when the browser has one, else the window. */
+function viewportSize(): { w: number; h: number } {
+  const visual = window.visualViewport;
+  if (visual && visual.width > 0 && visual.height > 0) return { w: visual.width, h: visual.height };
+  return { w: window.innerWidth, h: window.innerHeight };
+}
+
+function currentViewport(): Viewport {
+  const { w, h } = viewportSize();
+  const insets = typeof getComputedStyle === 'function' ? readInsets(getComputedStyle(document.documentElement)) : NO_INSETS;
+  return chooseViewport(w, h, window.devicePixelRatio || 1, insets);
 }
 
 function context2d(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
@@ -47,7 +76,8 @@ export function setupScreen(canvas: HTMLCanvasElement): Screen {
   frame.height = SCREEN_H;
   const scene = context2d(frame);
   const room = context2d(canvas);
-  let viewport = chooseViewport(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1);
+  let viewport = currentViewport();
+  let onResize: () => void = () => undefined;
 
   // The CRT canvas sits beside the room canvas; only one of them shows.
   const crtCanvas = document.createElement('canvas');
@@ -65,18 +95,23 @@ export function setupScreen(canvas: HTMLCanvasElement): Screen {
   if (!crt) crtCanvas.remove();
 
   const resize = (): void => {
-    viewport = chooseViewport(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1);
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    room.imageSmoothingEnabled = false;
+    viewport = currentViewport();
+    // Assigning a canvas size clears it, so only do it when the room changed.
+    if (canvas.width !== viewport.width || canvas.height !== viewport.height) {
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      room.imageSmoothingEnabled = false;
+    }
     canvas.style.width = `${viewport.cssW}px`;
     canvas.style.height = `${viewport.cssH}px`;
-    crt?.resize(viewport.width * viewport.scale, viewport.height * viewport.scale);
+    crt?.resize(Math.round(viewport.width * viewport.scale), Math.round(viewport.height * viewport.scale));
     crtCanvas.style.width = canvas.style.width;
     crtCanvas.style.height = canvas.style.height;
+    onResize();
   };
   window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', resize);
+  window.visualViewport?.addEventListener('resize', resize);
   resize();
 
   return {
@@ -97,9 +132,13 @@ export function setupScreen(canvas: HTMLCanvasElement): Screen {
       preset = next;
       apply();
     },
+    onResize(callback) {
+      onResize = callback;
+    },
     dispose() {
       window.removeEventListener('resize', resize);
       window.removeEventListener('orientationchange', resize);
+      window.visualViewport?.removeEventListener('resize', resize);
       crt?.dispose();
       crtCanvas.remove();
     },

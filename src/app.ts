@@ -126,6 +126,23 @@ export function createApp(options: AppOptions): App {
   let sceneMs = 0;
   let lastFrameMs = performance.now();
 
+  const renderFrame = (): void => {
+    const now = performance.now();
+    if (!state.paused) sceneMs += now - lastFrameMs;
+    lastFrameMs = now;
+    const theme = state.save.settings.theme;
+    const target = {
+      scene: screen.scene,
+      room: screen.room,
+      viewport: screen.viewport(),
+      present: () => {
+        screen.present();
+      },
+    };
+    renderer.render(target, state, input.held(), art.get(theme) ?? null, sceneMs, { menu, caps });
+    screen.flush(sceneMs);
+  };
+
   const stopLoop = startLoop({
     update(dt) {
       const { frame, menu: menuInputs } = input.consume();
@@ -148,23 +165,11 @@ export function createApp(options: AppOptions): App {
       for (const event of result.events) emit(event);
       followTempo();
     },
-    render() {
-      const now = performance.now();
-      if (!state.paused) sceneMs += now - lastFrameMs;
-      lastFrameMs = now;
-      const theme = state.save.settings.theme;
-      const target = {
-        scene: screen.scene,
-        room: screen.room,
-        viewport: screen.viewport(),
-        present: () => {
-          screen.present();
-        },
-      };
-      renderer.render(target, state, input.held(), art.get(theme) ?? null, sceneMs, { menu, caps });
-      screen.flush(sceneMs);
-    },
+    render: renderFrame,
   });
+
+  // A rotation or a toolbar change re-lays the room out; drawing at once keeps the screen from going blank.
+  screen.onResize(renderFrame);
 
   screen.setShader(state.save.settings.shader);
 
