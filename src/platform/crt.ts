@@ -165,7 +165,9 @@ void main() {
     }
   }
   vec3 rgb = toRgb(dest).rgb;
-  if (u_persistence > 0.0) rgb = max(rgb, texture(u_prev, v_uv).rgb * u_persistence);
+  // The target is 8 bit, where round(x * p) stalls at 1 or 2 for any p above 0.5. Taking one level off as
+  // well makes every lit pixel lose at least one level per frame, so the afterglow reaches 0 (see persistedLevel).
+  if (u_persistence > 0.0) rgb = max(rgb, max(texture(u_prev, v_uv).rgb * u_persistence - 1.0 / 255.0, 0.0));
   o = vec4(rgb, 1.0);
 }
 `;
@@ -217,6 +219,17 @@ void main() {
   o = vec4(mix(col * mask * vignette, vec3(0.0), scanline), 1.0);
 }
 `;
+
+/**
+ * The persistence step of the process shader on one 8-bit level (0..255):
+ * the previous level times the persistence, less one level, rounded as the
+ * texture store rounds it. Mirrors the GLSL line in `PROCESS_GLSL`, so a
+ * test can show that a lit pixel decays to 0 within a bounded number of
+ * frames at any persistence below 1.
+ */
+export function persistedLevel(previous: number, persistence: number): number {
+  return Math.round(Math.max(previous * persistence - 1, 0));
+}
 
 export interface CrtPass {
   /** True after the context was lost and until the browser restores it; `render` draws nothing meanwhile. */

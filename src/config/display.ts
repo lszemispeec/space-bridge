@@ -41,8 +41,9 @@ export const SHADER_PRESETS: readonly ShaderPreset[] = [
   { id: 'crt', name: 'CRT', params: { ...FLAT, scanlines: 0.25, curvature: 0.03, vignette: 0.3 } },
   { id: 'crt-glow', name: 'CRT GLOW', params: { ...FLAT, scanlines: 0.25, curvature: 0.03, vignette: 0.3, glow: 1, aberration: 0.35 } },
   { id: 'full', name: 'FULL', params: { scanlines: 0.25, curvature: 0.03, vignette: 0.3, glow: 1, aberration: 0.35, mask: 0.3, persistence: 0.55 } },
-  // Green phosphor vector monitor: a flat tube with a wide bloom and a long afterglow, no mask, no colour fringe.
-  { id: 'vector', name: 'VECTOR', params: { ...FLAT, curvature: 0.01, vignette: 0.2, glow: 1.6, persistence: 0.8 }, theme: 'vector' },
+  // Green phosphor vector monitor: a flat tube with the CRT GLOW bloom (more turns a 1 px wireframe into a blob)
+  // and an afterglow of about 5 frames, no mask, no colour fringe.
+  { id: 'vector', name: 'VECTOR', params: { ...FLAT, curvature: 0.01, vignette: 0.2, glow: 1, persistence: 0.6 }, theme: 'vector' },
 ];
 
 export const DEFAULT_SHADER: ShaderPresetId = 'off';
