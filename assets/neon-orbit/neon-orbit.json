@@ -5,7 +5,7 @@
     "image": "neon-orbit.png",
     "size": {
       "w": 1024,
-      "h": 1619
+      "h": 2638
     },
     "palette": [
       "#080C24",
@@ -1088,6 +1088,186 @@
       "ax": 12,
       "ay": 28,
       "duration": 160
+    },
+    "ui.lever.l.idle.0": {
+      "x": 1,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.l.pull.0": {
+      "x": 43,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.1": {
+      "x": 85,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.idle.0": {
+      "x": 211,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.r.pull.0": {
+      "x": 253,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.1": {
+      "x": 295,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "frame.room.landscape.0": {
+      "x": 421,
+      "y": 1620,
+      "w": 352,
+      "h": 320,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.room.portrait.0": {
+      "x": 1,
+      "y": 1942,
+      "w": 288,
+      "h": 344,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.lights.0": {
+      "x": 291,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "frame.lights.1": {
+      "x": 313,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "frame.lights.2": {
+      "x": 335,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "frame.lights.3": {
+      "x": 357,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "background.window": {
+      "x": 379,
+      "y": 1942,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "rocket.tophatch.closed.0": {
+      "x": 1,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.tophatch.opening.0": {
+      "x": 36,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.tophatch.open.0": {
+      "x": 71,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rover.hatch.closed.0": {
+      "x": 106,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 1000
+    },
+    "rover.hatch.opening.0": {
+      "x": 141,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 90
+    },
+    "rover.hatch.open.0": {
+      "x": 176,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 1000
+    },
+    "frame.room.side.0": {
+      "x": 0,
+      "y": 2380,
+      "w": 448,
+      "h": 256,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
     }
   },
   "animations": {
@@ -1460,6 +1640,121 @@
         "crater.tentacle.grab.4"
       ],
       "loop": false
+    },
+    "ui.lever.l.idle": {
+      "frames": [
+        "ui.lever.l.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.l.pull": {
+      "frames": [
+        "ui.lever.l.pull.0",
+        "ui.lever.l.pull.1"
+      ],
+      "loop": false
+    },
+    "ui.lever.l.release": {
+      "frames": [
+        "ui.lever.l.pull.0",
+        "ui.lever.l.idle.0"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.idle": {
+      "frames": [
+        "ui.lever.r.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.r.pull": {
+      "frames": [
+        "ui.lever.r.pull.0",
+        "ui.lever.r.pull.1"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.release": {
+      "frames": [
+        "ui.lever.r.pull.0",
+        "ui.lever.r.idle.0"
+      ],
+      "loop": false
+    },
+    "frame.room.landscape": {
+      "frames": [
+        "frame.room.landscape.0"
+      ],
+      "loop": true
+    },
+    "frame.room.portrait": {
+      "frames": [
+        "frame.room.portrait.0"
+      ],
+      "loop": true
+    },
+    "frame.lights": {
+      "frames": [
+        "frame.lights.0",
+        "frame.lights.1",
+        "frame.lights.2",
+        "frame.lights.3"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.closed": {
+      "frames": [
+        "rocket.tophatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.opening": {
+      "frames": [
+        "rocket.tophatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rocket.tophatch.open": {
+      "frames": [
+        "rocket.tophatch.open.0"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.closing": {
+      "frames": [
+        "rocket.tophatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rover.hatch.closed": {
+      "frames": [
+        "rover.hatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rover.hatch.opening": {
+      "frames": [
+        "rover.hatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rover.hatch.open": {
+      "frames": [
+        "rover.hatch.open.0"
+      ],
+      "loop": true
+    },
+    "rover.hatch.closing": {
+      "frames": [
+        "rover.hatch.opening.0"
+      ],
+      "loop": false
+    },
+    "frame.room.side": {
+      "frames": [
+        "frame.room.side.0"
+      ],
+      "loop": true
     }
   },
   "placements": {
@@ -1476,12 +1771,378 @@
       "y": 0
     }
   },
-  "retiredAnimations": [],
+  "retiredAnimations": [
+    "rocket.door_closed",
+    "rocket.door_open",
+    "rover.door_open",
+    "rocket.hatch.closed",
+    "rocket.hatch.opening",
+    "rocket.hatch.open",
+    "rocket.hatch.closing"
+  ],
   "sockets": {
     "rocketLedge": {
       "frame": "rocket.hatch.open.0",
       "x": 39,
       "y": 30
+    },
+    "rocketTopHatch": {
+      "frame": "rocket.tophatch.open.0",
+      "x": 20,
+      "y": 32
+    },
+    "roverHatch": {
+      "frame": "rover.hatch.open.0",
+      "x": 8,
+      "y": 30
     }
+  },
+  "operatorRoom": {
+    "background": "background.window",
+    "landscape": {
+      "size": {
+        "w": 352,
+        "h": 320
+      },
+      "frame": "frame.room.landscape.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 352,
+        "h": 68
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 270
+        },
+        "r": {
+          "x": 320,
+          "y": 270
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 308,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerRadius": 20
+    },
+    "portrait": {
+      "size": {
+        "w": 288,
+        "h": 344
+      },
+      "frame": "frame.room.portrait.0",
+      "scene": {
+        "sx": 32,
+        "sy": 0,
+        "w": 256,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 288,
+        "h": 92
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 270
+        },
+        "r": {
+          "x": 256,
+          "y": 270
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 244,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "controlStrip": {
+        "x": 16,
+        "y": 288,
+        "w": 256,
+        "h": 56
+      },
+      "windowCornerRadius": 20
+    },
+    "hud": {
+      "scoreIcon": {
+        "x": 52,
+        "y": 265
+      },
+      "digits": {
+        "x": 68,
+        "y": 265,
+        "pitch": 8,
+        "count": 4
+      },
+      "modeLabel": {
+        "x": 116,
+        "y": 268
+      },
+      "lives": {
+        "x": 52,
+        "y": 289,
+        "pitch": 20
+      },
+      "sound": {
+        "x": 166,
+        "y": 263,
+        "w": 36,
+        "h": 16
+      },
+      "lights": {
+        "x": 122,
+        "y": 288
+      }
+    },
+    "revision": 9,
+    "menu": {
+      "x": 210,
+      "y": 263,
+      "w": 36,
+      "h": 16
+    },
+    "recesses": {
+      "scoreMode": {
+        "x": 48,
+        "y": 260,
+        "w": 112,
+        "h": 22
+      },
+      "sound": {
+        "x": 164,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "menu": {
+        "x": 208,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "lives": {
+        "x": 48,
+        "y": 286,
+        "w": 68,
+        "h": 22
+      },
+      "status": {
+        "x": 120,
+        "y": 286,
+        "w": 10,
+        "h": 10
+      }
+    },
+    "leverMotion": {
+      "pivot": {
+        "x": 12,
+        "y": 30
+      },
+      "shaftEndpoints": [
+        {
+          "x": 12,
+          "y": 12
+        },
+        {
+          "x": 15,
+          "y": 12
+        },
+        {
+          "x": 18,
+          "y": 12
+        }
+      ],
+      "maxAngleDegrees": 18.4,
+      "mirrorForLeft": true
+    },
+    "side": {
+      "size": {
+        "w": 448,
+        "h": 256
+      },
+      "frame": "frame.room.side.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 64,
+        "dy": 8
+      },
+      "panels": {
+        "l": {
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 256
+        },
+        "r": {
+          "x": 384,
+          "y": 0,
+          "w": 64,
+          "h": 256
+        }
+      },
+      "levers": {
+        "l": {
+          "x": 14,
+          "y": 180
+        },
+        "r": {
+          "x": 410,
+          "y": 180
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 6,
+          "y": 160,
+          "w": 40,
+          "h": 80
+        },
+        "r": {
+          "x": 402,
+          "y": 160,
+          "w": 40,
+          "h": 80
+        }
+      },
+      "hud": {
+        "scoreIcon": {
+          "x": 7,
+          "y": 22
+        },
+        "digits": {
+          "x": 10,
+          "y": 40,
+          "pitch": 8,
+          "count": 4
+        },
+        "modeLabel": {
+          "x": 21,
+          "y": 26
+        },
+        "lives": {
+          "x": 5,
+          "y": 61,
+          "pitch": 14
+        },
+        "sound": {
+          "x": 404,
+          "y": 21,
+          "w": 36,
+          "h": 16
+        },
+        "lights": {
+          "x": 419,
+          "y": 72
+        }
+      },
+      "menu": {
+        "x": 404,
+        "y": 47,
+        "w": 36,
+        "h": 16
+      },
+      "recesses": {
+        "scoreMode": {
+          "x": 4,
+          "y": 18,
+          "w": 44,
+          "h": 36
+        },
+        "lives": {
+          "x": 4,
+          "y": 58,
+          "w": 44,
+          "h": 22
+        },
+        "sound": {
+          "x": 402,
+          "y": 18,
+          "w": 40,
+          "h": 22
+        },
+        "menu": {
+          "x": 402,
+          "y": 44,
+          "w": 40,
+          "h": 22
+        },
+        "status": {
+          "x": 417,
+          "y": 70,
+          "w": 10,
+          "h": 10
+        }
+      },
+      "windowCornerRadius": 20
+    }
+  },
+  "retiredSockets": [
+    "rocketLedge"
+  ],
+  "vehicleModels": {
+    "rocket": {
+      "anchor": {
+        "x": 43,
+        "y": 169
+      },
+      "mouth": "rocketTopHatch",
+      "hatch": {
+        "x": 16,
+        "y": 20,
+        "w": 8,
+        "h": 12
+      }
+    },
+    "rover": {
+      "anchor": {
+        "x": 248,
+        "y": 180
+      },
+      "mouth": "roverHatch",
+      "hatch": {
+        "x": 4,
+        "y": 12,
+        "w": 8,
+        "h": 18
+      }
+    },
+    "gantry": "retired"
   }
 }

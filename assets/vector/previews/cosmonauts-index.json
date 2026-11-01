@@ -1,0 +1,198 @@
+[
+  {
+    "name": "cosmonaut.emerge.0",
+    "x": 2,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.emerge.1",
+    "x": 26,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.emerge.2",
+    "x": 50,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crouch.0",
+    "x": 74,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.takeoff.0",
+    "x": 98,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.rise.0",
+    "x": 122,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.apex.0",
+    "x": 146,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.descend.0",
+    "x": 170,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.land.0",
+    "x": 194,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.land.1",
+    "x": 218,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crater_fall.0",
+    "x": 242,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crater_fall.1",
+    "x": 266,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.crater_fall.2",
+    "x": 290,
+    "y": 2,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.board.0",
+    "x": 2,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.board.1",
+    "x": 26,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.idle.0",
+    "x": 50,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.0",
+    "x": 74,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.1",
+    "x": 98,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.2",
+    "x": 122,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.3",
+    "x": 146,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.4",
+    "x": 170,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.5",
+    "x": 194,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.6",
+    "x": 218,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.spin.7",
+    "x": 242,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.flail.0",
+    "x": 266,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.air.flail.1",
+    "x": 290,
+    "y": 28,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.ledge.stand.0",
+    "x": 2,
+    "y": 54,
+    "w": 20,
+    "h": 22
+  },
+  {
+    "name": "cosmonaut.ledge.crouch.0",
+    "x": 26,
+    "y": 54,
+    "w": 20,
+    "h": 22
+  }
+]

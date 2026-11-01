@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import polar from '../../public/atlas/polar-signal.json';
 import type { Atlas, AtlasFrame } from './atlas';
-import { cosmonautFrame, craterFrame, craterFrontFrame, hatchFrame, ledgePoint, soundState } from './draw';
-import { ROCKET, ROCKET_LEDGE } from '../config/layout';
-import { drawFrame, frameAt, frameByProgress, frameOf, type Art } from './sprites';
+import { cosmonautFrame, craterFrame, craterFrontFrame, hatchFrame, hatchPoints, soundState } from './draw';
+import { ROCKET, ROCKET_HATCH, ROVER, ROVER_HATCH } from '../config/layout';
+import { drawFrame, drawFrameScaled, frameAt, frameByProgress, frameOf, type Art } from './sprites';
 
 function frame(x: number, duration: number): AtlasFrame {
   return { x, y: 0, w: 4, h: 4, ax: 2, ay: 4, duration };
@@ -59,15 +59,31 @@ describe('drawFrame', () => {
     drawFrame(ctx, art, frame(8, 100), 10.4, 20.6);
     expect(calls[0]).toEqual([art.image, 8, 0, 4, 4, 8, 17, 4, 4]);
   });
+
+  it('scales to whole pixels around the anchor, and draws plain at scale 1', () => {
+    const calls: unknown[][] = [];
+    const ctx = { drawImage: (...args: unknown[]) => calls.push(args) } as unknown as CanvasRenderingContext2D;
+    const art: Art = { atlas, image: {} as CanvasImageSource };
+    const cell: AtlasFrame = { x: 0, y: 0, w: 20, h: 22, ax: 10, ay: 22, duration: 1 };
+    drawFrameScaled(ctx, art, cell, 63, 112, 0.5);
+    expect(calls[0]).toEqual([art.image, 0, 0, 20, 22, 58, 101, 10, 11]);
+    drawFrameScaled(ctx, art, cell, 63, 112, 0.75);
+    expect(calls[1]).toEqual([art.image, 0, 0, 20, 22, 56, 96, 15, 17]);
+    drawFrameScaled(ctx, art, cell, 63, 112, 1);
+    expect(calls[2]).toEqual([art.image, 0, 0, 20, 22, 53, 90, 20, 22]);
+  });
 });
 
 describe('cosmonautFrame with the production atlas', () => {
   const real = polar as Atlas;
   const at = (pose: Parameters<typeof cosmonautFrame>[1]['pose'], progress: number) =>
-    cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 1, flail: false }, 0);
+    cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 1, flail: false, scale: 1 }, 0);
   const named = (name: string) => real.frames[name];
 
   it('plays the one-shots by progress and the poses by time', () => {
+    expect(at('hop', 0)).toBe(named('cosmonaut.takeoff.0'));
+    expect(at('hop', 0.5)).toBe(named('cosmonaut.takeoff.0'));
+    expect(at('hop', 0.99)).toBe(named('cosmonaut.takeoff.0'));
     expect(at('emerge', 0)).toBe(named('cosmonaut.ledge.stand.0'));
     expect(at('emerge', 0.49)).toBe(named('cosmonaut.ledge.stand.0'));
     expect(at('crouch', 0.7)).toBe(named('cosmonaut.ledge.crouch.0'));
@@ -83,7 +99,7 @@ describe('cosmonautFrame with the production atlas', () => {
 
   it('tumbles through cosmonaut.air.spin.* with the arc progress and the hop\'s spin', () => {
     const at = (pose: 'rise' | 'descend', progress: number, spin: number) =>
-      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin, flail: false }, 0);
+      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin, flail: false, scale: 1 }, 0);
     expect(at('rise', 0.02, 1)).toBe(named('cosmonaut.takeoff.0'));
     expect(at('rise', 0.1, 1)).toBe(named('cosmonaut.air.spin.0'));
     expect(at('rise', 0.3, 1)).toBe(named('cosmonaut.air.spin.2'));
@@ -95,7 +111,7 @@ describe('cosmonautFrame with the production atlas', () => {
 
   it('flails on the clock for the whole arc of a flail hop, after the take-off', () => {
     const at = (pose: 'rise' | 'descend', progress: number, nowMs: number) =>
-      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 0, flail: true }, nowMs);
+      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose, progress, spin: 0, flail: true, scale: 1 }, nowMs);
     expect(at('rise', 0.02, 0)).toBe(named('cosmonaut.takeoff.0'));
     expect(at('rise', 0.1, 0)).toBe(named('cosmonaut.air.flail.0'));
     expect(at('rise', 0.1, 159)).toBe(named('cosmonaut.air.flail.0'));
@@ -106,7 +122,7 @@ describe('cosmonautFrame with the production atlas', () => {
 
   it('flails into the crater until the fall pose takes over', () => {
     const at = (progress: number, nowMs: number) =>
-      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose: 'crater_fall', progress, spin: 0, flail: false }, nowMs);
+      cosmonautFrame(real, { pos: { x: 0, y: 0 }, pose: 'crater_fall', progress, spin: 0, flail: false, scale: 1 }, nowMs);
     expect(at(0, 0)).toBe(named('cosmonaut.air.flail.0'));
     expect(at(0.49, 200)).toBe(named('cosmonaut.air.flail.1'));
     expect(at(0.5, 200)).toBe(named('cosmonaut.crater_fall.0'));
@@ -115,34 +131,63 @@ describe('cosmonautFrame with the production atlas', () => {
   });
 });
 
-describe('hatch, ledge and crater art', () => {
+describe('hatch and crater art', () => {
   const real = polar as Atlas;
   const named = (name: string) => real.frames[name];
-  const view = (pose: 'emerge' | 'crouch', progress: number) => ({ pos: { x: 0, y: 0 }, pose, progress, spin: 0, flail: false });
+  const view = (pose: 'emerge' | 'crouch', progress: number) => ({ pos: { x: 0, y: 0 }, pose, progress, spin: 0, flail: false, scale: 1 });
 
-  it('stands, then crouches on the ledge', () => {
+  it('stands, then crouches in the hatch mouth', () => {
     expect(cosmonautFrame(real, view('emerge', 0.2), 0)).toBe(named('cosmonaut.ledge.stand.0'));
     expect(cosmonautFrame(real, view('crouch', 0.7), 0)).toBe(named('cosmonaut.ledge.crouch.0'));
   });
 
-  it('opens the hatch over the first half of the wait, holds it open, then closes it on the clock', () => {
-    expect(hatchFrame(real, 0, 0, 0)).toBe(named('rocket.hatch.opening.0'));
-    expect(hatchFrame(real, 0.2, 0, 0)).toBe(named('rocket.hatch.opening.1'));
-    expect(hatchFrame(real, 0.4, 0, 0)).toBe(named('rocket.hatch.opening.2'));
-    expect(hatchFrame(real, 0.5, 0, 0)).toBe(named('rocket.hatch.open.0'));
-    expect(hatchFrame(real, 0.99, 0, 500)).toBe(named('rocket.hatch.open.0'));
-    expect(hatchFrame(real, null, 0, 0)).toBe(named('rocket.hatch.closing.0'));
-    expect(hatchFrame(real, null, 100, 0)).toBe(named('rocket.hatch.closing.1'));
-    expect(hatchFrame(real, null, 200, 0)).toBe(named('rocket.hatch.closing.2'));
-    expect(hatchFrame(real, null, 270, 0)).toBe(named('rocket.hatch.closed.0'));
-    expect(hatchFrame(real, null, Infinity, 0)).toBe(named('rocket.hatch.closed.0'));
+  it('opens a hatch over the opening progress, holds it open, then closes it on the clock', () => {
+    expect(hatchFrame(real, 'rocket', 0, 0, 0)).toBe(named('rocket.tophatch.opening.0'));
+    expect(hatchFrame(real, 'rocket', 0.9, 0, 0)).toBe(named('rocket.tophatch.opening.0'));
+    expect(hatchFrame(real, 'rocket', 1, 0, 0)).toBe(named('rocket.tophatch.open.0'));
+    expect(hatchFrame(real, 'rocket', 1, 0, 500)).toBe(named('rocket.tophatch.open.0'));
+    expect(hatchFrame(real, 'rocket', null, 0, 0)).toBe(named('rocket.tophatch.opening.0'));
+    expect(hatchFrame(real, 'rocket', null, 179, 0)).toBe(named('rocket.tophatch.opening.0'));
+    expect(hatchFrame(real, 'rocket', null, 180, 0)).toBe(named('rocket.tophatch.closed.0'));
+    expect(hatchFrame(real, 'rocket', null, Infinity, 0)).toBe(named('rocket.tophatch.closed.0'));
+    expect(hatchFrame(real, 'rover', 0.5, 0, 0)).toBe(named('rover.hatch.opening.0'));
+    expect(hatchFrame(real, 'rover', 1, 0, 0)).toBe(named('rover.hatch.open.0'));
+    expect(hatchFrame(real, 'rover', null, 0, 0)).toBe(named('rover.hatch.opening.0'));
+    expect(hatchFrame(real, 'rover', null, 1000, 0)).toBe(named('rover.hatch.closed.0'));
   });
 
-  it('reads the ledge from the rocketLedge socket and lands on the layout default', () => {
-    expect(ledgePoint(real)).toEqual(ROCKET_LEDGE);
-    expect(ledgePoint({ ...real, sockets: {} })).toEqual(ROCKET_LEDGE);
-    const moved: Atlas = { ...real, sockets: { rocketLedge: { frame: 'rocket.hatch.open.0', x: 41, y: 28 } } };
-    expect(ledgePoint(moved)).toEqual({ x: ROCKET.x + 41, y: ROCKET.y + 28 });
+  it('never shows a retired door, gantry or ground-hatch frame', () => {
+    const retired = new Set(real.retiredAnimations ?? []);
+    const shown = new Set<string>();
+    for (const vehicle of ['rocket', 'rover'] as const) {
+      for (const opening of [0, 0.5, 1, null]) {
+        for (const ms of [0, 100, 1000]) {
+          const f = hatchFrame(real, vehicle, opening, ms, ms);
+          shown.add(`${f.x}:${f.y}`);
+        }
+      }
+    }
+    const retiredCells = new Set(
+      [...retired].flatMap((name) => real.animations[name]?.frames.map((f) => `${real.frames[f]?.x}:${real.frames[f]?.y}`) ?? []),
+    );
+    for (const cell of shown) expect(retiredCells.has(cell), cell).toBe(false);
+    expect(retired.has('rocket.hatch.open')).toBe(true);
+    expect(retired.has('rover.door_open')).toBe(true);
+  });
+
+  it('reads the hatch mouths from the rocketTopHatch and roverHatch sockets and lands on the layout defaults', () => {
+    expect(hatchPoints(real)).toEqual({ rocket: ROCKET_HATCH, rover: ROVER_HATCH });
+    expect(hatchPoints({ ...real, sockets: {} })).toEqual({ rocket: ROCKET_HATCH, rover: ROVER_HATCH });
+    const moved: Atlas = {
+      ...real,
+      sockets: {
+        rocketTopHatch: { frame: 'rocket.tophatch.open.0', x: 21, y: 28 },
+        roverHatch: { frame: 'rover.hatch.open.0', x: 9, y: 20 },
+      },
+    };
+    expect(hatchPoints(moved)).toEqual({ rocket: { x: ROCKET.x + 21, y: ROCKET.y + 28 }, rover: { x: ROVER.x + 9, y: ROVER.y + 20 } });
+    const retired: Atlas = { ...moved, retiredSockets: ['rocketTopHatch'] };
+    expect(hatchPoints(retired).rocket).toEqual(ROCKET_HATCH);
   });
 
   it('gives every crater its own rim and lip', () => {

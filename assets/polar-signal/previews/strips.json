@@ -476,5 +476,156 @@
       140,
       160
     ]
+  },
+  {
+    "animation": "ui.lever.l.idle",
+    "file": "ui.lever.l.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.lever.l.pull",
+    "file": "ui.lever.l.pull-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      50
+    ]
+  },
+  {
+    "animation": "ui.lever.l.release",
+    "file": "ui.lever.l.release-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      1000
+    ]
+  },
+  {
+    "animation": "ui.lever.r.idle",
+    "file": "ui.lever.r.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.lever.r.pull",
+    "file": "ui.lever.r.pull-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      50
+    ]
+  },
+  {
+    "animation": "ui.lever.r.release",
+    "file": "ui.lever.r.release-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      1000
+    ]
+  },
+  {
+    "animation": "frame.room.landscape",
+    "file": "frame.room.landscape-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "frame.room.portrait",
+    "file": "frame.room.portrait-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "frame.lights",
+    "file": "frame.lights-strip.png",
+    "loop": true,
+    "durations": [
+      600,
+      600,
+      600,
+      600
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.closed",
+    "file": "rocket.tophatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.opening",
+    "file": "rocket.tophatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.open",
+    "file": "rocket.tophatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.closing",
+    "file": "rocket.tophatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rover.hatch.closed",
+    "file": "rover.hatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.hatch.opening",
+    "file": "rover.hatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rover.hatch.open",
+    "file": "rover.hatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.hatch.closing",
+    "file": "rover.hatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "frame.room.side",
+    "file": "frame.room.side-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
   }
 ]

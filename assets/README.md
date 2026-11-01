@@ -1,8 +1,206 @@
+## Rounded viewport — revision 11
+
+Run **`node assets/tools/export-rounded.mjs` last**, after the older exporters
+below. The three layouts in every theme use a 20px radius at all four inner
+corners. Ink-0 outlines and the existing bevel inks follow each stepped arc.
+Only the four corner fills are opaque inside the glass. Four rail rivets remain.
+The outer room sizes, panels, controls, gameplay art and tap zones are preserved.
+The atlas and runtime art contract use `windowCornerRadius`.
+
+Review `operator-{landscape,portrait,side}-{1,4}x.png`, the room animation loops,
+and Polar Signal's `viewport-corner-before-after-8x.png` (before left, after
+right). `revision-11.json` records the baseline and unchanged full hex palettes;
+the frame's ink selection is listed in `docs/atlas-contract.md`.
+Run `python3 assets/tools/verify-rounded.py`, `python3 assets/tools/verify-side.py`,
+`python3 assets/tools/verify-art.py` and `npm run check`.
+
+The sections below record previous handoffs. Their export steps precede the
+rounded viewport export; their old screenshots and revision manifests are historical.
+
+## Side-console handoff — revision 10
+
+Run **`node assets/tools/export-side.mjs`** after older exporters, before revision 11.
+This appends `frame.room.side.0` and `operatorRoom.side` for all three themes.
+The existing landscape/portrait art, metadata, lever frames and previews remain
+unchanged. The room is **448×256**, with a **320×240** window at **(64,8)**.
+The extra 16px over the 432px target keeps the accepted 16px window rails and
+full-size readouts within the allowed maximum. The 20px corner mullions and
+rails are copied pixel-for-pixel; only the outer top/bottom trim is shortened.
+
+Left: score icon + GAME A/B + four original 8×10 digits in one recess, then
+three original 14×16 life icons at 14px pitch in one recess. Right: matching
+SND/MENU recesses and the status lamp. Levers reuse the accepted 24×40 frames,
+short swing and timing. Their 40×80 tap zones start at y160, around the lower
+thumb positions. Lighting remains upper-left, with palette-0 dark outlines.
+
+**Integration is separate.** The engineer must select `operatorRoom.side`,
+its local `hud`, `menu`, `recesses` and input rectangles. The shared readouts
+remain for landscape/portrait. See `docs/atlas-contract.md` for exact geometry.
+The runtime does not select side yet. No game logic changes are included.
+
+Review each theme's `operator-side-1x.png`, `operator-side-4x.png` and
+`operator-side-cycle-4x.gif`. The Polar `iphone16pro-landscape-mock.png` is an
+**offline in-game composition**, using the reported 874×300 CSS viewport;
+its `-dpr3` companion is 2622×900 physical pixels. At integer device scale 3,
+the room is 448×256 CSS px, centred at (213,22), versus roughly 235×213 before.
+It is intentionally not stretched to fill the width and is not a Safari capture.
+
+Run `python3 assets/tools/verify-side.py` and
+`python3 assets/tools/verify-art.py`. The side audit proves original sheet
+pixels and frame metadata survive, readouts fit, controls do not overlap, window
+rails/mullions match, and previews use exact integer scales with a closed loop.
+The exporter is safe to rerun without appending another frame.
+
+Unchanged palette hex values:
+
+- **polar-signal:** `#173B3A`, `#285552`, `#3F7068`, `#5E8D7A`, `#83A792`, `#ABC3A6`, `#D1DCC0`, `#F0EED5`, `#FFFAE8`, `#233A46`, `#426573`, `#6C929A`, `#9BB8B7`, `#C8493B`, `#E67B59`, `#F1B683`
+- **desert-expedition:** `#251C29`, `#49313B`, `#704348`, `#9C5549`, `#C97550`, `#E89B61`, `#F5C781`, `#FFE6B0`, `#FFF4DA`, `#173F49`, `#28606A`, `#47908D`, `#80B8A5`, `#B8D4BC`, `#BD3C38`, `#F16A42`
+- **neon-orbit:** `#080C24`, `#141B42`, `#252457`, `#3C2871`, `#64358C`, `#9747A6`, `#D454BB`, `#FF76CA`, `#103C58`, `#15687A`, `#27A6AE`, `#55E7DE`, `#B7FFF0`, `#A6B846`, `#E3EE72`, `#FFF8CB`
+
+## Revision 9 — calm console and compact levers
+
+For revision 9, run **`node assets/tools/export-console.mjs`** after older exporters,
+then run the side and rounded viewport exporters.
+It replaces only room, lamp and lever pixels, retaining every other frame's
+pixels and atlas position. Four obsolete pull frames are removed. Production
+sheets/JSON are copied to `public/atlas`. The first commit drafts the contract
+in `docs/atlas-contract.md`; each `revision-9.json` contains the final table.
+
+The five recesses hold score + mode, lives, SND, MENU and one small lamp.
+All gaps between adjacent recesses are four pixels. There are no decorative
+meters or spare boxes. Four rail rivets and one glint per frame corner keep
+the surround quiet. Upper-left lighting and palette-0 outlines are retained.
+Levers are 24×40 with two 50ms pull frames, an 18.4° swing and a fixed base.
+Their entire cells sit below the window. Tap zones are unchanged.
+
+Review `console-before-{landscape,portrait}-{1,4}x.png` alongside
+`operator-{landscape,portrait}-{1,4}x.png` and `levers-cycle-4x.gif` in each
+theme. These are **offline art compositions**, not runtime captures. Both
+sides use identical scenery, score and vehicle poses, and include the real
+mode label and MENU rectangle. Historical `tophatch-exit-4x.gif` remains a
+revision-8 vehicle study; use `operator-room.gif` for the current console.
+
+**Integration is separate:** Forge must update runtime room constants,
+SND/MENU targets and lever playback against the revision-9 table. The existing
+TypeScript integration assertions still describe revision 7 and will fail
+until that work lands; do not weaken them. `python3 assets/tools/verify-art.py`
+validates this art handoff, including palette, binary alpha, nonoverlapping
+controls, unchanged tap zones, fixed bases, readout containment, preserved
+unrelated pixels and exact 4× output. All 16-colour palettes below are unchanged.
+
+The sections below record earlier art revisions, not the current export order.
+
+## Revision 8 — in-scale built-in hatches
+
+Current production art is exported by `node assets/tools/export-vehicles.mjs`
+(Node + ImageMagick), after any older exporters. It draws the models from native
+integer shapes, blanks retired overlays, copies sheets/JSON to `public/atlas`,
+and refreshes strips and screen studies. Re-running an older exporter alone can
+restore historical pixels; always run this revision last.
+
+New complete vehicle frames: `rocket.tophatch.closed/opening/open` and
+`rover.hatch.closed/opening/open`. Closing reuses the middle pose. The rocket
+mouth is 8×12; the rover entrance is 8×18. The gantry and all old door/hatch
+frames are retired. Socket and integration details are in
+`docs/atlas-contract.md`. This delivery is art only; the current game renderer
+still needs to select the new frames and align actors to their mouth sockets.
+
+Review `previews/vehicles-{1,4}x.png`, `operator-{landscape,portrait}-{1,4}x.png`
+and `tophatch-exit-4x.gif` in each theme. The GIF is a scale-in mock, not runtime
+capture. Palette hex values below and each `palette.hex` are unchanged. All
+models use upper-left lighting and a dark one-pixel outline.
+
 # Space Bridge production art
 
-Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 118 frames, 54 animation entries, one 1024×1619 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
+Three interchangeable themes, derived from Astra's accepted `space-bridge-art-v1.zip`. Each theme has 135 frames, 63 animation entries, one 1024×2287 PNG and one contract-v1 JSON. Polar Signal is the default. The game owns unlocks.
 
-The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Existing flight art is integrated on `main`; the new hatch and creatures await the engine's next integration. This art change does not change game logic or layout config.
+The masters live in `assets/<theme>/`. Byte-identical sheet/JSON copies live in `public/atlas/` at the URLs configured by the engine. Flight, hatch and creatures are integrated on `main`; the operator room and levers await renderer integration. This art change does not change game logic or layout config.
+
+## Revision 7: full-bleed windshield and deck controls
+
+The window now uses **`background.window`**, a new 320×240 plate without the
+old HUD band or side gutters. The accepted centre (32,30)…(287,239) is exactly
+preserved. Only the old bands gain sky, mountain and terrain extensions.
+Ground heights and every vehicle/actor position stay fixed. `background`
+remains a legacy asset; the renderer must select `operatorRoom.background`
+for the new composition. Drawing the old plate would restore the rejected band.
+
+Two 20px angled upper mullions, rivets and ten diagonal pale reflection pixels
+make the surround read as a windshield. All other glass pixels are transparent.
+The native **40×64** lever cells replace the earlier 24×48 art, with larger
+knobs, shafts and base plates. They sit on the deck at (8,240)/(304,240) in
+landscape and (8,240)/(240,240) in portrait. **Tap zones do not move**: metadata
+keeps `leverTapZones` separate from `levers`, including the old 24×48 input sizes.
+The existing minimum CSS touch size and portrait strip input remain in force.
+
+Landscape output grows to **352×320** for the deeper console; portrait stays
+**288×344**. Both scene copies still begin at (16,12), with no scaling inside
+the scene. The deck starts at y252. Its central readouts move clear of the
+lever bases; exact positions are in `docs/atlas-contract.md` and atlas metadata.
+Rocket, rover, doors, eyes and Polar suits are unchanged in this revision.
+
+All original palettes below remain unchanged. Polar sky is **#FFFAE8**, Desert
+sky **#47908D**, Neon sky **#080C24**. The new glass glints use Polar
+**#9BB8B7 / #ABC3A6**, Desert **#FFF4DA / #F5C781**, Neon **#FFF8CB / #27A6AE**.
+Upper-left highlights and each theme's darkest outline remain consistent.
+
+The built-in imagegen tool extended the raster plates. Native palette/grid
+cleanup is documented in `window-extension-provenance.md`; production results
+are `assets/<theme>/window-plate.png`. No generated pixels replace the accepted
+centre. `tools/export-operator.mjs` exports the current atlases and previews.
+`revision-7.json` records the added frame, changed control/surround frames and
+layout. Animation names, sequences, anchors and durations remain unchanged.
+
+Review `operator-landscape-1x/4x.png`, `operator-portrait-1x/4x.png`,
+`operator-room.gif`, and `levers-cycle-4x.gif`. These are offline art studies;
+Forge owns renderer/input integration. Native/4× audit checks the scene-edge
+extensions, preserved centre, corner/glint mask, fixed tap zones and enlarged
+lever animations. The historical unframed previews still use the legacy plate.
+
+## Revision 6: operator room, levers, round eyes, Polar contrast (superseded layout)
+
+The contract draft preceded production art. The new `operatorRoom` metadata
+defines a **352×288 landscape** output around the complete 320×240 source scene.
+Portrait uses **288×344**, preserving the existing 256×240 centre crop and
+placing the side controls below the console. Both windows begin at **(16,12)**.
+Their entire interiors are transparent; bevels, rivets, struts and glass glints
+stay outside. The console starts at **y252**, with readout recesses for score,
+mode, lives and SND. Four 300ms `frame.lights` poses supply a small indicator loop.
+See `docs/atlas-contract.md` for every output position and pointer mapping.
+
+Each `ui.lever.l/r` has a 24×48 idle cell and four 50ms pull key poses, with a
+fixed base and pivot, metal shaft and chunky coloured knob. Release reuses the
+authored reverse poses and ends at idle. No bitmap rotation or resampling is
+used. Source-scene control placement remains (4,152)/(292,152); portrait keeps
+the relocated control strip. Old arrow frames remain compatibility assets.
+
+All eye states now use stepped circular whites and pupils. Full-open whites
+have widths 3/5/5/5/3; peeking reveals the circle and blinking compresses it.
+Cells, anchors, timing and the transparent hide endpoint are unchanged. The
+preview shows only one pair; the global creature director belongs to gameplay.
+
+Polar suits use **#3F7068** teal, **#426573** midtone and **#233A46** shadow,
+with **#FFFAE8 / #9BB8B7** visor inks and the **#173B3A** contour. Ground pose
+highlights also use **#D1DCC0**. All cosmonaut frames, the active life icon
+and captured victims match. Empty life icons remain dim. No silhouettes,
+anchors, cell sizes or frame durations change. Desert and Neon suits stay as
+they were. All three original 16-colour palettes below remain unchanged.
+
+Each atlas gains 16 frames and nine animation entries. Old rectangles stay
+fixed. `revision-6.json` lists the affected frame names, new layouts and sheet
+size. Native editable sources are `polar-suit-pixels.json`,
+`airborne-pixels.json` and the explicit shapes in `tools/export-operator.mjs`.
+Run **`node assets/tools/export-operator.mjs`** to rebuild the current revision.
+Older exporters below document historical revisions; do not run them over the
+current masters, because they do not preserve later additions.
+
+Current offline studies are `operator-landscape-1x/4x.png` and
+`operator-portrait-1x/4x.png`; `operator-room.gif` previews the lights and levers.
+`levers-*`, `creatures-*` and `suits-*` are native/4× review boards. Every
+animation has a native PNG strip; lever, eye, tentacle and air cycles also have
+4× GIFs. `screen-*`, `title-controls-*` and `jump-bounce.gif` remain explicitly
+legacy unframed compositions for comparing older integrations. These are art
+studies, not screenshots of the upcoming renderer.
 
 ## Revision 5: elevated hatch, living craters, clear Polar sky
 
@@ -190,4 +388,4 @@ All ambient overlays have anchor (0,0). Draw sky/drift over the background and b
 
 `python3 assets/tools/verify-art.py` needs Pillow. It audits every pixel for palette and binary alpha, sheet bounds and nonoverlapping rectangles, transparent unused space, actor feet and visible height, continuous dark actor contours, quiet corridors, panel-free gutters, life icon dimensions, ambient exclusions, runtime-copy parity, all animation strips, six-second GIFs, unscaled airborne crops and exact 4× enlargement.
 
-Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 354 frames. It checks silhouette contours, body/foot pivots, the ledge socket, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.
+Visual review covers the new frames at native resolution and integer enlargement; the pixel audit covers all 423 frames. It checks silhouette contours, body/foot pivots, retired overlays, both mouth sockets, stable vehicle silhouettes, distinct crater rims, the shared mouth, Polar retirement, strip/GIF pixels and timing, and exact 4× previews. Intentional eyes and ambient particles are not stray pixels. These checks do not replace renderer integration or desktop/mobile playtesting.

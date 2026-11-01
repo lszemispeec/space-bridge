@@ -13,7 +13,9 @@ import { rollHop } from './jump';
 import { pick } from './rng';
 import { spawnFits } from './schedule';
 import { newlyUnlocked, nextUnlockedTheme } from './unlocks';
-import type { Cosmonaut, GameEvent, GameState, InputFrame, PlateMove, SaveData, StepResult } from './types';
+import type { ShaderPresetId } from '../config/display';
+import { getTheme, type ThemeId } from '../config/themes';
+import type { Cosmonaut, GameCommand, GameEvent, GameState, InputFrame, PlateMove, SaveData, StepResult } from './types';
 
 const FIRST_CRATER = CRATER_SLOTS[0];
 const LAST_CRATER = CRATER_SLOTS[CRATER_SLOTS.length - 1] ?? FIRST_CRATER;
@@ -35,6 +37,7 @@ export function createState(save: SaveData, seed = 1): GameState {
     rng: { seed },
     save,
     newUnlocks: [],
+    paused: false,
   };
 }
 
@@ -46,6 +49,7 @@ function clone(state: GameState): GameState {
       ...state.save,
       highScores: { ...state.save.highScores },
       unlocked: [...state.save.unlocked],
+      displaySwitched: [...state.save.displaySwitched],
       settings: { ...state.save.settings },
     },
     newUnlocks: [...state.newUnlocks],
@@ -152,13 +156,20 @@ function advanceCosmonaut(s: GameState, c: Cosmonaut, beat: number, events: Game
 
   switch (c.state) {
     case 'crouch': {
-      const hop = rollHop(s.rng);
-      s.rng = hop.rng;
       c.state = 'air';
       c.t = carry;
-      c.duration = c.slot === ROCKET_SLOT ? DIFFICULTY.timing.drop : DIFFICULTY.timing.jump;
-      c.spin = hop.value.spin;
-      c.flail = hop.value.flail;
+      if (c.slot === LAST_CRATER) {
+        // The short leap home: no tumble, no flail, nothing for the player to catch.
+        c.duration = DIFFICULTY.timing.hop;
+        c.spin = 0;
+        c.flail = false;
+      } else {
+        const hop = rollHop(s.rng);
+        s.rng = hop.rng;
+        c.duration = c.slot === ROCKET_SLOT ? DIFFICULTY.timing.drop : DIFFICULTY.timing.jump;
+        c.spin = hop.value.spin;
+        c.flail = hop.value.flail;
+      }
       events.push({ type: 'jump' });
       return;
     }
@@ -239,6 +250,77 @@ function stepLifeLost(s: GameState, dt: number, events: GameEvent[]): void {
   }
 }
 
+function setPaused(s: GameState, paused: boolean, events: GameEvent[]): void {
+  if (s.paused === paused) return;
+  s.paused = paused;
+  events.push({ type: 'pause_changed', paused });
+}
+
+function setTheme(s: GameState, theme: ThemeId, events: GameEvent[]): void {
+  if (theme === s.save.settings.theme || !s.save.unlocked.includes(theme)) return;
+  s.save.settings.theme = theme;
+  events.push({ type: 'theme_changed', theme });
+  events.push({ type: 'save_changed' });
+}
+
+/** Returns false when the preset was already active. */
+function setShader(s: GameState, preset: ShaderPresetId, events: GameEvent[]): boolean {
+  if (s.save.settings.shader === preset) return false;
+  s.save.settings.shader = preset;
+  events.push({ type: 'shader_changed', preset });
+  return true;
+}
+
+function quitToTitle(s: GameState): void {
+  s.phase = 'title';
+  s.cosmonauts = [];
+  s.phaseTimer = 0;
+}
+
+/** Applies one menu command. Settings apply in any phase; the round commands only inside a round. */
+function applyCommand(s: GameState, command: GameCommand, events: GameEvent[]): void {
+  switch (command.type) {
+    case 'pause':
+      if (s.phase === 'playing' || s.phase === 'life_lost') setPaused(s, true, events);
+      return;
+    case 'resume':
+      setPaused(s, false, events);
+      return;
+    case 'restart':
+      if (s.phase === 'title') return;
+      startRound(s, s.mode, events);
+      setPaused(s, false, events);
+      return;
+    case 'quit':
+      if (s.phase === 'title') return;
+      quitToTitle(s);
+      setPaused(s, false, events);
+      return;
+    case 'theme':
+      setTheme(s, command.theme, events);
+      return;
+    case 'volume': {
+      const value = Math.min(1, Math.max(0, command.value));
+      if (s.save.settings[command.bus] === value) return;
+      s.save.settings[command.bus] = value;
+      events.push({ type: 'volume_changed', bus: command.bus, value });
+      events.push({ type: 'save_changed' });
+      return;
+    }
+    case 'shader':
+      if (setShader(s, command.preset, events)) events.push({ type: 'save_changed' });
+      return;
+    case 'theme_display': {
+      const theme = getTheme(s.save.settings.theme);
+      if (!theme.display || s.save.displaySwitched.includes(theme.id)) return;
+      s.save.displaySwitched.push(theme.id);
+      setShader(s, theme.display, events);
+      events.push({ type: 'save_changed' });
+      return;
+    }
+  }
+}
+
 export function step(state: GameState, input: InputFrame, dt: number): StepResult {
   const s = clone(state);
   const events: GameEvent[] = [];
@@ -248,17 +330,15 @@ export function step(state: GameState, input: InputFrame, dt: number): StepResul
     events.push({ type: 'mute_changed', muted: s.save.settings.muted });
     events.push({ type: 'save_changed' });
   }
+  if (input.pause) setPaused(s, !s.paused, events);
+  for (const command of input.commands) applyCommand(s, command, events);
+
+  // The pause menu freezes the round: no time passes, no plate moves, no start.
+  if (s.paused) return { state: s, events };
 
   switch (s.phase) {
     case 'title': {
-      for (let i = 0; i < input.theme; i++) {
-        const theme = nextUnlockedTheme(s.save.settings.theme, s.save.unlocked);
-        if (theme !== s.save.settings.theme) {
-          s.save.settings.theme = theme;
-          events.push({ type: 'theme_changed', theme });
-          events.push({ type: 'save_changed' });
-        }
-      }
+      for (let i = 0; i < input.theme; i++) setTheme(s, nextUnlockedTheme(s.save.settings.theme, s.save.unlocked), events);
       const first = input.moves[0];
       if (first === 'left') startRound(s, 'A', events);
       else if (first === 'right') startRound(s, 'B', events);
@@ -278,10 +358,7 @@ export function step(state: GameState, input: InputFrame, dt: number): StepResul
 
     case 'game_over':
       s.phaseTimer -= dt;
-      if (s.phaseTimer <= 0 && (input.moves.length > 0 || input.start)) {
-        s.phase = 'title';
-        s.cosmonauts = [];
-      }
+      if (s.phaseTimer <= 0 && (input.moves.length > 0 || input.start)) quitToTitle(s);
       break;
   }
 

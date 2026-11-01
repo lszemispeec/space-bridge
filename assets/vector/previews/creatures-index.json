@@ -1,0 +1,205 @@
+[
+  {
+    "name": "crater.idle.0",
+    "x": 2,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.front.0",
+    "x": 30,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.0",
+    "x": 58,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.1",
+    "x": 86,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.front.1",
+    "x": 114,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.2",
+    "x": 142,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.front.2",
+    "x": 170,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.3",
+    "x": 198,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.front.3",
+    "x": 226,
+    "y": 2,
+    "w": 24,
+    "h": 8
+  },
+  {
+    "name": "crater.eyes.peek.0",
+    "x": 254,
+    "y": 2,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.peek.1",
+    "x": 282,
+    "y": 2,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.peek.2",
+    "x": 2,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.blink.0",
+    "x": 30,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.blink.1",
+    "x": 58,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.blink.2",
+    "x": 86,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.look.l.0",
+    "x": 114,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.look.r.0",
+    "x": 142,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.hide.0",
+    "x": 170,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.hide.1",
+    "x": 198,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.eyes.hide.2",
+    "x": 226,
+    "y": 22,
+    "w": 24,
+    "h": 16
+  },
+  {
+    "name": "crater.tentacle.reach.0",
+    "x": 254,
+    "y": 22,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.reach.1",
+    "x": 282,
+    "y": 22,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.reach.2",
+    "x": 2,
+    "y": 58,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.reach.3",
+    "x": 30,
+    "y": 58,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.grab.0",
+    "x": 58,
+    "y": 58,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.grab.1",
+    "x": 86,
+    "y": 58,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.grab.2",
+    "x": 114,
+    "y": 58,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.grab.3",
+    "x": 142,
+    "y": 58,
+    "w": 24,
+    "h": 32
+  },
+  {
+    "name": "crater.tentacle.grab.4",
+    "x": 170,
+    "y": 58,
+    "w": 24,
+    "h": 32
+  }
+]

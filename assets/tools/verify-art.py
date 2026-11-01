@@ -1,5 +1,7 @@
 """Read-only pixel audit. Run from any directory with Python 3 and Pillow."""
 import json
+import io
+import subprocess
 from pathlib import Path
 from PIL import Image, ImageSequence
 
@@ -78,7 +80,9 @@ def audit(theme):
             check(pixel[:3] in palette, f"off-palette pixel {index}")
             check(index in occupied, f"stray pixel outside frame {index}")
     used = {p[:3] for p in image.getdata() if p[3]}
-    check(used == palette, "sheet must use exactly its 16 declared colours")
+    # Retiring a sprite can remove the final use of a legal ink. The contract
+    # limits colours to the approved palette; it does not require every ink.
+    check(used <= palette, "sheet colours must belong to the declared palette")
     check(set(crops["background"].getchannel("A").getdata()) == {255}, "opaque background")
     corridor = crops['background'].crop((76, 130, 248, 168))
     check(len(set(corridor.getdata())) == 1, 'quiet actor corridor')
@@ -90,7 +94,28 @@ def audit(theme):
 
     check(atlas['sockets']['rocketLedge'] == {'frame': 'rocket.hatch.open.0', 'x': 39, 'y': 30}, 'ledge socket')
     check(crops['rocket.hatch.open.0'].size == (44, 89), 'hatch hull size')
-    check(crops['rocket.hatch.open.0'].getpixel((39, 30))[3] == 255, 'solid ledge under foot socket')
+    check(atlas['retiredSockets'] == ['rocketLedge'], 'old gantry socket retired')
+    for prefix, socket_name, size, mouth in (
+        ('rocket.tophatch', 'rocketTopHatch', (33, 89), (16, 20, 8, 12)),
+        ('rover.hatch', 'roverHatch', (33, 38), (4, 12, 8, 18)),
+    ):
+        states = [crops[f'{prefix}.{state}.0'] for state in ('closed', 'opening', 'open')]
+        check(all(im.size == size for im in states), 'vehicle cell geometry')
+        check(len({im.tobytes() for im in states}) == 3, 'three visible hatch states')
+        check(len({im.getchannel('A').tobytes() for im in states}) == 1, 'stable vehicle silhouette')
+        mx, my, mw, mh = mouth
+        dark_ink = (*tuple(bytes.fromhex(atlas['meta']['palette'][0][1:])), 255)
+        check(set(states[2].crop((mx, my, mx+mw, my+mh)).getdata()) == {dark_ink}, 'open mouth within hull')
+        for yy in range(size[1]):
+            for xx in range(size[0]):
+                if not (mx <= xx < mx+mw and my <= yy < my+mh):
+                    check(len({im.getpixel((xx, yy)) for im in states}) == 1, 'only inset shutter changes')
+        socket = atlas['sockets'][socket_name]
+        check(socket == {'frame': f'{prefix}.open.0', 'x': mx+mw//2, 'y': my+mh}, 'mouth floor socket')
+        check(states[2].getpixel((socket['x'],socket['y']))[3] == 255, 'solid mouth sill')
+    required_retired = {n for n in atlas['animations'] if n.startswith(('rocket.door', 'rocket.hatch.', 'rover.door'))}
+    check(required_retired <= set(atlas['retiredAnimations']), 'all separate door and hatch animations retired')
+    check(crops['rover.idle.0'].tobytes() == crops['rover.hatch.closed.0'].tobytes(), 'legacy idle uses new model')
     check(len({crops[f'crater.{i}'].tobytes() for i in range(4)}) == 4, 'four distinct crater rims')
     dark = tuple(bytes.fromhex(atlas['meta']['palette'][0][1:]))
     for i in range(4):
@@ -100,7 +125,7 @@ def audit(theme):
     for name in retired_frames:
         check(crops[name].getbbox() is None, f'retired animation blank: {name}')
     if theme == 'polar-signal':
-        check(atlas['retiredAnimations'] == ['ambient.sky'], 'Polar aurora retired')
+        check('ambient.sky' in atlas['retiredAnimations'], 'Polar aurora retired')
         sky = tuple(bytes.fromhex(atlas['meta']['palette'][8][1:]))
         check(set(crops['background'].crop((104,35,234,78)).getdata()) == {(*sky,255)}, 'Polar sky clear of curtain and mark')
 
@@ -113,6 +138,112 @@ def audit(theme):
             check((frame['w'], frame['h'], frame['ax'], frame['ay']) == (width, 16, 0, 0), f'PR4 tap target: {name}')
             pixels.append(crops[name].tobytes())
         check(len(set(pixels)) == len(states), f'UI states must be visibly distinct: {control}')
+
+    # The full-bleed window plate preserves the accepted centre and removes old UI bands.
+    room = atlas['operatorRoom']
+    plate = crops[room['background']]
+    check(plate.size == (320,240) and set(plate.getchannel('A').getdata()) == {255}, 'opaque full-bleed plate')
+    check(plate.crop((32,30,288,240)).tobytes() == crops['background'].crop((32,30,288,240)).tobytes(), 'accepted scenery centre preserved')
+    for x0,x1 in [(0,32),(288,320)]:
+        check(len(set(plate.crop((x0,30,x1,240)).getdata())) > 3, 'terrain in former gutter')
+        for y in range(130,190):
+            check(all(plate.getpixel((x,y)) == plate.getpixel((32 if x<32 else 287,y)) for x in range(x0,x1)), 'continuous ground through former gutter')
+    if theme != 'neon-orbit':
+        sky = tuple(bytes.fromhex(atlas['meta']['palette'][8 if theme=='polar-signal' else 11][1:]))
+        check(set(plate.crop((0,0,320,30)).getdata()) == {(*sky,255)}, 'sky replaces old HUD band')
+    for orientation, size in [('landscape', (352, 320)), ('portrait', (288, 344))]:
+        layout = room[orientation]
+        surround = crops[layout['frame']]
+        check(surround.size == size, f'{orientation} outer dimensions')
+        scene = layout['scene']
+        window = (scene['dx'], scene['dy'], scene['dx']+scene['w'], scene['dy']+scene['h'])
+        # Exactly four pixel-centre quarter-circle fills, with no stray glass ink.
+        glass = surround.crop(window)
+        radius = layout['windowCornerRadius']
+        check(radius == 20, 'native corner radius')
+        allowed = {(x,y) for y in range(glass.height) for x in range(glass.width)
+                   if (radius-min(x,glass.width-1-x)-0.5)**2 + (radius-min(y,glass.height-1-y)-0.5)**2 > radius**2
+                   and min(x,glass.width-1-x) < radius and min(y,glass.height-1-y) < radius}
+        visible = {(x,y) for y in range(glass.height) for x in range(glass.width) if glass.getpixel((x,y))[3]}
+        check(visible == allowed, f'{orientation} clear gameplay window and four rounded corners')
+        check(scene['dy']+scene['h'] == layout['console']['y'], 'console below scene')
+        taps = layout['leverTapZones']
+        check(taps == ({'l':{'x':20,'y':164,'w':24,'h':48},'r':{'x':308,'y':164,'w':24,'h':48}} if orientation=='landscape' else {'l':{'x':20,'y':292,'w':24,'h':48},'r':{'x':244,'y':292,'w':24,'h':48}}), 'tap zones frozen')
+        check(layout['levers']['l']['y'] == layout['levers']['r']['y'] == 270, 'deck-mounted lever art')
+        boxes = list(room['recesses'].values()) + [dict(pos, w=24, h=40) for pos in layout['levers'].values()]
+        for i, a in enumerate(boxes):
+            check(a['y'] >= layout['console']['y'] and a['y']+a['h'] <= size[1] and 0 <= a['x'] < a['x']+a['w'] <= size[0], 'control inside deck')
+            for b in boxes[i+1:]:
+                check(a['x']+a['w'] <= b['x'] or b['x']+b['w'] <= a['x'] or a['y']+a['h'] <= b['y'] or b['y']+b['h'] <= a['y'], 'no overlapping controls')
+        for scale in (1, 4):
+            before = Image.open(directory / f'previews/console-before-{orientation}-{scale}x.png')
+            check(before.size == (size[0]*scale,size[1]*scale), 'before comparison geometry')
+        small = Image.open(directory / f'previews/operator-{orientation}-1x.png').convert('RGBA')
+        big = Image.open(directory / f'previews/operator-{orientation}-4x.png').convert('RGBA')
+        check(small.size == size, 'operator preview size')
+        check(small.resize((size[0]*4,size[1]*4), Image.Resampling.NEAREST).tobytes() == big.tobytes(), 'operator exact 4x')
+        snd = room['hud']['sound']
+        check(small.crop((snd['x'],snd['y'],snd['x']+snd['w'],snd['y']+snd['h'])).tobytes() == crops['ui.hud_sound.idle.0'].tobytes(), 'console sound target')
+    for side in ('l', 'r'):
+        frames = [f'ui.lever.{side}.idle.0'] + atlas['animations'][f'ui.lever.{side}.pull']['frames']
+        check(len(frames) == 3 and len({crops[n].tobytes() for n in frames}) == 3, 'idle and two distinct pull poses')
+        for name in frames:
+            f = atlas['frames'][name]
+            check((f['w'],f['h'],f['ax'],f['ay']) == (24,40,0,0), 'small native lever art')
+    # Preserve every unrelated production frame exactly against the pinned handoff.
+    revision = json.loads((directory / 'revision-9.json').read_text())
+    def baseline_blob(name):
+        return subprocess.check_output(['git', 'show', f"{revision['baseline']}:assets/{theme}/{name}"], cwd=ROOT)
+    previous = json.loads(baseline_blob(f'{theme}.json'))
+    previous_sheet = Image.open(io.BytesIO(baseline_blob(f'{theme}.png'))).convert('RGBA')
+    check(atlas['meta']['palette'] == previous['meta']['palette'], 'palette unchanged')
+    changed = set(revision['changedFrames']) | set(revision['removedFrames'])
+    check(set(previous['frames']) - set(atlas['frames']) == set(revision['removedFrames']), 'only redundant pull poses removed')
+    for name, f in previous['frames'].items():
+        if name in changed:
+            continue
+        check(atlas['frames'][name] == f, f'preserved frame metadata: {name}')
+        old = previous_sheet.crop((f['x'],f['y'],f['x']+f['w'],f['y']+f['h']))
+        check(crops[name].tobytes() == old.tobytes(), f'preserved frame pixels: {name}')
+    for side in ('l', 'r'):
+        check(atlas['animations'][f'ui.lever.{side}.release']['frames'] == [f'ui.lever.{side}.pull.0', f'ui.lever.{side}.idle.0'], 'release through intermediate to idle')
+        poses = [crops[f'ui.lever.{side}.{state}'] for state in ('idle.0','pull.0','pull.1')]
+        check(len({im.crop((0,29,24,40)).tobytes() for im in poses}) == 1, 'stationary lever base')
+    for i in range(4):
+        check(crops[f'frame.lights.{i}'].size == (6,6), 'single small status lamp')
+    recesses = room['recesses']
+    check(set(recesses) == {'scoreMode','lives','sound','menu','status'}, 'only required readouts have recesses')
+    for a,b in [('scoreMode','sound'),('sound','menu'),('lives','status')]:
+        check(recesses[b]['x'] - recesses[a]['x'] - recesses[a]['w'] == 4, 'four pixel horizontal gaps')
+    check(recesses['lives']['y'] - recesses['scoreMode']['y'] - recesses['scoreMode']['h'] == 4, 'four pixel row gap')
+    def inside(inner, outer):
+        return outer['x'] < inner['x'] and outer['y'] < inner['y'] and inner['x']+inner['w'] < outer['x']+outer['w'] and inner['y']+inner['h'] < outer['y']+outer['h']
+    for name, contents in {
+        'scoreMode': [dict(room['hud']['scoreIcon'],w=12,h=12),dict(room['hud']['digits'],w=32,h=10),dict(room['hud']['modeLabel'],w=23,h=5)],
+        'lives': [dict(room['hud']['lives'],w=54,h=16)],
+        'sound': [room['hud']['sound']], 'menu': [room['menu']], 'status': [dict(room['hud']['lights'],w=6,h=6)],
+    }.items():
+        for content in contents:
+            check(inside(content,recesses[name]), f'readout fits its own recess: {name}')
+    # Full-open eyes have circular 3/5/5/5/3 whites, including their dark pupil.
+    eye = crops['crater.eyes.peek.2']
+    eye_white = tuple(bytes.fromhex(atlas['meta']['palette'][15 if theme == 'neon-orbit' else 8][1:]))
+    for cx in (8,16):
+        for y,width in enumerate((3,5,5,5,3), start=8):
+            for x in range(cx-width//2,cx+width//2+1):
+                check(eye.getpixel((x,y))[:3] in (eye_white,dark), 'round eye silhouette')
+    if theme == 'polar-signal':
+        suit = crops['cosmonaut.air.spin.0']
+        check(suit.getpixel((9,8))[:3] == tuple(bytes.fromhex('3F7068')), 'dark Polar suit')
+        check(suit.getpixel((10,5))[:3] == tuple(bytes.fromhex('FFFAE8')), 'light Polar visor')
+    lever_loop = Image.open(directory / 'previews/levers-cycle-4x.gif')
+    check(lever_loop.n_frames == 5 and lever_loop.info.get('loop') == 0, 'complete lever cycle')
+    cycle = []
+    for frame, duration in zip(ImageSequence.Iterator(lever_loop), [300,50,250,50,100]):
+        check(frame.size == (256,192) and frame.info['duration'] == duration, 'lever cycle geometry/timing')
+        check(set(frame.convert('RGB').getdata()) <= palette, 'lever cycle palette')
+        cycle.append(frame.convert('RGBA').tobytes())
+    check(cycle == list(reversed(cycle)), 'lever release returns through authored poses')
 
     # Full-screen previews must be an exact integer enlargement, with no new colours.
     native = Image.open(directory / "previews/screen-1x.png").convert("RGBA")
@@ -129,7 +260,9 @@ def audit(theme):
     air_crop = Image.open(directory / 'previews/cosmonaut-air-1x.png').convert('RGBA')
     check(air_crop.tobytes() == native.crop((122, 58, 170, 122)).tobytes(), 'unscaled airborne crop')
     for file in (directory / "previews").glob("*.png"):
-        for pixel in Image.open(file).convert("RGBA").getdata():
+        colours = Image.open(file).convert("RGBA").getcolors(maxcolors=256)
+        check(colours is not None, f"preview colour count: {file.name}")
+        for _, pixel in colours:
             check(pixel[3] in (0, 255), f"preview alpha: {file.name}")
             check(not pixel[3] or pixel[:3] in palette, f"preview palette: {file.name}")
     strips = json.loads((directory / "previews/strips.json").read_text())
@@ -142,7 +275,7 @@ def audit(theme):
             check(strip.crop((x, 0, x+frame.width, frame.height)).tobytes() == frame.tobytes(), f"strip source pixels: {name}")
             x += frame.width
         check(strip.width == x, "strip width")
-        if entry['animation'].startswith(('cosmonaut.air.', 'crater.eyes.', 'crater.tentacle.')):
+        if entry['animation'].startswith(('cosmonaut.air.', 'crater.eyes.', 'crater.tentacle.', 'ui.lever.', 'frame.lights')):
             large_strip = Image.open(directory / 'previews' / entry['file'].replace('.png', '-4x.png')).convert('RGBA')
             check(strip.resize((strip.width * 4, strip.height * 4), Image.Resampling.NEAREST).tobytes() == large_strip.tobytes(), 'air strip exact 4x')
             loop = Image.open(directory / 'previews' / f"{entry['animation']}-4x.gif")
@@ -164,7 +297,18 @@ def audit(theme):
         total += frame.info["duration"]
         check(set(frame.convert("RGB").getdata()) <= palette, "GIF palette")
     check(total == 6000 and gif.info.get("loop") == 0, "six-second looping GIF")
-    print(f"{theme}: {len(crops)} frames, 16 colours, binary alpha, bounds, gutters, anchors, UI states, {len(strips)} strips, 6s GIF, exact 4x: PASS")
+    exit_gif = Image.open(directory / 'previews/tophatch-exit-4x.gif')
+    check(exit_gif.info.get('loop') == 0, 'exit preview loops')
+    exit_frames = []
+    for frame in ImageSequence.Iterator(exit_gif):
+        check(frame.size == (1408, 1280), '4x operator exit preview')
+        pixels = frame.convert('RGBA')
+        check(set(pixels.convert('RGB').getdata()) <= palette, 'exit GIF palette')
+        native_frame = pixels.resize((352, 320), Image.Resampling.NEAREST)
+        check(native_frame.resize(pixels.size, Image.Resampling.NEAREST).tobytes() == pixels.tobytes(), 'exit integer pixel grid')
+        exit_frames.append(pixels.tobytes())
+    check(exit_frames[0] == exit_frames[-1], 'matching exit loop seam')
+    print(f"{theme}: {len(crops)} frames, {len(used)}/16 palette colours, binary alpha, sockets, inset hatches, retired overlays, {len(strips)} strips, exact 4x and exit loop: PASS")
 
 
 for theme in THEMES:

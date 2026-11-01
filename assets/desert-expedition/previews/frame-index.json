@@ -824,5 +824,138 @@
     "y": 3453,
     "w": 24,
     "h": 32
+  },
+  {
+    "name": "ui.lever.l.idle.0",
+    "x": 422,
+    "y": 3453,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.l.pull.0",
+    "x": 450,
+    "y": 3453,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.l.pull.1",
+    "x": 478,
+    "y": 3453,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.r.idle.0",
+    "x": 506,
+    "y": 3453,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.r.pull.0",
+    "x": 534,
+    "y": 3453,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.r.pull.1",
+    "x": 562,
+    "y": 3453,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "frame.room.landscape.0",
+    "x": 2,
+    "y": 3497,
+    "w": 352,
+    "h": 320
+  },
+  {
+    "name": "frame.room.portrait.0",
+    "x": 2,
+    "y": 3821,
+    "w": 288,
+    "h": 344
+  },
+  {
+    "name": "frame.lights.0",
+    "x": 294,
+    "y": 3821,
+    "w": 6,
+    "h": 6
+  },
+  {
+    "name": "frame.lights.1",
+    "x": 304,
+    "y": 3821,
+    "w": 6,
+    "h": 6
+  },
+  {
+    "name": "frame.lights.2",
+    "x": 314,
+    "y": 3821,
+    "w": 6,
+    "h": 6
+  },
+  {
+    "name": "frame.lights.3",
+    "x": 324,
+    "y": 3821,
+    "w": 6,
+    "h": 6
+  },
+  {
+    "name": "background.window",
+    "x": 2,
+    "y": 4169,
+    "w": 320,
+    "h": 240
+  },
+  {
+    "name": "rocket.tophatch.closed.0",
+    "x": 326,
+    "y": 4169,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rocket.tophatch.opening.0",
+    "x": 363,
+    "y": 4169,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rocket.tophatch.open.0",
+    "x": 400,
+    "y": 4169,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rover.hatch.closed.0",
+    "x": 437,
+    "y": 4169,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.hatch.opening.0",
+    "x": 474,
+    "y": 4169,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.hatch.open.0",
+    "x": 511,
+    "y": 4169,
+    "w": 33,
+    "h": 38
   }
 ]

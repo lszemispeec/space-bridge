@@ -33,6 +33,13 @@ export interface AudioSink {
    * Game B. Optional: an engine without it plays every song as written.
    */
   setTempo?(multiplier: number): void;
+  /**
+   * The pause menu: freeze the music and schedule nothing until resumed.
+   * Optional: an engine without it plays on under the menu.
+   */
+  setPaused?(paused: boolean): void;
+  /** Volume 0..1 of the music or SFX bus. The game save owns the values. Optional. */
+  setVolume?(bus: 'music' | 'sfx', value: number): void;
 }
 
 export function isAudioEvent(name: string): name is AudioEvent {

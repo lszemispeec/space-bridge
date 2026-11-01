@@ -1,44 +1,32 @@
 {
-  "revision": 5,
+  "revision": 9,
   "themes": {
     "polar-signal": {
-      "frames": 118,
-      "animations": 54,
+      "frames": 137,
+      "animations": 71,
       "size": [
         1024,
-        1619
+        2378
       ],
-      "palette": 16,
-      "rocketLedge": [
-        82,
-        110
-      ]
+      "palette": 16
     },
     "desert-expedition": {
-      "frames": 118,
-      "animations": 54,
+      "frames": 137,
+      "animations": 71,
       "size": [
         1024,
-        1619
+        2378
       ],
-      "palette": 16,
-      "rocketLedge": [
-        82,
-        110
-      ]
+      "palette": 16
     },
     "neon-orbit": {
-      "frames": 118,
-      "animations": 54,
+      "frames": 137,
+      "animations": 71,
       "size": [
         1024,
-        1619
+        2378
       ],
-      "palette": 16,
-      "rocketLedge": [
-        82,
-        110
-      ]
+      "palette": 16
     }
   }
 }

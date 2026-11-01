@@ -1,0 +1,2148 @@
+{
+  "meta": {
+    "contract": 1,
+    "theme": "vector",
+    "image": "vector.png",
+    "size": {
+      "w": 1024,
+      "h": 2638
+    },
+    "palette": [
+      "#000000",
+      "#28E060",
+      "#A0FFB0",
+      "#126832",
+      "#001408",
+      "#002010",
+      "#003018",
+      "#004020",
+      "#005028",
+      "#087038",
+      "#108040",
+      "#189048",
+      "#20A050",
+      "#38B860",
+      "#60D880",
+      "#C0FFD0"
+    ]
+  },
+  "frames": {
+    "background": {
+      "x": 1,
+      "y": 1,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "cosmonaut.emerge.0": {
+      "x": 323,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 80
+    },
+    "cosmonaut.emerge.1": {
+      "x": 345,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 80
+    },
+    "cosmonaut.emerge.2": {
+      "x": 367,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 80
+    },
+    "cosmonaut.crouch.0": {
+      "x": 389,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 80
+    },
+    "cosmonaut.takeoff.0": {
+      "x": 411,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 60
+    },
+    "cosmonaut.rise.0": {
+      "x": 433,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 100
+    },
+    "cosmonaut.apex.0": {
+      "x": 455,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 80
+    },
+    "cosmonaut.descend.0": {
+      "x": 477,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 100
+    },
+    "cosmonaut.land.0": {
+      "x": 499,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 80
+    },
+    "cosmonaut.land.1": {
+      "x": 521,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 80
+    },
+    "cosmonaut.crater_fall.0": {
+      "x": 543,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 100
+    },
+    "cosmonaut.crater_fall.1": {
+      "x": 565,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 100
+    },
+    "cosmonaut.crater_fall.2": {
+      "x": 587,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 140
+    },
+    "cosmonaut.board.0": {
+      "x": 609,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 100
+    },
+    "cosmonaut.board.1": {
+      "x": 631,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 100
+    },
+    "cosmonaut.idle.0": {
+      "x": 653,
+      "y": 1,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 1000
+    },
+    "rocket.door_closed.0": {
+      "x": 675,
+      "y": 1,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.door_open.0": {
+      "x": 710,
+      "y": 1,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rover.idle.0": {
+      "x": 745,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "rover.door_open.0": {
+      "x": 780,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "rover.idle.1": {
+      "x": 815,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "rover.door_open.1": {
+      "x": 850,
+      "y": 1,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 420
+    },
+    "plate.idle.0": {
+      "x": 885,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 1000
+    },
+    "plate.move.0": {
+      "x": 913,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "plate.move.1": {
+      "x": 941,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "plate.dip.0": {
+      "x": 969,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "plate.dip.1": {
+      "x": 997,
+      "y": 1,
+      "w": 26,
+      "h": 6,
+      "ax": 13,
+      "ay": 6,
+      "duration": 80
+    },
+    "crater.idle.0": {
+      "x": 1,
+      "y": 243,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.0": {
+      "x": 27,
+      "y": 243,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "hud.icon.life.0": {
+      "x": 53,
+      "y": 243,
+      "w": 14,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.icon.score.0": {
+      "x": 69,
+      "y": 243,
+      "w": 12,
+      "h": 12,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.icon.life_empty.0": {
+      "x": 83,
+      "y": 243,
+      "w": 14,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.0": {
+      "x": 99,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.1": {
+      "x": 109,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.2": {
+      "x": 119,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.3": {
+      "x": 129,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.4": {
+      "x": 139,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.5": {
+      "x": 149,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.6": {
+      "x": 159,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.7": {
+      "x": 169,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.8": {
+      "x": 179,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.digit.9": {
+      "x": 189,
+      "y": 243,
+      "w": 8,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.left.idle.0": {
+      "x": 199,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.left.pressed.0": {
+      "x": 225,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.right.idle.0": {
+      "x": 251,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "button.right.pressed.0": {
+      "x": 277,
+      "y": 243,
+      "w": 24,
+      "h": 48,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.label.score.0": {
+      "x": 303,
+      "y": 243,
+      "w": 36,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "hud.label.lives.0": {
+      "x": 341,
+      "y": 243,
+      "w": 36,
+      "h": 10,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ambient.sky.0": {
+      "x": 379,
+      "y": 243,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.sky.1": {
+      "x": 701,
+      "y": 243,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.sky.2": {
+      "x": 1,
+      "y": 485,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.sky.3": {
+      "x": 323,
+      "y": 485,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 500
+    },
+    "ambient.drift.0": {
+      "x": 645,
+      "y": 485,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 120
+    },
+    "ambient.drift.1": {
+      "x": 1,
+      "y": 727,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 120
+    },
+    "ambient.drift.2": {
+      "x": 323,
+      "y": 727,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 240
+    },
+    "ambient.drift.3": {
+      "x": 645,
+      "y": 727,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 2520
+    },
+    "ambient.signal.0": {
+      "x": 1,
+      "y": 969,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    },
+    "ambient.signal.1": {
+      "x": 323,
+      "y": 969,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    },
+    "ambient.signal.2": {
+      "x": 645,
+      "y": 969,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    },
+    "ambient.signal.3": {
+      "x": 1,
+      "y": 1211,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 250
+    },
+    "ui.title_theme.idle.0": {
+      "x": 1,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.title_theme.pressed.0": {
+      "x": 59,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.title_sound.idle.0": {
+      "x": 117,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.title_sound.pressed.0": {
+      "x": 175,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.title_sound.muted.0": {
+      "x": 233,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.title_sound.muted_pressed.0": {
+      "x": 291,
+      "y": 1453,
+      "w": 56,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.hud_sound.idle.0": {
+      "x": 349,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.hud_sound.pressed.0": {
+      "x": 387,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.hud_sound.muted.0": {
+      "x": 425,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.hud_sound.muted_pressed.0": {
+      "x": 463,
+      "y": 1453,
+      "w": 36,
+      "h": 16,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "cosmonaut.air.spin.0": {
+      "x": 1,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.1": {
+      "x": 23,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.2": {
+      "x": 45,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.3": {
+      "x": 67,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.4": {
+      "x": 89,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.5": {
+      "x": 111,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.6": {
+      "x": 133,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.spin.7": {
+      "x": 155,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.flail.0": {
+      "x": 177,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "cosmonaut.air.flail.1": {
+      "x": 199,
+      "y": 1471,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 11,
+      "duration": 80
+    },
+    "rocket.hatch.closed.0": {
+      "x": 1,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.hatch.opening.0": {
+      "x": 47,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.opening.1": {
+      "x": 93,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.opening.2": {
+      "x": 139,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.open.0": {
+      "x": 185,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.hatch.closing.0": {
+      "x": 231,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.closing.1": {
+      "x": 277,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.hatch.closing.2": {
+      "x": 323,
+      "y": 1495,
+      "w": 44,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "cosmonaut.ledge.stand.0": {
+      "x": 369,
+      "y": 1495,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 1000
+    },
+    "cosmonaut.ledge.crouch.0": {
+      "x": 391,
+      "y": 1495,
+      "w": 20,
+      "h": 22,
+      "ax": 10,
+      "ay": 22,
+      "duration": 1000
+    },
+    "crater.0": {
+      "x": 413,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.1": {
+      "x": 439,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.1": {
+      "x": 465,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.2": {
+      "x": 491,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.2": {
+      "x": 517,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.3": {
+      "x": 543,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.front.3": {
+      "x": 569,
+      "y": 1495,
+      "w": 24,
+      "h": 8,
+      "ax": 12,
+      "ay": 4,
+      "duration": 1000
+    },
+    "crater.eyes.peek.0": {
+      "x": 595,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 120
+    },
+    "crater.eyes.peek.1": {
+      "x": 621,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 120
+    },
+    "crater.eyes.peek.2": {
+      "x": 647,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 300
+    },
+    "crater.eyes.blink.0": {
+      "x": 673,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 80
+    },
+    "crater.eyes.blink.1": {
+      "x": 699,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 80
+    },
+    "crater.eyes.blink.2": {
+      "x": 725,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 160
+    },
+    "crater.eyes.look.l.0": {
+      "x": 751,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 400
+    },
+    "crater.eyes.look.r.0": {
+      "x": 777,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 400
+    },
+    "crater.eyes.hide.0": {
+      "x": 803,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 100
+    },
+    "crater.eyes.hide.1": {
+      "x": 829,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 100
+    },
+    "crater.eyes.hide.2": {
+      "x": 855,
+      "y": 1495,
+      "w": 24,
+      "h": 16,
+      "ax": 12,
+      "ay": 12,
+      "duration": 160
+    },
+    "crater.tentacle.reach.0": {
+      "x": 881,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 120
+    },
+    "crater.tentacle.reach.1": {
+      "x": 907,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 160
+    },
+    "crater.tentacle.reach.2": {
+      "x": 933,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 240
+    },
+    "crater.tentacle.reach.3": {
+      "x": 959,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 160
+    },
+    "crater.tentacle.grab.0": {
+      "x": 985,
+      "y": 1495,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 100
+    },
+    "crater.tentacle.grab.1": {
+      "x": 1,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 120
+    },
+    "crater.tentacle.grab.2": {
+      "x": 27,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 140
+    },
+    "crater.tentacle.grab.3": {
+      "x": 53,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 140
+    },
+    "crater.tentacle.grab.4": {
+      "x": 79,
+      "y": 1586,
+      "w": 24,
+      "h": 32,
+      "ax": 12,
+      "ay": 28,
+      "duration": 160
+    },
+    "ui.lever.l.idle.0": {
+      "x": 1,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.l.pull.0": {
+      "x": 43,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.l.pull.1": {
+      "x": 85,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.idle.0": {
+      "x": 211,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "ui.lever.r.pull.0": {
+      "x": 253,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "ui.lever.r.pull.1": {
+      "x": 295,
+      "y": 1620,
+      "w": 24,
+      "h": 40,
+      "ax": 0,
+      "ay": 0,
+      "duration": 50
+    },
+    "frame.room.landscape.0": {
+      "x": 421,
+      "y": 1620,
+      "w": 352,
+      "h": 320,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.room.portrait.0": {
+      "x": 1,
+      "y": 1942,
+      "w": 288,
+      "h": 344,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "frame.lights.0": {
+      "x": 291,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "frame.lights.1": {
+      "x": 313,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "frame.lights.2": {
+      "x": 335,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "frame.lights.3": {
+      "x": 357,
+      "y": 1942,
+      "w": 6,
+      "h": 6,
+      "ax": 0,
+      "ay": 0,
+      "duration": 600
+    },
+    "background.window": {
+      "x": 379,
+      "y": 1942,
+      "w": 320,
+      "h": 240,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    },
+    "rocket.tophatch.closed.0": {
+      "x": 1,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rocket.tophatch.opening.0": {
+      "x": 36,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 90
+    },
+    "rocket.tophatch.open.0": {
+      "x": 71,
+      "y": 2288,
+      "w": 33,
+      "h": 89,
+      "ax": 0,
+      "ay": 89,
+      "duration": 1000
+    },
+    "rover.hatch.closed.0": {
+      "x": 106,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 1000
+    },
+    "rover.hatch.opening.0": {
+      "x": 141,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 90
+    },
+    "rover.hatch.open.0": {
+      "x": 176,
+      "y": 2288,
+      "w": 33,
+      "h": 38,
+      "ax": 0,
+      "ay": 38,
+      "duration": 1000
+    },
+    "frame.room.side.0": {
+      "x": 0,
+      "y": 2380,
+      "w": 448,
+      "h": 256,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
+    }
+  },
+  "animations": {
+    "cosmonaut.emerge": {
+      "frames": [
+        "cosmonaut.emerge.0",
+        "cosmonaut.emerge.1",
+        "cosmonaut.emerge.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crouch": {
+      "frames": [
+        "cosmonaut.crouch.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.takeoff": {
+      "frames": [
+        "cosmonaut.takeoff.0"
+      ],
+      "loop": false
+    },
+    "cosmonaut.rise": {
+      "frames": [
+        "cosmonaut.rise.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.apex": {
+      "frames": [
+        "cosmonaut.apex.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.descend": {
+      "frames": [
+        "cosmonaut.descend.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.land": {
+      "frames": [
+        "cosmonaut.land.0",
+        "cosmonaut.land.1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.crater_fall": {
+      "frames": [
+        "cosmonaut.crater_fall.0",
+        "cosmonaut.crater_fall.1",
+        "cosmonaut.crater_fall.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.board": {
+      "frames": [
+        "cosmonaut.board.0",
+        "cosmonaut.board.1"
+      ],
+      "loop": false
+    },
+    "cosmonaut.idle": {
+      "frames": [
+        "cosmonaut.idle.0"
+      ],
+      "loop": true
+    },
+    "plate.idle": {
+      "frames": [
+        "plate.idle.0"
+      ],
+      "loop": true
+    },
+    "plate.move": {
+      "frames": [
+        "plate.move.0",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "plate.move_right": {
+      "frames": [
+        "plate.move.1",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "plate.dip": {
+      "frames": [
+        "plate.dip.0",
+        "plate.dip.1",
+        "plate.idle.0"
+      ],
+      "loop": false
+    },
+    "rocket.door_closed": {
+      "frames": [
+        "rocket.door_closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.door_open": {
+      "frames": [
+        "rocket.door_open.0"
+      ],
+      "loop": false
+    },
+    "rover.idle": {
+      "frames": [
+        "rover.idle.0",
+        "rover.idle.1"
+      ],
+      "loop": true
+    },
+    "rover.door_open": {
+      "frames": [
+        "rover.door_open.0",
+        "rover.door_open.1"
+      ],
+      "loop": false
+    },
+    "ambient.sky": {
+      "frames": [
+        "ambient.sky.0",
+        "ambient.sky.1",
+        "ambient.sky.2",
+        "ambient.sky.3"
+      ],
+      "loop": true
+    },
+    "ambient.drift": {
+      "frames": [
+        "ambient.drift.0",
+        "ambient.drift.1",
+        "ambient.drift.2",
+        "ambient.drift.3"
+      ],
+      "loop": true
+    },
+    "ambient.signal": {
+      "frames": [
+        "ambient.signal.0",
+        "ambient.signal.1",
+        "ambient.signal.2",
+        "ambient.signal.3"
+      ],
+      "loop": true
+    },
+    "crater.idle": {
+      "frames": [
+        "crater.idle.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.score": {
+      "frames": [
+        "hud.icon.score.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.life": {
+      "frames": [
+        "hud.icon.life.0"
+      ],
+      "loop": true
+    },
+    "hud.icon.life_empty": {
+      "frames": [
+        "hud.icon.life_empty.0"
+      ],
+      "loop": true
+    },
+    "button.left.idle": {
+      "frames": [
+        "button.left.idle.0"
+      ],
+      "loop": true
+    },
+    "button.left.pressed": {
+      "frames": [
+        "button.left.pressed.0"
+      ],
+      "loop": true
+    },
+    "button.right.idle": {
+      "frames": [
+        "button.right.idle.0"
+      ],
+      "loop": true
+    },
+    "button.right.pressed": {
+      "frames": [
+        "button.right.pressed.0"
+      ],
+      "loop": true
+    },
+    "ui.title_theme.idle": {
+      "frames": [
+        "ui.title_theme.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.title_theme.pressed": {
+      "frames": [
+        "ui.title_theme.pressed.0"
+      ],
+      "loop": true
+    },
+    "ui.title_sound.idle": {
+      "frames": [
+        "ui.title_sound.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.title_sound.pressed": {
+      "frames": [
+        "ui.title_sound.pressed.0"
+      ],
+      "loop": true
+    },
+    "ui.title_sound.muted": {
+      "frames": [
+        "ui.title_sound.muted.0"
+      ],
+      "loop": true
+    },
+    "ui.title_sound.muted_pressed": {
+      "frames": [
+        "ui.title_sound.muted_pressed.0"
+      ],
+      "loop": true
+    },
+    "ui.hud_sound.idle": {
+      "frames": [
+        "ui.hud_sound.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.hud_sound.pressed": {
+      "frames": [
+        "ui.hud_sound.pressed.0"
+      ],
+      "loop": true
+    },
+    "ui.hud_sound.muted": {
+      "frames": [
+        "ui.hud_sound.muted.0"
+      ],
+      "loop": true
+    },
+    "ui.hud_sound.muted_pressed": {
+      "frames": [
+        "ui.hud_sound.muted_pressed.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.air.spin": {
+      "frames": [
+        "cosmonaut.air.spin.0",
+        "cosmonaut.air.spin.1",
+        "cosmonaut.air.spin.2",
+        "cosmonaut.air.spin.3",
+        "cosmonaut.air.spin.4",
+        "cosmonaut.air.spin.5",
+        "cosmonaut.air.spin.6",
+        "cosmonaut.air.spin.7"
+      ],
+      "loop": true
+    },
+    "cosmonaut.air.flail": {
+      "frames": [
+        "cosmonaut.air.flail.0",
+        "cosmonaut.air.flail.1"
+      ],
+      "loop": true
+    },
+    "rocket.hatch.closed": {
+      "frames": [
+        "rocket.hatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.hatch.opening": {
+      "frames": [
+        "rocket.hatch.opening.0",
+        "rocket.hatch.opening.1",
+        "rocket.hatch.opening.2"
+      ],
+      "loop": false
+    },
+    "rocket.hatch.open": {
+      "frames": [
+        "rocket.hatch.open.0"
+      ],
+      "loop": true
+    },
+    "rocket.hatch.closing": {
+      "frames": [
+        "rocket.hatch.closing.0",
+        "rocket.hatch.closing.1",
+        "rocket.hatch.closing.2"
+      ],
+      "loop": false
+    },
+    "cosmonaut.ledge.stand": {
+      "frames": [
+        "cosmonaut.ledge.stand.0"
+      ],
+      "loop": true
+    },
+    "cosmonaut.ledge.crouch": {
+      "frames": [
+        "cosmonaut.ledge.crouch.0"
+      ],
+      "loop": true
+    },
+    "crater.eyes.peek": {
+      "frames": [
+        "crater.eyes.peek.0",
+        "crater.eyes.peek.1",
+        "crater.eyes.peek.2"
+      ],
+      "loop": false
+    },
+    "crater.eyes.blink": {
+      "frames": [
+        "crater.eyes.blink.0",
+        "crater.eyes.blink.1",
+        "crater.eyes.blink.2"
+      ],
+      "loop": false
+    },
+    "crater.eyes.look.l": {
+      "frames": [
+        "crater.eyes.look.l.0"
+      ],
+      "loop": true
+    },
+    "crater.eyes.look.r": {
+      "frames": [
+        "crater.eyes.look.r.0"
+      ],
+      "loop": true
+    },
+    "crater.eyes.hide": {
+      "frames": [
+        "crater.eyes.hide.0",
+        "crater.eyes.hide.1",
+        "crater.eyes.hide.2"
+      ],
+      "loop": false
+    },
+    "crater.tentacle.reach": {
+      "frames": [
+        "crater.tentacle.reach.0",
+        "crater.tentacle.reach.1",
+        "crater.tentacle.reach.2",
+        "crater.tentacle.reach.3"
+      ],
+      "loop": false
+    },
+    "crater.tentacle.grab": {
+      "frames": [
+        "crater.tentacle.grab.0",
+        "crater.tentacle.grab.1",
+        "crater.tentacle.grab.2",
+        "crater.tentacle.grab.3",
+        "crater.tentacle.grab.4"
+      ],
+      "loop": false
+    },
+    "ui.lever.l.idle": {
+      "frames": [
+        "ui.lever.l.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.l.pull": {
+      "frames": [
+        "ui.lever.l.pull.0",
+        "ui.lever.l.pull.1"
+      ],
+      "loop": false
+    },
+    "ui.lever.l.release": {
+      "frames": [
+        "ui.lever.l.pull.0",
+        "ui.lever.l.idle.0"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.idle": {
+      "frames": [
+        "ui.lever.r.idle.0"
+      ],
+      "loop": true
+    },
+    "ui.lever.r.pull": {
+      "frames": [
+        "ui.lever.r.pull.0",
+        "ui.lever.r.pull.1"
+      ],
+      "loop": false
+    },
+    "ui.lever.r.release": {
+      "frames": [
+        "ui.lever.r.pull.0",
+        "ui.lever.r.idle.0"
+      ],
+      "loop": false
+    },
+    "frame.room.landscape": {
+      "frames": [
+        "frame.room.landscape.0"
+      ],
+      "loop": true
+    },
+    "frame.room.portrait": {
+      "frames": [
+        "frame.room.portrait.0"
+      ],
+      "loop": true
+    },
+    "frame.lights": {
+      "frames": [
+        "frame.lights.0",
+        "frame.lights.1",
+        "frame.lights.2",
+        "frame.lights.3"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.closed": {
+      "frames": [
+        "rocket.tophatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.opening": {
+      "frames": [
+        "rocket.tophatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rocket.tophatch.open": {
+      "frames": [
+        "rocket.tophatch.open.0"
+      ],
+      "loop": true
+    },
+    "rocket.tophatch.closing": {
+      "frames": [
+        "rocket.tophatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rover.hatch.closed": {
+      "frames": [
+        "rover.hatch.closed.0"
+      ],
+      "loop": true
+    },
+    "rover.hatch.opening": {
+      "frames": [
+        "rover.hatch.opening.0"
+      ],
+      "loop": false
+    },
+    "rover.hatch.open": {
+      "frames": [
+        "rover.hatch.open.0"
+      ],
+      "loop": true
+    },
+    "rover.hatch.closing": {
+      "frames": [
+        "rover.hatch.opening.0"
+      ],
+      "loop": false
+    },
+    "frame.room.side": {
+      "frames": [
+        "frame.room.side.0"
+      ],
+      "loop": true
+    }
+  },
+  "placements": {
+    "ambient.sky": {
+      "x": 0,
+      "y": 0
+    },
+    "ambient.drift": {
+      "x": 0,
+      "y": 0
+    },
+    "ambient.signal": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "retiredAnimations": [
+    "rocket.door_closed",
+    "rocket.door_open",
+    "rover.door_open",
+    "rocket.hatch.closed",
+    "rocket.hatch.opening",
+    "rocket.hatch.open",
+    "rocket.hatch.closing"
+  ],
+  "sockets": {
+    "rocketLedge": {
+      "frame": "rocket.hatch.open.0",
+      "x": 39,
+      "y": 30
+    },
+    "rocketTopHatch": {
+      "frame": "rocket.tophatch.open.0",
+      "x": 20,
+      "y": 32
+    },
+    "roverHatch": {
+      "frame": "rover.hatch.open.0",
+      "x": 8,
+      "y": 30
+    }
+  },
+  "operatorRoom": {
+    "background": "background.window",
+    "landscape": {
+      "size": {
+        "w": 352,
+        "h": 320
+      },
+      "frame": "frame.room.landscape.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 352,
+        "h": 68
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 270
+        },
+        "r": {
+          "x": 320,
+          "y": 270
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 308,
+          "y": 164,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "windowCornerRadius": 20
+    },
+    "portrait": {
+      "size": {
+        "w": 288,
+        "h": 344
+      },
+      "frame": "frame.room.portrait.0",
+      "scene": {
+        "sx": 32,
+        "sy": 0,
+        "w": 256,
+        "h": 240,
+        "dx": 16,
+        "dy": 12
+      },
+      "console": {
+        "x": 0,
+        "y": 252,
+        "w": 288,
+        "h": 92
+      },
+      "levers": {
+        "l": {
+          "x": 8,
+          "y": 270
+        },
+        "r": {
+          "x": 256,
+          "y": 270
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 20,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        },
+        "r": {
+          "x": 244,
+          "y": 292,
+          "w": 24,
+          "h": 48
+        }
+      },
+      "controlStrip": {
+        "x": 16,
+        "y": 288,
+        "w": 256,
+        "h": 56
+      },
+      "windowCornerRadius": 20
+    },
+    "hud": {
+      "scoreIcon": {
+        "x": 52,
+        "y": 265
+      },
+      "digits": {
+        "x": 68,
+        "y": 265,
+        "pitch": 8,
+        "count": 4
+      },
+      "modeLabel": {
+        "x": 116,
+        "y": 268
+      },
+      "lives": {
+        "x": 52,
+        "y": 289,
+        "pitch": 20
+      },
+      "sound": {
+        "x": 166,
+        "y": 263,
+        "w": 36,
+        "h": 16
+      },
+      "lights": {
+        "x": 122,
+        "y": 288
+      }
+    },
+    "revision": 9,
+    "menu": {
+      "x": 210,
+      "y": 263,
+      "w": 36,
+      "h": 16
+    },
+    "recesses": {
+      "scoreMode": {
+        "x": 48,
+        "y": 260,
+        "w": 112,
+        "h": 22
+      },
+      "sound": {
+        "x": 164,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "menu": {
+        "x": 208,
+        "y": 260,
+        "w": 40,
+        "h": 22
+      },
+      "lives": {
+        "x": 48,
+        "y": 286,
+        "w": 68,
+        "h": 22
+      },
+      "status": {
+        "x": 120,
+        "y": 286,
+        "w": 10,
+        "h": 10
+      }
+    },
+    "leverMotion": {
+      "pivot": {
+        "x": 12,
+        "y": 30
+      },
+      "shaftEndpoints": [
+        {
+          "x": 12,
+          "y": 12
+        },
+        {
+          "x": 15,
+          "y": 12
+        },
+        {
+          "x": 18,
+          "y": 12
+        }
+      ],
+      "maxAngleDegrees": 18.4,
+      "mirrorForLeft": true
+    },
+    "side": {
+      "size": {
+        "w": 448,
+        "h": 256
+      },
+      "frame": "frame.room.side.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 64,
+        "dy": 8
+      },
+      "panels": {
+        "l": {
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 256
+        },
+        "r": {
+          "x": 384,
+          "y": 0,
+          "w": 64,
+          "h": 256
+        }
+      },
+      "levers": {
+        "l": {
+          "x": 14,
+          "y": 180
+        },
+        "r": {
+          "x": 410,
+          "y": 180
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 6,
+          "y": 160,
+          "w": 40,
+          "h": 80
+        },
+        "r": {
+          "x": 402,
+          "y": 160,
+          "w": 40,
+          "h": 80
+        }
+      },
+      "hud": {
+        "scoreIcon": {
+          "x": 7,
+          "y": 22
+        },
+        "digits": {
+          "x": 10,
+          "y": 40,
+          "pitch": 8,
+          "count": 4
+        },
+        "modeLabel": {
+          "x": 21,
+          "y": 26
+        },
+        "lives": {
+          "x": 5,
+          "y": 61,
+          "pitch": 14
+        },
+        "sound": {
+          "x": 404,
+          "y": 21,
+          "w": 36,
+          "h": 16
+        },
+        "lights": {
+          "x": 419,
+          "y": 72
+        }
+      },
+      "menu": {
+        "x": 404,
+        "y": 47,
+        "w": 36,
+        "h": 16
+      },
+      "recesses": {
+        "scoreMode": {
+          "x": 4,
+          "y": 18,
+          "w": 44,
+          "h": 36
+        },
+        "lives": {
+          "x": 4,
+          "y": 58,
+          "w": 44,
+          "h": 22
+        },
+        "sound": {
+          "x": 402,
+          "y": 18,
+          "w": 40,
+          "h": 22
+        },
+        "menu": {
+          "x": 402,
+          "y": 44,
+          "w": 40,
+          "h": 22
+        },
+        "status": {
+          "x": 417,
+          "y": 70,
+          "w": 10,
+          "h": 10
+        }
+      },
+      "windowCornerRadius": 20
+    }
+  },
+  "retiredSockets": [
+    "rocketLedge"
+  ],
+  "vehicleModels": {
+    "rocket": {
+      "anchor": {
+        "x": 43,
+        "y": 169
+      },
+      "mouth": "rocketTopHatch",
+      "hatch": {
+        "x": 16,
+        "y": 20,
+        "w": 8,
+        "h": 12
+      }
+    },
+    "rover": {
+      "anchor": {
+        "x": 248,
+        "y": 180
+      },
+      "mouth": "roverHatch",
+      "hatch": {
+        "x": 4,
+        "y": 12,
+        "w": 8,
+        "h": 18
+      }
+    },
+    "gantry": "retired"
+  }
+}

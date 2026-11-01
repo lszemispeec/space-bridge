@@ -49,6 +49,61 @@ export interface AtlasSocket {
   y: number;
 }
 
+/** A vehicle model: its draw anchor, the hatch mouth inside the hull and the socket that names the mouth floor. */
+export interface VehicleModel {
+  anchor: Placement;
+  mouth: string;
+  hatch: Placement & { w: number; h: number };
+}
+
+/** Art layout in native output pixels; the simulation remains 320×240. */
+export interface OperatorLayout {
+  size: { w: number; h: number };
+  frame: string;
+  scene: { sx: number; sy: number; w: number; h: number; dx: number; dy: number };
+  console: Placement & { w: number; h: number };
+  levers: { l: Placement; r: Placement };
+  /** Input geometry stays separate from the deck-mounted art. */
+  leverTapZones: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
+  windowCornerRadius: number;
+  controlStrip?: Placement & { w: number; h: number };
+}
+
+export interface OperatorHud {
+  scoreIcon: Placement;
+  digits: Placement & { pitch: number; count: number };
+  modeLabel: Placement;
+  lives: Placement & { pitch: number };
+  sound: Placement & { w: number; h: number };
+  lights: Placement;
+}
+
+/** The side room for short landscape screens: console panels left and right of the window, with their own HUD. */
+export interface SideLayout {
+  size: { w: number; h: number };
+  frame: string;
+  scene: { sx: number; sy: number; w: number; h: number; dx: number; dy: number };
+  panels: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
+  levers: { l: Placement; r: Placement };
+  leverTapZones: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
+  windowCornerRadius: number;
+  hud: OperatorHud;
+  menu: Placement & { w: number; h: number };
+  recesses: Record<string, Placement & { w: number; h: number }>;
+}
+
+export interface OperatorRoom {
+  background: string;
+  landscape: OperatorLayout;
+  portrait: OperatorLayout;
+  side?: SideLayout;
+  hud: OperatorHud;
+  /** The MENU button's rectangle; the renderer draws the button itself. */
+  menu?: Placement & { w: number; h: number };
+  /** The outer bezels the room plate draws around the readouts. */
+  recesses?: Record<string, Placement & { w: number; h: number }>;
+}
+
 export interface Atlas {
   meta: AtlasMeta;
   frames: Record<string, AtlasFrame>;
@@ -56,12 +111,28 @@ export interface Atlas {
   /** Where the game draws optional ambient animations, by animation name. */
   placements?: Record<string, Placement>;
   sockets?: Record<string, AtlasSocket>;
+  /** Sockets kept for old readers that no longer mark anything visible. */
+  retiredSockets?: string[];
   /** Compatibility animations with intentionally blank frames in this theme. */
   retiredAnimations?: string[];
+  /** The complete vehicle models with built-in hatches, and the retired gantry. */
+  vehicleModels?: Record<string, VehicleModel | 'retired'>;
+  /** Expanded surround and console coordinates. See docs/atlas-contract.md. */
+  operatorRoom?: OperatorRoom;
 }
 
 /** Animations the game plays by name. Every theme atlas must define these. */
 export const REQUIRED_ANIMATIONS = [
+  'frame.room.landscape',
+  'frame.room.portrait',
+  'frame.room.side',
+  'frame.lights',
+  'ui.lever.l.idle',
+  'ui.lever.l.pull',
+  'ui.lever.l.release',
+  'ui.lever.r.idle',
+  'ui.lever.r.pull',
+  'ui.lever.r.release',
   'cosmonaut.emerge',
   'cosmonaut.crouch',
   'cosmonaut.takeoff',
@@ -113,6 +184,7 @@ export const REQUIRED_ANIMATIONS = [
 
 /** Single frames the game draws by name. */
 export const REQUIRED_FRAMES = [
+  'background.window',
   'background',
   'crater.0',
   'crater.1',

@@ -13,6 +13,7 @@ export class Sequencer {
   private step = 0;
   private nextStepTime = 0;
   private playing = false;
+  private paused = false;
   /** Tempo multiplier applied from the next step on. Game B can push this above 1. */
   rate = 1;
 
@@ -26,17 +27,48 @@ export class Sequencer {
     return this.song;
   }
 
+  /** True between `pause` and `resume`: the song is kept, nothing is scheduled. */
+  get isPaused(): boolean {
+    return this.paused;
+  }
+
   play(song: CompiledSong, at: number): void {
     this.song = song;
     this.cursors = song.tracks.map(() => 0);
     this.step = 0;
     this.nextStepTime = at;
     this.playing = true;
+    this.paused = false;
   }
 
   stop(at: number): void {
     this.playing = false;
+    this.paused = false;
     this.song = null;
+    this.cutAll(at);
+  }
+
+  /**
+   * Freezes the song at its next unscheduled step: the voices are cut at
+   * `at`, and no more steps are scheduled until `resume`. Up to the
+   * look-ahead of already scheduled notes is lost; that is the cut.
+   */
+  pause(at: number): void {
+    if (!this.playing || this.paused) return;
+    this.playing = false;
+    this.paused = true;
+    this.cutAll(at);
+  }
+
+  /** Continues a paused song from where it stopped, with its first step at `at`. */
+  resume(at: number): void {
+    if (!this.paused || !this.song) return;
+    this.paused = false;
+    this.playing = true;
+    this.nextStepTime = at;
+  }
+
+  private cutAll(at: number): void {
     for (const track of ['pulse1', 'pulse2', 'tri', 'noise'] as const) this.voices[track].cut(at);
   }
 

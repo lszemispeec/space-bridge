@@ -8,33 +8,45 @@ import {
   CRATER_BOTTOM_Y,
   CRATER_SLOTS,
   CRATER_Y,
-  HUD,
   PLATE_Y,
-  PLAY_X0,
-  PLAY_X1,
   ROCKET,
-  ROCKET_LEDGE,
+  ROCKET_HATCH,
   ROCKET_SLOT,
+  ROOM_BACKGROUND,
   ROVER,
+  ROVER_HATCH,
+  roomLayout,
   SCREEN_H,
   SCREEN_W,
-  SIDE_BUTTONS,
   TAP_TARGETS,
+  type PlateSide,
   type Rect,
 } from '../config/layout';
-import { getTheme, type Theme, type ThemePalette } from '../config/themes';
-import { createCreatures, creatureAnimation, stepCreatures, type Creatures } from '../game/creatures';
+import { getTheme, THEMES, type Theme, type ThemePalette } from '../config/themes';
+import { createCreatures, creatureAnimation, creatureAt, stepCreatures, type Creatures } from '../game/creatures';
 import { tumbleFrame, type Point } from '../game/jump';
-import { cosmonautView, progressOf, slotPoint, type CosmonautView } from '../game/positions';
+import { cosmonautView, progressOf, slotPoint, type CosmonautView, type Hatches } from '../game/positions';
 import { bestScore, canLeaveGameOver } from '../game/rules';
 import { nextLanding } from '../game/schedule';
+import type { MenuCaps, MenuState } from '../game/menu';
 import type { Cosmonaut, GameState } from '../game/types';
 import type { HeldButtons } from '../platform/input';
+import type { Viewport } from '../platform/viewport';
 import type { Atlas, AtlasFrame } from './atlas';
-import { drawText, drawTextCentered } from './font';
-import { drawFrame, frameAt, frameByProgress, frameOf, hasAnimation, type Art } from './sprites';
+import { drawTextCentered } from './font';
+import { drawMenu } from './menu';
+import { LEVER_IDLE, leverPull, pullLever, settleLever, type Lever } from './lever';
+import { drawRoom, drawRoomLoading, leverPullMs, pad as padTo, soundState, type LeverPulls } from './room';
+import { drawFrame, drawFrameScaled, frameAt, frameByProgress, frameOf, hasAnimation, type Art } from './sprites';
+
+export { soundState } from './room';
+
+/** The score digits as the console shows them. */
+const SCORE_DIGITS = 4;
+const pad = (n: number): string => padTo(n, SCORE_DIGITS);
 
 const CENTER_X = SCREEN_W / 2;
+const LAST_CRATER = CRATER_SLOTS[CRATER_SLOTS.length - 1] ?? ROCKET_SLOT;
 /** How long the plate shows its move frame after a press, in ms. */
 const PLATE_MOVE_MS = 160;
 /** Share of the arc, from the start, that shows the take-off pose. */
@@ -60,27 +72,50 @@ const FALL_FLAIL_SHARE = 0.5;
 /** Ambient loops drawn over the vehicles instead of behind them. */
 const AMBIENT_FRONT = 'ambient.signal';
 /**
- * The rocket hull is one of four hatch states. It opens over the first half
- * of the wait on the ledge, stays open while the cosmonaut crouches, and
- * closes on the clock after the take-off.
+ * Each vehicle is one complete model with a built-in hatch, drawn in one of
+ * four states. The rocket's top hatch opens over the first half of the wait
+ * in its mouth, stays open while the cosmonaut grows and crouches, and closes
+ * on the clock after the take-off. The rover's hatch opens at the start of
+ * the last hop, stays open while the cosmonaut shrinks in, and closes on the
+ * clock once it is gone. The old door and gantry hulls are retired.
  */
-const HATCH = { closed: 'rocket.hatch.closed', opening: 'rocket.hatch.opening', open: 'rocket.hatch.open', closing: 'rocket.hatch.closing' } as const;
-/** Share of the wait on the ledge during which the hatch opens and the cosmonaut stands. */
+export type Vehicle = 'rocket' | 'rover';
+const HATCH: Record<Vehicle, string> = { rocket: 'rocket.tophatch', rover: 'rover.hatch' };
+/** Share of the wait in the rocket's mouth during which the hatch opens. */
 const HATCH_OPENING_SHARE = 0.5;
-/** Real ms the closing plays after the take-off, then the closed hull shows. */
-const HATCH_CLOSING_MS = 270;
+/** Share of the last hop during which the rover's hatch opens. */
+const ROVER_OPENING_SHARE = 0.3;
+/** Real ms the closing plays after the mouth empties, then the closed hull shows. */
+const HATCH_CLOSING_MS = 180;
 const LEDGE_STAND = 'cosmonaut.ledge.stand';
 const LEDGE_CROUCH = 'cosmonaut.ledge.crouch';
+const TAKEOFF = 'cosmonaut.takeoff';
 const GRAB = 'crater.tentacle.grab';
 /** Longest real gap between two frames that the creatures advance by; a hidden tab does not fast-forward them. */
 const MAX_CREATURE_STEP = 0.1;
 
-export interface Renderer {
-  render(ctx: CanvasRenderingContext2D, s: GameState, held: HeldButtons, art: Art | null, nowMs: number): void;
+/** Where the renderer draws: the scene, and the room on the page canvas around it. */
+export interface RenderTarget {
+  /** The 320x240 scene. */
+  scene: CanvasRenderingContext2D;
+  /** The page canvas, in room pixels. */
+  room: CanvasRenderingContext2D;
+  viewport: Viewport;
+  /** Copies the scene into the room's window. */
+  present(): void;
 }
 
-function pad(n: number, width = HUD.digits.count): string {
-  return String(Math.min(n, 10 ** width - 1)).padStart(width, '0');
+/** The shell's part of what is on screen: the pause menu's cursor and what the shell can offer in it. */
+export interface Overlay {
+  menu: MenuState;
+  caps: MenuCaps;
+}
+
+export interface Renderer {
+  /** Draws one frame. `nowMs` is the scene clock: it stops while the game is paused, so every loop freezes with it. */
+  render(target: RenderTarget, s: GameState, held: HeldButtons, art: Art | null, nowMs: number, overlay: Overlay): void;
+  /** A plate press, so the lever on that side pulls. Queued presses pull in turn. */
+  pull(side: PlateSide): void;
 }
 
 function flailFrame(atlas: Atlas, nowMs: number): AtlasFrame {
@@ -102,8 +137,10 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
     case 'crouch':
       return frameAt(atlas, LEDGE_CROUCH, nowMs);
     case 'rise':
-      if (p < TAKEOFF_SHARE) return frameByProgress(atlas, 'cosmonaut.takeoff', p / TAKEOFF_SHARE);
+      if (p < TAKEOFF_SHARE) return frameByProgress(atlas, TAKEOFF, p / TAKEOFF_SHARE);
       return airFrame(atlas, view, nowMs);
+    case 'hop':
+      return frameAt(atlas, TAKEOFF, 0);
     case 'descend':
       return airFrame(atlas, view, nowMs);
     case 'land':
@@ -114,12 +151,6 @@ export function cosmonautFrame(atlas: Atlas, view: CosmonautView, nowMs: number)
     case 'board':
       return frameByProgress(atlas, 'cosmonaut.board', p);
   }
-}
-
-/** The sound button state for the saved flag and the pointer. */
-export function soundState(muted: boolean, pressed: boolean): string {
-  if (muted) return pressed ? 'muted_pressed' : 'muted';
-  return pressed ? 'pressed' : 'idle';
 }
 
 /** The rim of the `index`-th crater, left to right. */
@@ -133,29 +164,39 @@ export function craterFrontFrame(atlas: Atlas, index: number): AtlasFrame {
 }
 
 /**
- * The rocket hull for the hatch state. `onLedge` is the progress of the wait
- * on the ledge, or null when nobody is there; `sinceLeftMs` is the real time
- * since the last take-off from the ledge.
+ * A vehicle's hull for its hatch state. `opening` is the progress of the
+ * opening, 0..1, or null when the mouth is empty: the hatch opens over it and
+ * then holds open. `sinceEmptyMs` is the real time since the mouth emptied,
+ * for the closing.
  */
-export function hatchFrame(atlas: Atlas, onLedge: number | null, sinceLeftMs: number, nowMs: number): AtlasFrame {
-  if (onLedge !== null) {
-    if (onLedge < HATCH_OPENING_SHARE) return frameByProgress(atlas, HATCH.opening, onLedge / HATCH_OPENING_SHARE);
-    return frameAt(atlas, HATCH.open, nowMs);
+export function hatchFrame(atlas: Atlas, vehicle: Vehicle, opening: number | null, sinceEmptyMs: number, nowMs: number): AtlasFrame {
+  const hatch = HATCH[vehicle];
+  if (opening !== null) {
+    if (opening < 1) return frameByProgress(atlas, `${hatch}.opening`, opening);
+    return frameAt(atlas, `${hatch}.open`, nowMs);
   }
-  if (sinceLeftMs < HATCH_CLOSING_MS) return frameAt(atlas, HATCH.closing, sinceLeftMs);
-  return frameAt(atlas, HATCH.closed, nowMs);
+  if (sinceEmptyMs < HATCH_CLOSING_MS) return frameAt(atlas, `${hatch}.closing`, sinceEmptyMs);
+  return frameAt(atlas, `${hatch}.closed`, nowMs);
+}
+
+function socketPoint(atlas: Atlas, name: string, anchor: Point, fallback: Point): Point {
+  const socket = atlas.sockets?.[name];
+  const frame = socket ? atlas.frames[socket.frame] : undefined;
+  if (!socket || !frame || atlas.retiredSockets?.includes(name)) return fallback;
+  return { x: anchor.x - frame.ax + socket.x, y: anchor.y - frame.ay + socket.y };
 }
 
 /**
- * Feet position on the ledge, from the atlas's `rocketLedge` socket: a point
- * inside the open-hatch hull, measured from that frame's top-left corner. The
- * layout's default stands in when the atlas has no socket.
+ * The hatch mouths, from the atlas's `rocketTopHatch` and `roverHatch`
+ * sockets: points inside the open-hatch hulls, measured from those frames'
+ * top-left corners. The layout's defaults stand in when a socket is missing
+ * or retired.
  */
-export function ledgePoint(atlas: Atlas): Point {
-  const socket = atlas.sockets?.rocketLedge;
-  const frame = socket ? atlas.frames[socket.frame] : undefined;
-  if (!socket || !frame) return ROCKET_LEDGE;
-  return { x: ROCKET.x - frame.ax + socket.x, y: ROCKET.y + ROCKET.h - frame.ay + socket.y };
+export function hatchPoints(atlas: Atlas): Hatches {
+  return {
+    rocket: socketPoint(atlas, 'rocketTopHatch', { x: ROCKET.x, y: ROCKET.y + ROCKET.h }, ROCKET_HATCH),
+    rover: socketPoint(atlas, 'roverHatch', { x: ROVER.x, y: ROVER.y + ROVER.h }, ROVER_HATCH),
+  };
 }
 
 function craterIndex(slot: number): number {
@@ -172,16 +213,16 @@ function drawLoading(ctx: CanvasRenderingContext2D, theme: Theme): void {
   drawTextCentered(ctx, 'LOADING', CENTER_X, 116, theme.palette.text, 2);
 }
 
+/** Dims the whole scene under the title and game-over text: the window shows the scene edge to edge. */
 function drawOverlay(ctx: CanvasRenderingContext2D, p: ThemePalette): void {
   ctx.globalAlpha = 0.8;
-  fill(ctx, { x: PLAY_X0, y: 30, w: PLAY_X1 - PLAY_X0, h: SCREEN_H - 30 }, p.overlay);
+  fill(ctx, { x: 0, y: 0, w: SCREEN_W, h: SCREEN_H }, p.overlay);
   ctx.globalAlpha = 1;
 }
 
 function themeUnlockHints(s: GameState): string {
   const best = bestScore(s.save);
-  const locked = ['desert-expedition', 'neon-orbit'] as const;
-  const next = locked.map(getTheme).find((t) => !s.save.unlocked.includes(t.id));
+  const next = THEMES.find((t) => t.unlockAt > 0 && !s.save.unlocked.includes(t.id));
   if (!next) return 'ALL THEMES UNLOCKED';
   return `NEXT: ${next.name} AT ${next.unlockAt} (BEST ${best})`;
 }
@@ -190,10 +231,12 @@ export function createRenderer(): Renderer {
   let lastPlateSlot: number | null = null;
   let plateMovedAt = -Infinity;
   let plateMoveAnimation = 'plate.move';
-  let ledgeBusy = false;
-  let hatchLeftAt = -Infinity;
+  const mouthBusy: Record<Vehicle, boolean> = { rocket: false, rover: false };
+  const mouthEmptiedAt: Record<Vehicle, number> = { rocket: -Infinity, rover: -Infinity };
   let creatures: Creatures | null = null;
   let creaturesSteppedAt = 0;
+  const levers: Record<PlateSide, Lever> = { left: LEVER_IDLE, right: LEVER_IDLE };
+  const pendingPulls: PlateSide[] = [];
 
   const stepScene = (s: GameState, nowMs: number): Creatures => {
     if (!creatures) {
@@ -236,32 +279,37 @@ export function createRenderer(): Renderer {
     }
   };
 
+  /** The hull for a mouth's state, and the clock for its closing. `opening` is null while the mouth is empty. */
+  const hull = (vehicle: Vehicle, opening: number | null, atlas: Atlas, nowMs: number): AtlasFrame => {
+    if (mouthBusy[vehicle] && opening === null) mouthEmptiedAt[vehicle] = nowMs;
+    mouthBusy[vehicle] = opening !== null;
+    return hatchFrame(atlas, vehicle, opening, nowMs - mouthEmptiedAt[vehicle], nowMs);
+  };
+
+  /** The rover's mouth is busy from the take-off of the last hop until the boarder is gone. */
+  const roverOpening = (s: GameState): number | null => {
+    if (s.cosmonauts.some((c) => c.state === 'board')) return 1;
+    const hopping = s.cosmonauts.find((c) => c.state === 'air' && c.slot === LAST_CRATER);
+    return hopping ? Math.min(1, progressOf(hopping) / ROVER_OPENING_SHARE) : null;
+  };
+
   const drawVehicles = (ctx: CanvasRenderingContext2D, s: GameState, art: Art, nowMs: number): void => {
     const { atlas } = art;
-    const onLedge = s.cosmonauts.find((c) => c.state === 'crouch' && c.slot === ROCKET_SLOT);
-    if (ledgeBusy && !onLedge) hatchLeftAt = nowMs;
-    ledgeBusy = onLedge !== undefined;
-    const hull = hatchFrame(atlas, onLedge ? progressOf(onLedge) : null, nowMs - hatchLeftAt, nowMs);
-    drawFrame(ctx, art, hull, ROCKET.x, ROCKET.y + ROCKET.h);
-
-    // Boarding cosmonauts walk into the rover, so the hull covers them.
-    for (const c of s.cosmonauts) if (c.state === 'board') drawCosmonaut(ctx, c, art, nowMs);
-    const boarding = s.cosmonauts.find((c) => c.state === 'board');
-    const rover = boarding
-      ? frameByProgress(atlas, 'rover.door_open', progressOf(boarding))
-      : frameAt(atlas, 'rover.idle', nowMs);
-    drawFrame(ctx, art, rover, ROVER.x, ROVER.y + ROVER.h);
+    const inMouth = s.cosmonauts.find((c) => c.state === 'crouch' && c.slot === ROCKET_SLOT);
+    const rocketOpening = inMouth ? Math.min(1, progressOf(inMouth) / HATCH_OPENING_SHARE) : null;
+    drawFrame(ctx, art, hull('rocket', rocketOpening, atlas, nowMs), ROCKET.x, ROCKET.y + ROCKET.h);
+    drawFrame(ctx, art, hull('rover', roverOpening(s), atlas, nowMs), ROVER.x, ROVER.y + ROVER.h);
   };
 
   const drawCosmonaut = (ctx: CanvasRenderingContext2D, c: Cosmonaut, art: Art, nowMs: number): void => {
-    const view = cosmonautView(c, ledgePoint(art.atlas));
+    const view = cosmonautView(c, hatchPoints(art.atlas));
     if (view.pose === 'crater_fall') {
       drawGrab(ctx, c, art);
       return;
     }
     const frame = cosmonautFrame(art.atlas, view, nowMs);
     // Air frames are anchored at the body centre, the rest at the feet; keep the cell's bottom on the feet position.
-    drawFrame(ctx, art, frame, view.pos.x, view.pos.y - (frame.h - frame.ay));
+    drawFrameScaled(ctx, art, frame, view.pos.x, view.pos.y - (frame.h - frame.ay) * view.scale, view.scale);
   };
 
   /**
@@ -288,31 +336,12 @@ export function createRenderer(): Renderer {
       const index = craterIndex(slot);
       const at = slotPoint(slot);
       drawFrame(ctx, art, craterFrame(atlas, index), at.x, CRATER_Y);
-      const creature = scene.creatures.find((k) => k.slot === slot);
-      const animation = creature ? creatureAnimation(creature) : null;
-      if (animation && creature?.act !== 'grab') {
+      const creature = creatureAt(scene, slot);
+      if (creature && creature.act !== 'grab') {
+        const animation = creatureAnimation(creature);
         drawFrame(ctx, art, frameByProgress(atlas, animation.name, animation.progress), at.x, CRATER_Y);
       }
       drawFrame(ctx, art, craterFrontFrame(atlas, index), at.x, CRATER_Y);
-    }
-  };
-
-  const drawHud = (ctx: CanvasRenderingContext2D, s: GameState, held: HeldButtons, art: Art, nowMs: number): void => {
-    const { atlas } = art;
-    const p = getTheme(s.save.settings.theme).palette;
-    drawFrame(ctx, art, frameAt(atlas, 'hud.icon.score', nowMs), HUD.scoreIcon.x, HUD.scoreIcon.y);
-    const digits = pad(s.score);
-    for (let i = 0; i < digits.length; i++) {
-      const frame = frameOf(atlas, `hud.digit.${digits.charAt(i)}`);
-      drawFrame(ctx, art, frame, HUD.digits.x + i * HUD.digits.pitch, HUD.digits.y);
-    }
-    drawText(ctx, `GAME ${s.mode}`, HUD.modeLabel.x, HUD.modeLabel.y, p.text, 1);
-    const sound = frameAt(atlas, `ui.hud_sound.${soundState(s.save.settings.muted, held.mute)}`, nowMs);
-    drawFrame(ctx, art, sound, TAP_TARGETS.hudMute.x, TAP_TARGETS.hudMute.y);
-    for (let i = 0; i < DIFFICULTY.lives; i++) {
-      const name = i < s.lives ? 'hud.icon.life' : 'hud.icon.life_empty';
-      if (!hasAnimation(atlas, name)) continue;
-      drawFrame(ctx, art, frameAt(atlas, name, nowMs), HUD.lives.x + i * HUD.lives.pitch, HUD.lives.y);
     }
   };
 
@@ -352,29 +381,52 @@ export function createRenderer(): Renderer {
     if (canLeaveGameOver(s)) drawTextCentered(ctx, 'PRESS ANY BUTTON', CENTER_X, 176, text, 1);
   };
 
+  /** Pulls the levers for the presses since the last frame, lets them settle on the clock, and reads them. */
+  const stepLevers = (held: HeldButtons, atlas: Atlas, nowMs: number): LeverPulls => {
+    const pulls = {} as LeverPulls;
+    for (const side of ['left', 'right'] as const) {
+      const pullMs = leverPullMs(atlas, side);
+      let lever = levers[side];
+      for (const pressed of pendingPulls) if (pressed === side) lever = pullLever(lever, nowMs, pullMs);
+      lever = settleLever(lever, held[side], nowMs, pullMs);
+      levers[side] = lever;
+      pulls[side] = { pull: leverPull(lever, nowMs, pullMs), releasing: lever.phase === 'release' };
+    }
+    pendingPulls.length = 0;
+    return pulls;
+  };
+
   return {
-    render(ctx, s, held, art, nowMs) {
+    pull(side) {
+      pendingPulls.push(side);
+    },
+    render(target, s, held, art, nowMs, overlay) {
+      const ctx = target.scene;
+      const room = roomLayout(target.viewport.layout);
       if (!art) {
         drawLoading(ctx, getTheme(s.save.settings.theme));
+        drawRoomLoading(target.room, room, getTheme(s.save.settings.theme).palette);
+        target.present();
         return;
       }
       const { atlas } = art;
       trackPlate(s, atlas, nowMs);
 
-      drawFrame(ctx, art, frameOf(atlas, 'background'), 0, 0);
+      drawFrame(ctx, art, frameOf(atlas, ROOM_BACKGROUND), 0, 0);
       drawAmbient(ctx, art, nowMs, false);
       drawVehicles(ctx, s, art, nowMs);
       drawAmbient(ctx, art, nowMs, true);
       drawCraters(ctx, s, art, nowMs);
       drawFrame(ctx, art, plateFrame(s, atlas, nowMs), slotPoint(s.plateSlot).x, PLATE_Y);
-      for (const c of s.cosmonauts) if (c.state !== 'board') drawCosmonaut(ctx, c, art, nowMs);
+      for (const c of s.cosmonauts) drawCosmonaut(ctx, c, art, nowMs);
 
-      drawFrame(ctx, art, frameAt(atlas, `button.left.${held.left ? 'pressed' : 'idle'}`, nowMs), SIDE_BUTTONS.left.x, SIDE_BUTTONS.left.y);
-      drawFrame(ctx, art, frameAt(atlas, `button.right.${held.right ? 'pressed' : 'idle'}`, nowMs), SIDE_BUTTONS.right.x, SIDE_BUTTONS.right.y);
-      drawHud(ctx, s, held, art, nowMs);
+      // The menu replaces the title and game-over screens while it is open.
+      if (s.paused) drawMenu(ctx, s, overlay.menu, overlay.caps);
+      else if (s.phase === 'title') drawTitle(ctx, s, held, art, nowMs);
+      else if (s.phase === 'game_over') drawGameOver(ctx, s);
 
-      if (s.phase === 'title') drawTitle(ctx, s, held, art, nowMs);
-      if (s.phase === 'game_over') drawGameOver(ctx, s);
+      target.present();
+      drawRoom(target.room, room, s, held, stepLevers(held, atlas, nowMs), art, nowMs);
     },
   };
 }

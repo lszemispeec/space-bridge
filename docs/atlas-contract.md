@@ -2,6 +2,57 @@
 
 This document is the contract between the game code and the pixel art. The TypeScript type lives in `src/render/atlas.ts` (`Atlas`), together with `validateAtlas()`, which checks a JSON file against this contract. Run it on every atlas before you hand it over.
 
+## Side-console layout (art handoff)
+
+The optional **`operatorRoom.side`** entry adds a 448×256 layout for short
+landscape screens. `operatorRoom.revision` remains 9 for the unchanged common
+contract; `assets/<theme>/revision-10.json` records this additive handoff.
+No existing frame or animation changes. The new `frame.room.side` animation
+is one 1000ms looping hold, `frame.room.side.0`, with anchor (0,0).
+All themes share its atlas rectangle and every layout coordinate.
+
+The final rectangle table below uses **absolute room pixels**. Side-specific
+`hud`, `menu` and `recesses` live inside `operatorRoom.side`; do not use the
+shared console-under-window HUD for this layout. `panels.l/r` replaces the
+single `console` rectangle for side only. The engineer should extend the
+TypeScript layout contract and compare this atlas entry in the integration
+art tests when wiring up selection, rendering and input.
+
+| Entry | x | y | w | h | Notes |
+|---|---:|---:|---:|---:|---|
+| Room | 0 | 0 | 448 | 256 | Allowed maximum; 64px side panels |
+| Scene | 64 | 8 | 320 | 240 | Source (0,0); no crop or resampling |
+| Left panel | 0 | 0 | 64 | 256 | Includes unchanged inner 16px rail |
+| Right panel | 384 | 0 | 64 | 256 | Includes unchanged inner 16px rail |
+| Score/mode recess | 4 | 18 | 44 | 36 | Shared recess; label above digits |
+| Score icon | 7 | 22 | 12 | 12 | Existing sprite |
+| Mode label | 21 | 26 | 23 | 5 | Existing 3×5 bitmap font, GAME A/B |
+| Digits | 10 | 40 | 32 | 10 | Four 8×10 cells, pitch 8 |
+| Lives recess | 4 | 58 | 44 | 22 | 4px below score recess |
+| Lives | 5 | 61 | 42 | 16 | Three 14×16 cells, pitch 14 |
+| Sound recess | 402 | 18 | 40 | 22 | Same geometry as MENU |
+| SND/MUTE | 404 | 21 | 36 | 16 | Existing state sprites |
+| Menu recess | 402 | 44 | 40 | 22 | 4px below SND recess |
+| MENU | 404 | 47 | 36 | 16 | Engine bitmap label and border |
+| Status recess | 417 | 70 | 10 | 10 | 4px below MENU recess |
+| Status lamp | 419 | 72 | 6 | 6 | Existing four-frame animation |
+| Left lever | 14 | 180 | 24 | 40 | Existing idle/pull/release |
+| Right lever | 410 | 180 | 24 | 40 | Existing idle/pull/release |
+| Left lever tap zone | 6 | 160 | 40 | 80 | Lower half, contains every lever pose |
+| Right lever tap zone | 402 | 160 | 40 | 80 | Lower half, contains every lever pose |
+
+`windowCornerRadius` is 20 room pixels in all three layouts, including side.
+The four inner corners use the same pixel-centre quarter-circle mask. The side
+layout retains its 16px vertical rails and 8px top/bottom trim. No panel, tap
+zone or readout crosses into the scene.
+
+At the reported 874×300 CSS px and DPR 3, integer device scale 3 gives a
+448×256 CSS room and a 320×240 CSS scene. Phone mocks are offline compositions
+at CSS and physical resolution. Layout selection should compare picture size
+against the existing landscape room, preserving desktop's larger option.
+This PR delivers art and metadata only; selection, hit testing and runtime
+font placement belong to the follow-up engineer integration.
+
 ## Files
 
 Each theme ships two files in `public/atlas/`:
@@ -11,8 +62,17 @@ Each theme ships two files in `public/atlas/`:
 | Polar Signal | `polar-signal.png` | `polar-signal.json` |
 | Desert Expedition | `desert-expedition.png` | `desert-expedition.json` |
 | Neon Orbit | `neon-orbit.png` | `neon-orbit.json` |
+| VECTOR | `vector.png` | `vector.json` |
 
-All three atlases must use the **same frame names, frame sizes and anchors**. The game swaps a theme by loading a different file. Nothing else changes.
+All four atlases must use the **same frame names, frame sizes and anchors**. The game swaps a theme by loading a different file. Nothing else changes.
+
+VECTOR is an art handoff with the same complete contract, including the side
+console. Its one-pixel green contours use black interiors and three painted
+greens; twelve further palette entries remain reserved. Palette values for
+theme registration, preview details and rebuild instructions are in
+`assets/vector/README.md` and `assets/vector/theme.json`. The shared art tests
+include VECTOR; its wireframe pixel audit is `assets/tools/verify-vector.py`.
+Runtime theme registration and unlock policy are a separate engine change.
 
 ## Rules
 
@@ -106,10 +166,10 @@ geometry, timing and order. Flight/scheduler integration belongs to the engine.
 | Name | Loop | Notes |
 |---|---|---|
 | `crater.idle` | yes | About 24×8. Drawn at the four crater slots. |
-| `rocket.door_closed` | yes | Fits inside x 43–75, y 80–168. |
-| `rocket.door_open` | no | Plays while a cosmonaut emerges. |
+| `rocket.door_closed` | yes | Retired transparent compatibility frame. |
+| `rocket.door_open` | no | Retired transparent compatibility frame. |
 | `rover.idle` | yes | Fits inside x 248–280, y 142–179. |
-| `rover.door_open` | no | Plays while a cosmonaut boards. |
+| `rover.door_open` | no | Retired transparent compatibility frames. |
 
 ### HUD and buttons (anchor: top left)
 
@@ -147,35 +207,182 @@ states; renderer/input integration remains with Forge.
 ## Required single frames
 
 - `background`: the full 320×240 scene without sprites, craters, plate or HUD text. The 32 px gutters on both sides are part of it.
+- `background.window`: full-bleed 320×240 scenery for the operator room, without the old HUD band or gutters.
 - `hud.digit.0` … `hud.digit.9`: all the same size, about 8×10.
 - `crater.0` … `crater.3` and `crater.front.0` … `.3`: see the creature contract below.
+
+## Operator room and lever extension — revision 9
+
+Contract drafted before art export. This art handoff requires the separate
+renderer integration: replace the old room constants, sound/menu targets and
+lever timing with this table. Pixel owns assets; Forge owns runtime changes.
+The simulation remains **320×240**. Room and lever anchors are **(0,0)**.
+All three themes share frame names, rectangles, anchors, timing and metadata.
+Use `operatorRoom.background` (`background.window`) through the glass.
+Scenery, actors, vehicles, sockets and all gameplay geometry are unchanged.
+
+| Frame / animation | Cell | Sequence / timing | Loop |
+|---|---|---|---|
+| `frame.room.landscape.0` / `frame.room.landscape` | 352×320 | one frame, 1000ms | yes |
+| `frame.room.portrait.0` / `frame.room.portrait` | 288×344 | one frame, 1000ms | yes |
+| `frame.lights.0`…`.3` / `frame.lights` | 6×6 | one lamp, four brightness phases, 600ms each | yes |
+| `ui.lever.l.idle.0`, `ui.lever.r.idle.0` | 24×40 | one frame, 1000ms static hold | yes |
+| `ui.lever.l.pull.0`…`.1`, `ui.lever.r.pull.0`…`.1` | 24×40 | two frames, 50ms each | no |
+| `ui.lever.l.release`, `ui.lever.r.release` (animations only) | 24×40 | pull `.0`, then idle `.0` | no |
+
+Hold pull `.1` while pressed. Release returns through the intermediate pose.
+Idle's 1000ms is a terminal hold, not a required return delay. The engine owns
+snappy release timing. Removed pull `.2`/`.3` frames must not be indexed by
+number in code; use the animation arrays. The fixed pivot is **(12,30)**;
+shaft endpoints are **(12,12)** idle, **(±3+12,12)** intermediate, and
+**(±6+12,12)** pulled: a **18.4°** swing. Left pulls left; right pulls right.
+There is no raster rotation, scale animation or base movement.
+
+### Layout coordinates (all native pixels)
+
+| Item | Landscape | Portrait |
+|---|---|---|
+| Output size | 352×320 | 288×344 |
+| Source scene crop | (0,0,320,240) | (32,0,256,240) |
+| Scene destination | (16,12) | (16,12) |
+| Console | (0,252,352,68) | (0,252,288,92) |
+| Left lever ART top-left | (8,270) | (8,270) |
+| Right lever ART top-left | (320,270) | (256,270) |
+| Left lever TAP zone | (20,164,24,48) | (20,292,24,48) |
+| Right lever TAP zone | (308,164,24,48) | (244,292,24,48) |
+| Existing portrait input strip | — | (16,288,256,56) |
+
+Both levers fit wholly inside the deck, ending at y310. The window ends at
+y252. **Tap zones stay exactly as before**, including the portrait strip and
+44 CSS pixel minimum target. Do not derive input from the smaller art.
+
+Keep the 16px side rails and 12px lintel. All four inner glass corners have
+`windowCornerRadius: 20`, matching `ROOM.windowCornerRadius`. The rim and its
+short glints follow the curves; four rail rivets remain. The only opaque pixels
+inside the glass are the four quarter-circle corner fills. At local corner
+pixel (x,y), a fill is opaque when `(20-x-0.5)^2 + (20-y-0.5)^2 > 20^2`;
+mirror that mask at each corner. Everything outside the four 20×20 corner
+boxes stays transparent. Lighting comes from upper left; outlines use palette
+ink 0 and bevels retain the theme inks. No extra controls or decorations.
+
+Both orientations share `operatorRoom.hud` and `operatorRoom.menu`:
+
+| Readout | Position / size |
+|---|---|
+| Score icon | (52,265), 12×12 |
+| Four digits | (68,265), pitch 8, count 4 |
+| Mode label `GAME A` / `GAME B` | (116,268), native 3×5 font |
+| Three life icons | (52,289), pitch 20, 14×16 each |
+| SND / MUTE | (166,263,36,16) |
+| MENU | (210,263,36,16) |
+| Status lamp | (122,288), 6×6 |
+
+`operatorRoom.recesses` records the **outer** bezel rectangles:
+scoreMode (48,260,112,22), sound (164,260,40,22), menu (208,260,40,22),
+lives (48,286,68,22), status (120,286,10,10). All adjacent recesses have
+**4px clear gaps**. Score and mode share one recess. Each other readout has
+its own. The narrower portrait deck still leaves an 8px gap before the right
+lever. MENU has no overlap with SND, the lamp, a lever or any other recess.
+`hud.sound` and `menu` are the visual rectangles for the runtime tap targets.
+
+Draw scene, room plate, levers, then readouts and lamp. Draw MENU with the
+existing native font/button renderer at the supplied rectangle. Do not bake
+text or readout state into the room plate. Old arrow-button frames remain
+available for legacy consumers. Title controls retain their existing positions.
+
+The exported PNGs are offline art compositions, including `GAME A` and MENU,
+not captures of the integrated game. Before/after shots use the same scene,
+score, lives and vehicle poses; only the room and its controls change.
+`previews/console-before-{landscape,portrait}-{1,4}x.png` shows the prior
+contract with the current engine's MENU and full mode text included.
+`operator-{landscape,portrait}-{1,4}x.png` shows this contract.
+
+Engine notes on this section (`src/render/room.ts`, `src/render/lever.ts`,
+`src/config/layout.ts`): the room geometry lives in `layout.ts` and the art
+test checks that every atlas's `operatorRoom` table, including `background`,
+`levers`, `leverTapZones`, `hud`, `menu` and `recesses`, matches it. The
+renderer draws `operatorRoom.background` through the glass and never the
+legacy plate. A full lever pull or return is compressed to at most 80 ms and
+the pulled hold after a tap is 60 ms, so a good player's press every 220 ms
+reads as separate pulls; a press during the return pulls again from the
+current pose. The lever poses are picked by travel, not by frame duration:
+the pull shows `.0` then `.1`, the release shows `.0` then idle, so the
+idle frame's terminal hold never swallows the intermediate pose.
+
+Eyes keep their existing names, cells, anchors and durations. Their whites are
+round stepped circles with moving pupils; the blink compresses that circle,
+and the hidden terminal frame stays transparent. Polar suits become dark teal
+with pale visors across every pose, life icon and captured victim. No actor
+silhouette, animation timing or collision geometry changes.
 
 ## Elevated hatch and crater creatures
 
 All additions below share names, geometry and timing across themes. This is an
 art contract; the engine owns spawn timing, creature RNG and plate safety.
 
-### Rocket hatch and ledge
+### Built-in rocket and rover hatches (revision 8)
 
-Replace the old rocket hull with one `rocket.hatch.*` full-hull frame, drawn at
-bottom-left **(43,169)**. New cells are **44×89**, anchor **(0,89)**; the extra
-width contains the right-hand gantry. The ledge foot point is local **(39,30)**,
-world **(82,110)**. It is about two thirds of the rocket height above the base.
-Every atlas supplies `sockets.rocketLedge = {frame: "rocket.hatch.open.0",
-x:39, y:30}`. The socket is measured from the frame's top-left, not its anchor.
+Draw **one complete model** per vehicle. The three unique poses are closed,
+partly open and open; only the shutter pixels change. The hatch stays inside
+the hull outline. Light comes from upper left; silhouettes use a one-pixel
+darkest-palette contour with flat shade clusters. No ground door remains on
+the rocket. Vehicle cells, anchors, durations and socket coordinates match
+across all three themes.
 
-| Animation | Frames | Duration per frame | Loop |
+| Prefix | Cell / anchor | World anchor | Mouth rectangle (local) | Mouth-floor socket / world |
+|---|---|---|---|---|
+| `rocket.tophatch` | 33×89 / (0,89) | (43,169) | x16,y20,w8,h12 | `rocketTopHatch` (20,32) / **(63,112)** |
+| `rover.hatch` | 33×38 / (0,38) | (248,180) | x4,y12,w8,h18 | `roverHatch` (8,30) / **(256,172)** |
+
+Both prefixes expose these animations:
+
+| Suffix | Frame | Duration | Loop |
 |---|---|---|---|
-| `rocket.hatch.closed` | `.0` | 1000ms | yes |
-| `rocket.hatch.opening` | `.0`, `.1`, `.2` | 90ms | no |
-| `rocket.hatch.open` | `.0` | 1000ms | yes |
-| `rocket.hatch.closing` | `.0`, `.1`, `.2` | 90ms | no |
-| `cosmonaut.ledge.stand` | `.0` | 1000ms | yes |
-| `cosmonaut.ledge.crouch` | `.0` | 1000ms | yes |
+| `.closed` | `.closed.0` | 1000ms | yes |
+| `.opening` | `.opening.0` | 90ms | no |
+| `.open` | `.open.0` | 1000ms | yes |
+| `.closing` | reuses `.opening.0` | 90ms | no |
 
-Cosmonaut ledge poses retain **20×22, feet anchor (10,22)**. Place their feet
-at (82,110); the first flight starts there. Draw the hatch hull, then the actor.
-Do not also draw the old `rocket.door_*` hull. Its frames remain for compatibility.
+Hold closed → play opening → hold open. For closing, play closing → hold closed.
+Sockets are measured from the full frame's top-left: world = draw anchor minus
+frame anchor plus socket. `vehicleModels` records draw anchors, mouth rectangles
+and socket keys. `rover.idle` remains as a compatibility alias in pixels to the
+closed model; do not layer it under another rover frame.
+
+The gantry is **retired**. It no longer makes sense beside a small hull hatch.
+`retiredSockets: ["rocketLedge"]` marks the historical (82,110) ledge point as
+unusable. Its metadata and the old cosmonaut ledge poses remain for old readers,
+but there is no visible platform at that point. Use the new mouth socket for
+spawn/exit; the engineer must update the departure trajectory and boarding
+alignment. The crater slots, collision geometry and game code are unchanged.
+
+Every `rocket.door_*`, `rocket.hatch.*` and `rover.door_*` animation is listed in
+`retiredAnimations`; all corresponding pixels are fully transparent. Their old
+frame names, rectangles, anchors, durations and animation sequences remain.
+This also covers any future dotted door names selected by the exporter prefix.
+Polar additionally keeps `ambient.sky` retired.
+
+`previews/tophatch-exit-4x.gif` is an **offline mock**, not implemented gameplay.
+It shows a 6×7 → 20×22 nearest-neighbour scale-in from (63,112), then departure
+toward crater 1, with integer positions and a closed-to-closed loop seam.
+Production actor cells stay 20×22 and unchanged. The renderer owns reveal,
+clipping, animation timing, and the new path. Each animation has native and 4×
+strip previews. Full operator screens are exported in both orientations.
+
+Engine notes on this section (`src/render/draw.ts`, `src/game/positions.ts`,
+`src/config/layout.ts`): the hatch mouths are `ROCKET_HATCH` (63,112) and
+`ROVER_HATCH` (256,172) in `layout.ts`, read from the `rocketTopHatch` and
+`roverHatch` sockets at run time; the art test checks that the two agree, and
+that both hulls are full models at the vehicle anchors. The cosmonaut stands
+in the rocket's mouth at 50 %, 75 % and 100 % of its 20×22 cell over the
+emerge and the crouch (whole-pixel nearest-neighbour steps: 10×11, 15×17,
+20×22), drawn over the hull, and the first arc starts at the mouth floor. The
+last hop from crater 4 is a one-beat, 24 px arc into the rover's mouth in the
+plain take-off pose; the boarder then shrinks 100 → 75 → 50 % in the mouth. The
+rocket's hatch opens over the first half of the wait and closes 180 ms after
+the take-off; the rover's opens over the first 30 % of the last hop and closes
+180 ms after the boarder is gone. `rover.idle` is no longer drawn: the closed
+model is `rover.hatch.closed`. Nothing in `retiredAnimations` is drawn.
 
 ### Four crater rims and their occupants
 
@@ -233,8 +440,31 @@ The renderer draws every `ambient.*` animation that has a placement, so you can 
 | HUD | y 8–25 |
 | Ground line | y 175 |
 | Slot x (rocket door, 4 craters, rover door) | 82, 106, 146, 186, 226, 252 |
-| Ledge (feet of the cosmonaut before the first drop) | (82,110), from the `rocketLedge` socket |
+| Rocket mouth floor | (63,112), from `rocketTopHatch`; old ledge (82,110) retired |
 | Jump apex | 90 px above the ground (feet at y 85) |
-| Drop from the ledge to crater 1 | rises to about y 99, then falls to the ground |
+| Rover mouth floor | (256,172), from `roverHatch` |
 
 The slot positions come from `src/config/layout.ts`. If art needs them moved, say so on the issue and we change the config, not the art.
+
+## Rounded viewport export
+
+`assets/tools/export-rounded.mjs` is the final art export step, after the
+older operator, console and side exporters. It changes only the three room
+frames and the radius metadata. Frame names, atlas rectangles, anchors,
+durations, animations and controls retain their accepted contracts.
+`assets/<theme>/revision-11.json` records the baseline and complete hex palette.
+`python3 assets/tools/verify-rounded.py` audits all nine masks, gameplay
+clearance, palette/alpha, preserved controls and exact nearest-neighbour previews.
+
+The current `operator-{landscape,portrait,side}-{1,4}x.png` previews and room
+loops include the new rim. `viewport-corner-before-after-8x.png` in Polar
+Signal shows the old corner on the left and the rounded corner on the right.
+These are offline compositions, not browser captures.
+
+Frame ink hex values (all are existing theme palette entries):
+
+| Theme | Outline | Shadow | Body | Bevel shade | Bevel light | Glint |
+|---|---|---|---|---|---|---|
+| polar-signal | #173B3A | #285552 | #3F7068 | #5E8D7A | #ABC3A6 | #F0EED5 |
+| desert-expedition | #251C29 | #49313B | #704348 | #C97550 | #F5C781 | #FFF4DA |
+| neon-orbit | #080C24 | #141B42 | #252457 | #64358C | #27A6AE | #B7FFF0 |
