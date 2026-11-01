@@ -1,6 +1,25 @@
+## Rounded viewport — revision 11
+
+Run **`node assets/tools/export-rounded.mjs` last**, after the older exporters
+below. The three layouts in every theme use a 20px radius at all four inner
+corners. Ink-0 outlines and the existing bevel inks follow each stepped arc.
+Only the four corner fills are opaque inside the glass. Four rail rivets remain.
+The outer room sizes, panels, controls, gameplay art and tap zones are preserved.
+The atlas and runtime art contract use `windowCornerRadius`.
+
+Review `operator-{landscape,portrait,side}-{1,4}x.png`, the room animation loops,
+and Polar Signal's `viewport-corner-before-after-8x.png` (before left, after
+right). `revision-11.json` records the baseline and unchanged full hex palettes;
+the frame's ink selection is listed in `docs/atlas-contract.md`.
+Run `python3 assets/tools/verify-rounded.py`, `python3 assets/tools/verify-side.py`,
+`python3 assets/tools/verify-art.py` and `npm run check`.
+
+The sections below record previous handoffs. Their export steps precede the
+rounded viewport export; their old screenshots and revision manifests are historical.
+
 ## Side-console handoff — revision 10
 
-Run **`node assets/tools/export-side.mjs` last** after older exporters.
+Run **`node assets/tools/export-side.mjs`** after older exporters, before revision 11.
 This appends `frame.room.side.0` and `operatorRoom.side` for all three themes.
 The existing landscape/portrait art, metadata, lever frames and previews remain
 unchanged. The room is **448×256**, with a **320×240** window at **(64,8)**.
@@ -41,7 +60,7 @@ Unchanged palette hex values:
 ## Revision 9 — calm console and compact levers
 
 For revision 9, run **`node assets/tools/export-console.mjs`** after older exporters,
-then run the side exporter above last.
+then run the side and rounded viewport exporters.
 It replaces only room, lamp and lever pixels, retaining every other frame's
 pixels and atlas position. Four obsolete pull frames are removed. Production
 sheets/JSON are copied to `public/atlas`. The first commit drafts the contract

@@ -157,12 +157,15 @@ def audit(theme):
         check(surround.size == size, f'{orientation} outer dimensions')
         scene = layout['scene']
         window = (scene['dx'], scene['dy'], scene['dx']+scene['w'], scene['dy']+scene['h'])
-        # The glass stays clear except for the two upper chamfers.
+        # Exactly four pixel-centre quarter-circle fills, with no stray glass ink.
         glass = surround.crop(window)
-        allowed = {(x,y) for y in range(20) for i in range(20-y) for x in (i,glass.width-1-i)}
+        radius = layout['windowCornerRadius']
+        check(radius == 20, 'native corner radius')
+        allowed = {(x,y) for y in range(glass.height) for x in range(glass.width)
+                   if (radius-min(x,glass.width-1-x)-0.5)**2 + (radius-min(y,glass.height-1-y)-0.5)**2 > radius**2
+                   and min(x,glass.width-1-x) < radius and min(y,glass.height-1-y) < radius}
         visible = {(x,y) for y in range(glass.height) for x in range(glass.width) if glass.getpixel((x,y))[3]}
-        check(visible <= allowed, f'{orientation} clear gameplay window outside chamfers/glints')
-        check((0,0) in visible and (19,0) in visible, 'angled upper mullion')
+        check(visible == allowed, f'{orientation} clear gameplay window and four rounded corners')
         check(scene['dy']+scene['h'] == layout['console']['y'], 'console below scene')
         taps = layout['leverTapZones']
         check(taps == ({'l':{'x':20,'y':164,'w':24,'h':48},'r':{'x':308,'y':164,'w':24,'h':48}} if orientation=='landscape' else {'l':{'x':20,'y':292,'w':24,'h':48},'r':{'x':244,'y':292,'w':24,'h':48}}), 'tap zones frozen')
