@@ -619,5 +619,13 @@
     "durations": [
       90
     ]
+  },
+  {
+    "animation": "frame.room.side",
+    "file": "frame.room.side-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
   }
 ]

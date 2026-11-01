@@ -1,6 +1,47 @@
+## Side-console handoff — revision 10
+
+Run **`node assets/tools/export-side.mjs` last** after older exporters.
+This appends `frame.room.side.0` and `operatorRoom.side` for all three themes.
+The existing landscape/portrait art, metadata, lever frames and previews remain
+unchanged. The room is **448×256**, with a **320×240** window at **(64,8)**.
+The extra 16px over the 432px target keeps the accepted 16px window rails and
+full-size readouts within the allowed maximum. The 20px corner mullions and
+rails are copied pixel-for-pixel; only the outer top/bottom trim is shortened.
+
+Left: score icon + GAME A/B + four original 8×10 digits in one recess, then
+three original 14×16 life icons at 14px pitch in one recess. Right: matching
+SND/MENU recesses and the status lamp. Levers reuse the accepted 24×40 frames,
+short swing and timing. Their 40×80 tap zones start at y160, around the lower
+thumb positions. Lighting remains upper-left, with palette-0 dark outlines.
+
+**Integration is separate.** The engineer must select `operatorRoom.side`,
+its local `hud`, `menu`, `recesses` and input rectangles. The shared readouts
+remain for landscape/portrait. See `docs/atlas-contract.md` for exact geometry.
+The runtime does not select side yet. No game logic changes are included.
+
+Review each theme's `operator-side-1x.png`, `operator-side-4x.png` and
+`operator-side-cycle-4x.gif`. The Polar `iphone16pro-landscape-mock.png` is an
+**offline in-game composition**, using the reported 874×300 CSS viewport;
+its `-dpr3` companion is 2622×900 physical pixels. At integer device scale 3,
+the room is 448×256 CSS px, centred at (213,22), versus roughly 235×213 before.
+It is intentionally not stretched to fill the width and is not a Safari capture.
+
+Run `python3 assets/tools/verify-side.py` and
+`python3 assets/tools/verify-art.py`. The side audit proves original sheet
+pixels and frame metadata survive, readouts fit, controls do not overlap, window
+rails/mullions match, and previews use exact integer scales with a closed loop.
+The exporter is safe to rerun without appending another frame.
+
+Unchanged palette hex values:
+
+- **polar-signal:** `#173B3A`, `#285552`, `#3F7068`, `#5E8D7A`, `#83A792`, `#ABC3A6`, `#D1DCC0`, `#F0EED5`, `#FFFAE8`, `#233A46`, `#426573`, `#6C929A`, `#9BB8B7`, `#C8493B`, `#E67B59`, `#F1B683`
+- **desert-expedition:** `#251C29`, `#49313B`, `#704348`, `#9C5549`, `#C97550`, `#E89B61`, `#F5C781`, `#FFE6B0`, `#FFF4DA`, `#173F49`, `#28606A`, `#47908D`, `#80B8A5`, `#B8D4BC`, `#BD3C38`, `#F16A42`
+- **neon-orbit:** `#080C24`, `#141B42`, `#252457`, `#3C2871`, `#64358C`, `#9747A6`, `#D454BB`, `#FF76CA`, `#103C58`, `#15687A`, `#27A6AE`, `#55E7DE`, `#B7FFF0`, `#A6B846`, `#E3EE72`, `#FFF8CB`
+
 ## Revision 9 — calm console and compact levers
 
-Run **`node assets/tools/export-console.mjs` last** after any older exporter.
+For revision 9, run **`node assets/tools/export-console.mjs`** after older exporters,
+then run the side exporter above last.
 It replaces only room, lamp and lever pixels, retaining every other frame's
 pixels and atlas position. Four obsolete pull frames are removed. Production
 sheets/JSON are copied to `public/atlas`. The first commit drafts the contract

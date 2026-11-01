@@ -5,7 +5,7 @@
     "image": "desert-expedition.png",
     "size": {
       "w": 1024,
-      "h": 2378
+      "h": 2638
     },
     "palette": [
       "#251C29",
@@ -1259,6 +1259,15 @@
       "ax": 0,
       "ay": 38,
       "duration": 1000
+    },
+    "frame.room.side.0": {
+      "x": 0,
+      "y": 2380,
+      "w": 448,
+      "h": 256,
+      "ax": 0,
+      "ay": 0,
+      "duration": 1000
     }
   },
   "animations": {
@@ -1740,6 +1749,12 @@
         "rover.hatch.opening.0"
       ],
       "loop": false
+    },
+    "frame.room.side": {
+      "frames": [
+        "frame.room.side.0"
+      ],
+      "loop": true
     }
   },
   "placements": {
@@ -1973,6 +1988,129 @@
       ],
       "maxAngleDegrees": 18.4,
       "mirrorForLeft": true
+    },
+    "side": {
+      "size": {
+        "w": 448,
+        "h": 256
+      },
+      "frame": "frame.room.side.0",
+      "scene": {
+        "sx": 0,
+        "sy": 0,
+        "w": 320,
+        "h": 240,
+        "dx": 64,
+        "dy": 8
+      },
+      "panels": {
+        "l": {
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 256
+        },
+        "r": {
+          "x": 384,
+          "y": 0,
+          "w": 64,
+          "h": 256
+        }
+      },
+      "levers": {
+        "l": {
+          "x": 14,
+          "y": 180
+        },
+        "r": {
+          "x": 410,
+          "y": 180
+        }
+      },
+      "leverTapZones": {
+        "l": {
+          "x": 6,
+          "y": 160,
+          "w": 40,
+          "h": 80
+        },
+        "r": {
+          "x": 402,
+          "y": 160,
+          "w": 40,
+          "h": 80
+        }
+      },
+      "windowCornerCut": 20,
+      "hud": {
+        "scoreIcon": {
+          "x": 7,
+          "y": 22
+        },
+        "digits": {
+          "x": 10,
+          "y": 40,
+          "pitch": 8,
+          "count": 4
+        },
+        "modeLabel": {
+          "x": 21,
+          "y": 26
+        },
+        "lives": {
+          "x": 5,
+          "y": 61,
+          "pitch": 14
+        },
+        "sound": {
+          "x": 404,
+          "y": 21,
+          "w": 36,
+          "h": 16
+        },
+        "lights": {
+          "x": 419,
+          "y": 72
+        }
+      },
+      "menu": {
+        "x": 404,
+        "y": 47,
+        "w": 36,
+        "h": 16
+      },
+      "recesses": {
+        "scoreMode": {
+          "x": 4,
+          "y": 18,
+          "w": 44,
+          "h": 36
+        },
+        "lives": {
+          "x": 4,
+          "y": 58,
+          "w": 44,
+          "h": 22
+        },
+        "sound": {
+          "x": 402,
+          "y": 18,
+          "w": 40,
+          "h": 22
+        },
+        "menu": {
+          "x": 402,
+          "y": 44,
+          "w": 40,
+          "h": 22
+        },
+        "status": {
+          "x": 417,
+          "y": 70,
+          "w": 10,
+          "h": 10
+        }
+      }
     }
   },
   "retiredSockets": [
