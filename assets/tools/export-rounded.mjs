@@ -100,12 +100,15 @@ for (const theme of themes) {
     }
   }
   for(const [name,orientation,scale] of [['operator-room','landscape',1],['operator-side-cycle-4x','side',4]]){
-    const input=path.join(pv,`${name}.gif`);
+    // Always encode from the accepted animation, avoiding palette/order drift
+    // when an already encoded GIF is fed through another export.
+    const input=path.join(temp,`before-${name}.gif`);
+    fs.writeFileSync(input,run('git',['show',`${baseline}:assets/${theme}/previews/${name}.gif`],{cwd:ROOT,maxBuffer:128e6}));
     const delays=run('magick',['identify','-format','%T ',input]).toString().trim().split(/\s+/);
     run('magick',[input,'-coalesce',path.join(temp,`${name}-%d.png`)]);
     const args=['-dispose','background'];
     delays.forEach((delay,i)=>{const file=path.join(temp,`${name}-${i}.png`);save(refresh(read(file),orientation,scale),file);args.push('-delay',delay,file);});
-    run('magick',[...args,'-loop','0',input]);
+    run('magick',[...args,'-loop','0',path.join(pv,`${name}.gif`)]);
   }
   // Refresh room frames on the full-sheet contact study, retaining its layout.
   const contact=read(path.join(pv,'frames-1x.png'));
