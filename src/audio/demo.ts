@@ -6,9 +6,9 @@ import { audio } from './index';
 import { encodeWav, renderSfxReel, renderSong } from './render';
 import { SFX } from './sfx';
 import { JINGLE_SONGS, THEME_SONGS } from './songs/index';
-import { AUDIO_EVENTS, JINGLES, type AudioEvent, type JingleId, type ThemeId } from './types';
+import { AUDIO_EVENTS, JINGLES, type AudioEvent, type JingleId, type MusicId } from './types';
 
-const THEMES = Object.keys(THEME_SONGS) as ThemeId[];
+const THEMES = Object.keys(THEME_SONGS) as MusicId[];
 
 const $ = (id: string): HTMLElement => {
   const el = document.getElementById(id);
@@ -55,10 +55,10 @@ AUDIO_EVENTS.forEach((ev, i) => {
 const MISS: readonly AudioEvent[] = ['fall', 'grab', 'life_lost'];
 button($('sfx'), 'F miss (fall + grab + life_lost)', () => { MISS.forEach(play); });
 
-const themeButtons = new Map<ThemeId, HTMLButtonElement>();
-const themeKeys: Record<string, ThemeId> = { q: 'polar-signal', w: 'desert-expedition', e: 'neon-orbit' };
+const themeButtons = new Map<MusicId, HTMLButtonElement>();
+const themeKeys: Record<string, MusicId> = { q: 'polar-signal', w: 'desert-expedition', e: 'neon-orbit', r: 'vector' };
 THEMES.forEach((theme, i) => {
-  themeButtons.set(theme, button($('music'), `${'QWE'[i]} ${THEME_SONGS[theme].name}`, () => { music(theme); }));
+  themeButtons.set(theme, button($('music'), `${'QWER'[i]} ${THEME_SONGS[theme].name}`, () => { music(theme); }));
 });
 JINGLES.forEach((id) => button($('music'), `G jingle: ${JINGLE_SONGS[id].name}`, () => { jingle(id); }));
 button($('music'), 'S stop', () => { music(null); });
@@ -115,7 +115,7 @@ function play(ev: AudioEvent): void {
   log(`sfx ${ev}`);
 }
 
-function music(theme: ThemeId | null): void {
+function music(theme: MusicId | null): void {
   audio.music(theme);
   for (const [t, b] of themeButtons) b.classList.toggle('on', t === theme);
   log(theme ? `music ${THEME_SONGS[theme].name}` : 'music stop');
