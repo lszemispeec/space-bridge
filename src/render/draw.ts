@@ -22,7 +22,7 @@ import {
   type PlateSide,
   type Rect,
 } from '../config/layout';
-import { getTheme, type Theme, type ThemePalette } from '../config/themes';
+import { getTheme, THEMES, type Theme, type ThemePalette } from '../config/themes';
 import { createCreatures, creatureAnimation, creatureAt, stepCreatures, type Creatures } from '../game/creatures';
 import { tumbleFrame, type Point } from '../game/jump';
 import { cosmonautView, progressOf, slotPoint, type CosmonautView, type Hatches } from '../game/positions';
@@ -222,8 +222,7 @@ function drawOverlay(ctx: CanvasRenderingContext2D, p: ThemePalette): void {
 
 function themeUnlockHints(s: GameState): string {
   const best = bestScore(s.save);
-  const locked = ['desert-expedition', 'neon-orbit'] as const;
-  const next = locked.map(getTheme).find((t) => !s.save.unlocked.includes(t.id));
+  const next = THEMES.find((t) => t.unlockAt > 0 && !s.save.unlocked.includes(t.id));
   if (!next) return 'ALL THEMES UNLOCKED';
   return `NEXT: ${next.name} AT ${next.unlockAt} (BEST ${best})`;
 }

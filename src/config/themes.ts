@@ -5,7 +5,9 @@
  * from that theme's 16-colour palette. Unlocks are driven by the best score
  * of any mode.
  */
-export type ThemeId = 'polar-signal' | 'desert-expedition' | 'neon-orbit';
+import type { ShaderPresetId } from './display';
+
+export type ThemeId = 'polar-signal' | 'desert-expedition' | 'neon-orbit' | 'vector';
 
 export interface ThemePalette {
   /** Menu and HUD text. */
@@ -26,6 +28,11 @@ export interface Theme {
   /** Music track id for the audio engine. */
   music: string;
   palette: ThemePalette;
+  /**
+   * The display preset the game switches to the first time the player picks
+   * this theme on a device with the shader pass. The player can change it afterwards.
+   */
+  display?: ShaderPresetId;
 }
 
 export const THEMES: readonly Theme[] = [
@@ -52,6 +59,15 @@ export const THEMES: readonly Theme[] = [
     atlas: 'atlas/neon-orbit.json',
     music: 'neon-orbit',
     palette: { text: '#FFF8CB', accent: '#55E7DE', overlay: '#080C24' },
+  },
+  {
+    id: 'vector',
+    name: 'VECTOR',
+    unlockAt: 900,
+    atlas: 'atlas/vector.json',
+    music: 'vector',
+    palette: { text: '#A0FFB0', accent: '#28E060', overlay: '#000000' },
+    display: 'vector',
   },
 ];
 

@@ -39,6 +39,8 @@ export interface SaveData {
   version: 1;
   highScores: HighScores;
   unlocked: ThemeId[];
+  /** Themes whose own display preset (`Theme.display`) the game has already switched to once. */
+  displaySwitched: ThemeId[];
   settings: {
     theme: ThemeId;
     muted: boolean;
@@ -97,7 +99,9 @@ export type GameCommand =
   | { type: 'quit' }
   | { type: 'theme'; theme: ThemeId }
   | { type: 'volume'; bus: VolumeBus; value: number }
-  | { type: 'shader'; preset: ShaderPresetId };
+  | { type: 'shader'; preset: ShaderPresetId }
+  /** Switches to the current theme's own display preset, the first time only. The shell sends it when the shader pass exists. */
+  | { type: 'theme_display' };
 
 /**
  * One simulation step of player input. `moves` lists every plate press
