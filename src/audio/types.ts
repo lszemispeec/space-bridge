@@ -6,6 +6,10 @@
 export type { AudioEvent } from './api';
 export { AUDIO_EVENTS } from './api';
 export type { ThemeId } from '../config/themes';
+import type { ThemeId } from '../config/themes';
+
+/** Keys of the theme tracks. Every theme has one. */
+export type MusicId = ThemeId;
 
 /** One-shot, non-looping music cues that interrupt the current track. */
 export type JingleId = 'gameOver';

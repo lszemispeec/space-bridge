@@ -4,9 +4,10 @@ import { loadSettings, saveSettings } from './settings';
 import { SFX } from './sfx';
 import { compileSong, type CompiledSong, type Song } from './song';
 import { JINGLE_SONGS, THEME_SONGS } from './songs/index';
-import { JINGLES, type AudioEvent, type AudioSettings, type JingleId, type ThemeId } from './types';
+import { JINGLES, type AudioEvent, type AudioSettings, type JingleId, type MusicId } from './types';
+import { ACTIVATION_EVENTS, AutoplayUnlock, browserEnv, type UnlockEnv } from './unlock';
 
-export type { AudioEvent, AudioSettings, JingleId, ThemeId } from './types';
+export type { AudioEvent, AudioSettings, JingleId, MusicId, ThemeId } from './types';
 export { AUDIO_EVENTS, JINGLES } from './types';
 
 const LOOKAHEAD_SEC = 0.15;
@@ -14,42 +15,46 @@ const TICK_MS = 40;
 const SFX_LATENCY = 0.005;
 /** Delay before a new song's first note, so the scheduler is never late for it. */
 const SONG_START_SEC = 0.05;
-const UNLOCK_EVENTS = ['pointerdown', 'touchend', 'keydown'] as const;
 
-type SongKey = ThemeId | JingleId;
+type SongKey = MusicId | JingleId;
 
 /**
  * Browser facade and the game's `AudioSink`. The game calls `unlock()` from
- * its first user gesture, as autoplay rules require; `init()` is an optional
+ * its first user gesture, as autoplay rules require; from then on the
+ * context keeps itself running (see `unlock.ts`). `init()` is an optional
  * stand-alone unlock for pages without the game, such as the demo page.
  * Requests made before unlock are remembered (music) or dropped (SFX).
  */
-class GameAudio implements AudioSink {
+export class GameAudio implements AudioSink {
   private ctx: AudioContext | null = null;
   private engine: ChipEngine | null = null;
+  private unlocker: AutoplayUnlock | null = null;
   private settings: AudioSettings = loadSettings();
   private readonly songs = new Map<SongKey, CompiledSong>();
   /** What is playing now: a theme loop, a jingle, or nothing. */
   private current: SongKey | null = null;
   /** The theme the game asked for. Restored after a jingle and at unlock. */
-  private theme: ThemeId | null = null;
+  private theme: MusicId | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private tempo = 1;
   private paused = false;
   private installed = false;
   private readonly listeners = new Set<(s: AudioSettings) => void>();
 
-  /** Attach one-time unlock listeners to the window. Safe to call more than once. */
+  /** `env` and `createContext` stand in for the page in tests. */
+  constructor(
+    private readonly env: () => UnlockEnv = browserEnv,
+    private readonly createContext: () => AudioContext | null = defaultContext,
+  ) {}
+
+  /** Create the context from the first gesture on the window. Safe to call more than once. */
   init(): void {
     if (this.installed || typeof window === 'undefined') return;
     this.installed = true;
     const unlock = (): void => {
       this.unlock();
     };
-    for (const ev of UNLOCK_EVENTS) window.addEventListener(ev, unlock, { passive: true });
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') this.resume();
-    });
+    for (const ev of ACTIVATION_EVENTS) window.addEventListener(ev, unlock, { passive: true, once: true });
   }
 
   /** True once the AudioContext exists and is running. */
@@ -57,16 +62,22 @@ class GameAudio implements AudioSink {
     return this.ctx !== null && this.ctx.state === 'running';
   }
 
-  /** Create or resume the AudioContext. Must run inside a user gesture the first time. */
+  /**
+   * Create or resume the AudioContext. Call it from a user gesture; when that
+   * gesture is not activation yet, as a touch `pointerdown` is not, the
+   * unlock finishes on the one that is.
+   */
   unlock(): void {
-    if (typeof window === 'undefined') return;
     if (!this.ctx) {
-      const Ctor = window.AudioContext as typeof AudioContext | undefined;
-      if (!Ctor) return;
-      this.ctx = new Ctor({ latencyHint: 'interactive' });
-      this.engine = new ChipEngine(this.ctx, this.settings);
+      const ctx = this.createContext();
+      if (!ctx) return;
+      this.ctx = ctx;
+      this.engine = new ChipEngine(ctx, this.settings);
+      this.unlocker = new AutoplayUnlock(ctx, this.env(), () => {
+        this.onRunning();
+      });
     }
-    this.resume();
+    this.unlocker?.gesture();
     if (this.theme && this.current === null) this.startSong(this.theme, THEME_SONGS[this.theme]);
   }
 
@@ -88,7 +99,7 @@ class GameAudio implements AudioSink {
    * already playing is a no-op. While paused the request is remembered and
    * starts at resume.
    */
-  music(theme: ThemeId | null): void {
+  music(theme: MusicId | null): void {
     this.theme = theme;
     if (!this.engine || !this.ctx) return;
     if (theme === null) {
@@ -184,12 +195,9 @@ class GameAudio implements AudioSink {
     for (const l of this.listeners) l(this.settings);
   }
 
-  private resume(): void {
-    const ctx = this.ctx;
-    if (!ctx || ctx.state === 'running') return;
-    void ctx.resume().then(() => {
-      if (this.engine?.sequencer.isPlaying && !this.paused) this.startTicker();
-    });
+  /** The context runs again after a lock, an interruption or a hidden tab: the scheduler must follow. */
+  private onRunning(): void {
+    if (this.engine?.sequencer.isPlaying && !this.paused) this.startTicker();
   }
 
   private applyTempo(): void {
@@ -241,6 +249,12 @@ class GameAudio implements AudioSink {
 
 function isJingle(key: SongKey): key is JingleId {
   return (JINGLES as readonly string[]).includes(key);
+}
+
+function defaultContext(): AudioContext | null {
+  if (typeof window === 'undefined') return null;
+  const Ctor = window.AudioContext as typeof AudioContext | undefined;
+  return Ctor ? new Ctor({ latencyHint: 'interactive' }) : null;
 }
 
 export const audio = new GameAudio();

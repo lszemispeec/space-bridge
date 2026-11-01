@@ -413,6 +413,28 @@ describe('pause menu', () => {
     expect(r.state.save).toEqual(before.save);
   });
 
+  it('switches to the Vector preset once, when the shell asks for the theme display', () => {
+    const save = defaultSave();
+    save.unlocked = ['polar-signal', 'vector'];
+    const s = titleState(save);
+    // Polar has no preset of its own: nothing happens.
+    const polar = step(s, press({ commands: [{ type: 'theme_display' }] }), STEP_SECONDS);
+    expect(polar.state.save.settings.shader).toBe('off');
+    expect(polar.events).toEqual([]);
+
+    const chosen = step(s, press({ commands: [{ type: 'theme', theme: 'vector' }, { type: 'theme_display' }] }), STEP_SECONDS);
+    expect(chosen.state.save.settings.shader).toBe('vector');
+    expect(chosen.state.save.displaySwitched).toEqual(['vector']);
+    expect(types(chosen.events)).toEqual(['theme_changed', 'save_changed', 'shader_changed', 'save_changed']);
+
+    // The player turns it off; choosing the theme again leaves that choice alone.
+    const off = step(chosen.state, press({ commands: [{ type: 'shader', preset: 'off' }] }), STEP_SECONDS);
+    const again = step(off.state, press({ commands: [{ type: 'theme', theme: 'polar-signal' }, { type: 'theme', theme: 'vector' }, { type: 'theme_display' }] }), STEP_SECONDS);
+    expect(again.state.save.settings.shader).toBe('off');
+    expect(types(again.events)).not.toContain('shader_changed');
+    expect(again.state.save.displaySwitched).toEqual(['vector']);
+  });
+
   it('changes the theme from the menu, only to an unlocked one', () => {
     const save = defaultSave();
     save.unlocked = ['polar-signal', 'neon-orbit'];

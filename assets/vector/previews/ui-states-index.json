@@ -1,0 +1,72 @@
+[
+  {
+    "name": "ui.title_theme.idle.0",
+    "x": 2,
+    "y": 2,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_theme.pressed.0",
+    "x": 62,
+    "y": 2,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.idle.0",
+    "x": 122,
+    "y": 2,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.pressed.0",
+    "x": 182,
+    "y": 2,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.muted.0",
+    "x": 242,
+    "y": 2,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.title_sound.muted_pressed.0",
+    "x": 2,
+    "y": 22,
+    "w": 56,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.idle.0",
+    "x": 62,
+    "y": 22,
+    "w": 36,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.pressed.0",
+    "x": 102,
+    "y": 22,
+    "w": 36,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.muted.0",
+    "x": 142,
+    "y": 22,
+    "w": 36,
+    "h": 16
+  },
+  {
+    "name": "ui.hud_sound.muted_pressed.0",
+    "x": 182,
+    "y": 22,
+    "w": 36,
+    "h": 16
+  }
+]

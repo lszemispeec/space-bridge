@@ -1,12 +1,32 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SHADER, getShaderPreset, isShaderPresetId, needsShader, SHADER_PRESETS } from './display';
+import { availableShaderPresets, DEFAULT_SHADER, getShaderPreset, isShaderPresetId, needsShader, SHADER_PRESETS } from './display';
 
 describe('display presets', () => {
-  it('offers Off, CRT, CRT + Glow and Full, with Off as the default', () => {
-    expect(SHADER_PRESETS.map((p) => p.id)).toEqual(['off', 'crt', 'crt-glow', 'full']);
+  it('offers Off, CRT, CRT + Glow, Full and Vector, with Off as the default', () => {
+    expect(SHADER_PRESETS.map((p) => p.id)).toEqual(['off', 'crt', 'crt-glow', 'full', 'vector']);
     expect(DEFAULT_SHADER).toBe('off');
     expect(needsShader('off')).toBe(false);
-    for (const id of ['crt', 'crt-glow', 'full'] as const) expect(needsShader(id)).toBe(true);
+    for (const id of ['crt', 'crt-glow', 'full', 'vector'] as const) expect(needsShader(id)).toBe(true);
+  });
+
+  it('makes Vector a green phosphor tube: wide glow, long afterglow, no mask or fringe, hardly any scanlines or curve', () => {
+    const vector = getShaderPreset('vector').params;
+    const full = getShaderPreset('full').params;
+    expect(vector.glow).toBeGreaterThan(full.glow);
+    expect(vector.persistence).toBeGreaterThan(full.persistence);
+    expect(vector.persistence).toBeLessThan(1);
+    expect(vector.mask).toBe(0);
+    expect(vector.aberration).toBe(0);
+    expect(vector.scanlines).toBeLessThanOrEqual(0.05);
+    expect(vector.curvature).toBeLessThanOrEqual(0.01);
+  });
+
+  it('keeps Vector out of the menu until its theme is unlocked', () => {
+    const ids = (unlocked: Parameters<typeof availableShaderPresets>[0]) => availableShaderPresets(unlocked).map((p) => p.id);
+    expect(ids(['polar-signal'])).toEqual(['off', 'crt', 'crt-glow', 'full']);
+    expect(ids(['polar-signal', 'desert-expedition', 'neon-orbit'])).toEqual(['off', 'crt', 'crt-glow', 'full']);
+    expect(ids(['polar-signal', 'vector'])).toEqual(['off', 'crt', 'crt-glow', 'full', 'vector']);
+    expect(SHADER_PRESETS.filter((p) => p.theme).map((p) => p.id)).toEqual(['vector']);
   });
 
   it('keeps Off flat, so the output is the renderer\'s own pixels', () => {

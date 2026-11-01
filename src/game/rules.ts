@@ -13,7 +13,8 @@ import { rollHop } from './jump';
 import { pick } from './rng';
 import { spawnFits } from './schedule';
 import { newlyUnlocked, nextUnlockedTheme } from './unlocks';
-import type { ThemeId } from '../config/themes';
+import type { ShaderPresetId } from '../config/display';
+import { getTheme, type ThemeId } from '../config/themes';
 import type { Cosmonaut, GameCommand, GameEvent, GameState, InputFrame, PlateMove, SaveData, StepResult } from './types';
 
 const FIRST_CRATER = CRATER_SLOTS[0];
@@ -48,6 +49,7 @@ function clone(state: GameState): GameState {
       ...state.save,
       highScores: { ...state.save.highScores },
       unlocked: [...state.save.unlocked],
+      displaySwitched: [...state.save.displaySwitched],
       settings: { ...state.save.settings },
     },
     newUnlocks: [...state.newUnlocks],
@@ -261,6 +263,14 @@ function setTheme(s: GameState, theme: ThemeId, events: GameEvent[]): void {
   events.push({ type: 'save_changed' });
 }
 
+/** Returns false when the preset was already active. */
+function setShader(s: GameState, preset: ShaderPresetId, events: GameEvent[]): boolean {
+  if (s.save.settings.shader === preset) return false;
+  s.save.settings.shader = preset;
+  events.push({ type: 'shader_changed', preset });
+  return true;
+}
+
 function quitToTitle(s: GameState): void {
   s.phase = 'title';
   s.cosmonauts = [];
@@ -298,11 +308,16 @@ function applyCommand(s: GameState, command: GameCommand, events: GameEvent[]): 
       return;
     }
     case 'shader':
-      if (s.save.settings.shader === command.preset) return;
-      s.save.settings.shader = command.preset;
-      events.push({ type: 'shader_changed', preset: command.preset });
+      if (setShader(s, command.preset, events)) events.push({ type: 'save_changed' });
+      return;
+    case 'theme_display': {
+      const theme = getTheme(s.save.settings.theme);
+      if (!theme.display || s.save.displaySwitched.includes(theme.id)) return;
+      s.save.displaySwitched.push(theme.id);
+      setShader(s, theme.display, events);
       events.push({ type: 'save_changed' });
       return;
+    }
   }
 }
 

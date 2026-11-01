@@ -1,0 +1,631 @@
+[
+  {
+    "animation": "cosmonaut.emerge",
+    "file": "cosmonaut.emerge-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.crouch",
+    "file": "cosmonaut.crouch-strip.png",
+    "loop": true,
+    "durations": [
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.takeoff",
+    "file": "cosmonaut.takeoff-strip.png",
+    "loop": false,
+    "durations": [
+      60
+    ]
+  },
+  {
+    "animation": "cosmonaut.rise",
+    "file": "cosmonaut.rise-strip.png",
+    "loop": true,
+    "durations": [
+      100
+    ]
+  },
+  {
+    "animation": "cosmonaut.apex",
+    "file": "cosmonaut.apex-strip.png",
+    "loop": true,
+    "durations": [
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.descend",
+    "file": "cosmonaut.descend-strip.png",
+    "loop": true,
+    "durations": [
+      100
+    ]
+  },
+  {
+    "animation": "cosmonaut.land",
+    "file": "cosmonaut.land-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.crater_fall",
+    "file": "cosmonaut.crater_fall-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      100,
+      140
+    ]
+  },
+  {
+    "animation": "cosmonaut.board",
+    "file": "cosmonaut.board-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      100
+    ]
+  },
+  {
+    "animation": "cosmonaut.idle",
+    "file": "cosmonaut.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "plate.idle",
+    "file": "plate.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "plate.move",
+    "file": "plate.move-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      1000
+    ]
+  },
+  {
+    "animation": "plate.move_right",
+    "file": "plate.move_right-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      1000
+    ]
+  },
+  {
+    "animation": "plate.dip",
+    "file": "plate.dip-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80,
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.door_closed",
+    "file": "rocket.door_closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.door_open",
+    "file": "rocket.door_open-strip.png",
+    "loop": false,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.idle",
+    "file": "rover.idle-strip.png",
+    "loop": true,
+    "durations": [
+      420,
+      420
+    ]
+  },
+  {
+    "animation": "rover.door_open",
+    "file": "rover.door_open-strip.png",
+    "loop": false,
+    "durations": [
+      420,
+      420
+    ]
+  },
+  {
+    "animation": "ambient.sky",
+    "file": "ambient.sky-strip.png",
+    "loop": true,
+    "durations": [
+      500,
+      500,
+      500,
+      500
+    ]
+  },
+  {
+    "animation": "ambient.drift",
+    "file": "ambient.drift-strip.png",
+    "loop": true,
+    "durations": [
+      120,
+      120,
+      240,
+      2520
+    ]
+  },
+  {
+    "animation": "ambient.signal",
+    "file": "ambient.signal-strip.png",
+    "loop": true,
+    "durations": [
+      250,
+      250,
+      250,
+      250
+    ]
+  },
+  {
+    "animation": "crater.idle",
+    "file": "crater.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "hud.icon.score",
+    "file": "hud.icon.score-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "hud.icon.life",
+    "file": "hud.icon.life-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "hud.icon.life_empty",
+    "file": "hud.icon.life_empty-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.left.idle",
+    "file": "button.left.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.left.pressed",
+    "file": "button.left.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.right.idle",
+    "file": "button.right.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "button.right.pressed",
+    "file": "button.right.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_theme.idle",
+    "file": "ui.title_theme.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_theme.pressed",
+    "file": "ui.title_theme.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.idle",
+    "file": "ui.title_sound.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.pressed",
+    "file": "ui.title_sound.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.muted",
+    "file": "ui.title_sound.muted-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.title_sound.muted_pressed",
+    "file": "ui.title_sound.muted_pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.idle",
+    "file": "ui.hud_sound.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.pressed",
+    "file": "ui.hud_sound.pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.muted",
+    "file": "ui.hud_sound.muted-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.hud_sound.muted_pressed",
+    "file": "ui.hud_sound.muted_pressed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "cosmonaut.air.spin",
+    "file": "cosmonaut.air.spin-strip.png",
+    "loop": true,
+    "durations": [
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "cosmonaut.air.flail",
+    "file": "cosmonaut.air.flail-strip.png",
+    "loop": true,
+    "durations": [
+      80,
+      80
+    ]
+  },
+  {
+    "animation": "rocket.hatch.closed",
+    "file": "rocket.hatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.hatch.opening",
+    "file": "rocket.hatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90,
+      90,
+      90
+    ]
+  },
+  {
+    "animation": "rocket.hatch.open",
+    "file": "rocket.hatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.hatch.closing",
+    "file": "rocket.hatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90,
+      90,
+      90
+    ]
+  },
+  {
+    "animation": "cosmonaut.ledge.stand",
+    "file": "cosmonaut.ledge.stand-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "cosmonaut.ledge.crouch",
+    "file": "cosmonaut.ledge.crouch-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "crater.eyes.peek",
+    "file": "crater.eyes.peek-strip.png",
+    "loop": false,
+    "durations": [
+      120,
+      120,
+      300
+    ]
+  },
+  {
+    "animation": "crater.eyes.blink",
+    "file": "crater.eyes.blink-strip.png",
+    "loop": false,
+    "durations": [
+      80,
+      80,
+      160
+    ]
+  },
+  {
+    "animation": "crater.eyes.look.l",
+    "file": "crater.eyes.look.l-strip.png",
+    "loop": true,
+    "durations": [
+      400
+    ]
+  },
+  {
+    "animation": "crater.eyes.look.r",
+    "file": "crater.eyes.look.r-strip.png",
+    "loop": true,
+    "durations": [
+      400
+    ]
+  },
+  {
+    "animation": "crater.eyes.hide",
+    "file": "crater.eyes.hide-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      100,
+      160
+    ]
+  },
+  {
+    "animation": "crater.tentacle.reach",
+    "file": "crater.tentacle.reach-strip.png",
+    "loop": false,
+    "durations": [
+      120,
+      160,
+      240,
+      160
+    ]
+  },
+  {
+    "animation": "crater.tentacle.grab",
+    "file": "crater.tentacle.grab-strip.png",
+    "loop": false,
+    "durations": [
+      100,
+      120,
+      140,
+      140,
+      160
+    ]
+  },
+  {
+    "animation": "ui.lever.l.idle",
+    "file": "ui.lever.l.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.lever.l.pull",
+    "file": "ui.lever.l.pull-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      50
+    ]
+  },
+  {
+    "animation": "ui.lever.l.release",
+    "file": "ui.lever.l.release-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      1000
+    ]
+  },
+  {
+    "animation": "ui.lever.r.idle",
+    "file": "ui.lever.r.idle-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "ui.lever.r.pull",
+    "file": "ui.lever.r.pull-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      50
+    ]
+  },
+  {
+    "animation": "ui.lever.r.release",
+    "file": "ui.lever.r.release-strip.png",
+    "loop": false,
+    "durations": [
+      50,
+      1000
+    ]
+  },
+  {
+    "animation": "frame.room.landscape",
+    "file": "frame.room.landscape-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "frame.room.portrait",
+    "file": "frame.room.portrait-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "frame.lights",
+    "file": "frame.lights-strip.png",
+    "loop": true,
+    "durations": [
+      600,
+      600,
+      600,
+      600
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.closed",
+    "file": "rocket.tophatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.opening",
+    "file": "rocket.tophatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.open",
+    "file": "rocket.tophatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rocket.tophatch.closing",
+    "file": "rocket.tophatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rover.hatch.closed",
+    "file": "rover.hatch.closed-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.hatch.opening",
+    "file": "rover.hatch.opening-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "rover.hatch.open",
+    "file": "rover.hatch.open-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  },
+  {
+    "animation": "rover.hatch.closing",
+    "file": "rover.hatch.closing-strip.png",
+    "loop": false,
+    "durations": [
+      90
+    ]
+  },
+  {
+    "animation": "frame.room.side",
+    "file": "frame.room.side-strip.png",
+    "loop": true,
+    "durations": [
+      1000
+    ]
+  }
+]

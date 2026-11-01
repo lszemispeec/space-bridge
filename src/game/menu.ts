@@ -9,7 +9,7 @@
  * On the title screen the round rows (Restart, Quit) are left out and
  * Resume reads Close.
  */
-import { getShaderPreset, SHADER_PRESETS, type ShaderPresetId } from '../config/display';
+import { availableShaderPresets, getShaderPreset, type ShaderPresetId } from '../config/display';
 import { PLAY_W, PLAY_X0, type Rect } from '../config/layout';
 import { getTheme, type ThemeId } from '../config/themes';
 import type { Point } from './jump';
@@ -133,7 +133,7 @@ function adjust(row: MenuRow, s: GameState, dir: 1 | -1): Pick<MenuResult, 'comm
       return { commands: [{ type: 'volume', bus, value: stepVolume(settings[bus], dir) }], mute: false };
     }
     case 'display': {
-      const ids = SHADER_PRESETS.map((p) => p.id);
+      const ids = availableShaderPresets(s.save.unlocked).map((p) => p.id);
       return { commands: [{ type: 'shader', preset: cycle<ShaderPresetId>(ids, settings.shader, dir) }], mute: false };
     }
     case 'resume':
