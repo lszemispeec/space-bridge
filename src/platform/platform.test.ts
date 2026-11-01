@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { SHADER_PRESETS } from '../config/display';
 import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, PLAY_W, PLAY_X0, PORTRAIT_STRIP, roomLayout, SCREEN_H, SCREEN_W, TAP_TARGETS } from '../config/layout';
 import { menuRowRect } from '../game/menu';
 import { defaultSave } from '../game/save';
-import { createCrtPass, webgl2Available } from './crt';
+import { createCrtPass, persistedLevel, webgl2Available } from './crt';
 import { menuTapAction, minHitSize, sideForPointer, tapAction, tapTarget, toRoomPoint } from './input';
 import { accumulateSteps, STEP_SECONDS } from './loop';
 import { loadSave, memoryStore, writeSave } from './storage';
@@ -378,6 +379,46 @@ describe('crt pass without WebGL2', () => {
     const throwing = { getContext: () => { throw new Error('blocked'); } } as unknown as HTMLCanvasElement;
     expect(webgl2Available(throwing)).toBe(false);
     expect(createCrtPass(throwing, { onLost: () => undefined, onRestored: () => undefined })).toBeNull();
+  });
+});
+
+describe('crt persistence', () => {
+  /** Frames until a fully lit 8-bit level is black again, and whether it ever stalled. */
+  const decay = (persistence: number): { frames: number; stalled: boolean } => {
+    let level = 255;
+    let frames = 0;
+    while (level > 0) {
+      const next = persistedLevel(level, persistence);
+      if (next >= level) return { frames, stalled: true };
+      level = next;
+      frames++;
+    }
+    return { frames, stalled: false };
+  };
+
+  it('fades a lit pixel to black within a bounded number of frames on every preset', () => {
+    for (const preset of SHADER_PRESETS.filter((p) => p.params.persistence > 0)) {
+      const p = preset.params.persistence;
+      const { frames, stalled } = decay(p);
+      // Pure geometric decay needs log(255) / log(1 / p) frames; the floor only makes it quicker.
+      expect(stalled, preset.id).toBe(false);
+      expect(frames, preset.id).toBeLessThanOrEqual(Math.ceil(Math.log(255) / -Math.log(p)));
+      expect(frames, preset.id).toBeLessThanOrEqual(12);
+    }
+  });
+
+  it('takes the floor off the lowest levels, where 8-bit rounding alone would keep them lit', () => {
+    // Without the floor, round(2 * 0.8) = 2 and round(1 * 0.8) = 1: a permanent ghost (DEIM-451).
+    expect(Math.round(2 * 0.8)).toBe(2);
+    expect(persistedLevel(2, 0.8)).toBe(1);
+    expect(persistedLevel(1, 0.8)).toBe(0);
+    expect(persistedLevel(2, 0.55)).toBe(0);
+    expect(persistedLevel(0, 0.9)).toBe(0);
+  });
+
+  it('keeps a bright afterglow bright for the first frames, so the trail still reads', () => {
+    expect(persistedLevel(255, 0.6)).toBe(152);
+    expect(persistedLevel(255, 0.55)).toBe(139);
   });
 });
 
