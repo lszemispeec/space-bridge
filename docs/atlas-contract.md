@@ -62,8 +62,17 @@ Each theme ships two files in `public/atlas/`:
 | Polar Signal | `polar-signal.png` | `polar-signal.json` |
 | Desert Expedition | `desert-expedition.png` | `desert-expedition.json` |
 | Neon Orbit | `neon-orbit.png` | `neon-orbit.json` |
+| VECTOR | `vector.png` | `vector.json` |
 
-All three atlases must use the **same frame names, frame sizes and anchors**. The game swaps a theme by loading a different file. Nothing else changes.
+All four atlases must use the **same frame names, frame sizes and anchors**. The game swaps a theme by loading a different file. Nothing else changes.
+
+VECTOR is an art handoff with the same complete contract, including the side
+console. Its one-pixel green contours use black interiors and three painted
+greens; twelve further palette entries remain reserved. Palette values for
+theme registration, preview details and rebuild instructions are in
+`assets/vector/README.md` and `assets/vector/theme.json`. The shared art tests
+include VECTOR; its wireframe pixel audit is `assets/tools/verify-vector.py`.
+Runtime theme registration and unlock policy are a separate engine change.
 
 ## Rules
 

@@ -1,0 +1,44 @@
+[
+  {
+    "name": "ui.lever.l.idle.0",
+    "x": 2,
+    "y": 2,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.l.pull.0",
+    "x": 30,
+    "y": 2,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.l.pull.1",
+    "x": 58,
+    "y": 2,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.r.idle.0",
+    "x": 86,
+    "y": 2,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.r.pull.0",
+    "x": 114,
+    "y": 2,
+    "w": 24,
+    "h": 40
+  },
+  {
+    "name": "ui.lever.r.pull.1",
+    "x": 142,
+    "y": 2,
+    "w": 24,
+    "h": 40
+  }
+]

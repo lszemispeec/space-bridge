@@ -2,13 +2,15 @@ import { describe, expect, it } from 'vitest';
 import polar from '../../assets/polar-signal/polar-signal.json';
 import desert from '../../assets/desert-expedition/desert-expedition.json';
 import neon from '../../assets/neon-orbit/neon-orbit.json';
+import vector from '../../assets/vector/vector.json';
 import publishedPolar from '../../public/atlas/polar-signal.json';
 import publishedDesert from '../../public/atlas/desert-expedition.json';
 import publishedNeon from '../../public/atlas/neon-orbit.json';
+import publishedVector from '../../public/atlas/vector.json';
 import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, ROCKET, ROCKET_HATCH, ROOM, ROOM_BACKGROUND, ROVER, ROVER_HATCH, roomLayout, SCREEN_H, SCREEN_W, type Rect } from '../config/layout';
 import { validateAtlas } from './atlas';
 
-const atlases = [polar, desert, neon];
+const atlases = [polar, desert, neon, vector];
 
 describe('production art handoff', () => {
   for (const atlas of atlases) {
@@ -185,11 +187,11 @@ describe('production art handoff', () => {
   }
 
   it('publishes matching metadata at the configured URLs', () => {
-    expect([publishedPolar, publishedDesert, publishedNeon]).toEqual(atlases);
+    expect([publishedPolar, publishedDesert, publishedNeon, publishedVector]).toEqual(atlases);
   });
 
   it('swaps themes without changing geometry, timing, animation names or placements', () => {
-    for (const atlas of [desert, neon]) {
+    for (const atlas of [desert, neon, vector]) {
       expect(atlas.frames).toEqual(polar.frames);
       expect(atlas.animations).toEqual(polar.animations);
       expect(atlas.placements).toEqual(polar.placements);

@@ -1,0 +1,44 @@
+[
+  {
+    "name": "rocket.tophatch.closed.0",
+    "x": 2,
+    "y": 2,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rocket.tophatch.opening.0",
+    "x": 39,
+    "y": 2,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rocket.tophatch.open.0",
+    "x": 76,
+    "y": 2,
+    "w": 33,
+    "h": 89
+  },
+  {
+    "name": "rover.hatch.closed.0",
+    "x": 113,
+    "y": 2,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.hatch.opening.0",
+    "x": 150,
+    "y": 2,
+    "w": 33,
+    "h": 38
+  },
+  {
+    "name": "rover.hatch.open.0",
+    "x": 187,
+    "y": 2,
+    "w": 33,
+    "h": 38
+  }
+]
