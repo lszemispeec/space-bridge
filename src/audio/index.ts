@@ -4,9 +4,9 @@ import { loadSettings, saveSettings } from './settings';
 import { SFX } from './sfx';
 import { compileSong, type CompiledSong, type Song } from './song';
 import { JINGLE_SONGS, THEME_SONGS } from './songs/index';
-import { JINGLES, type AudioEvent, type AudioSettings, type JingleId, type ThemeId } from './types';
+import { JINGLES, type AudioEvent, type AudioSettings, type JingleId, type MusicId } from './types';
 
-export type { AudioEvent, AudioSettings, JingleId, ThemeId } from './types';
+export type { AudioEvent, AudioSettings, JingleId, MusicId, ThemeId } from './types';
 export { AUDIO_EVENTS, JINGLES } from './types';
 
 const LOOKAHEAD_SEC = 0.15;
@@ -16,7 +16,7 @@ const SFX_LATENCY = 0.005;
 const SONG_START_SEC = 0.05;
 const UNLOCK_EVENTS = ['pointerdown', 'touchend', 'keydown'] as const;
 
-type SongKey = ThemeId | JingleId;
+type SongKey = MusicId | JingleId;
 
 /**
  * Browser facade and the game's `AudioSink`. The game calls `unlock()` from
@@ -32,7 +32,7 @@ class GameAudio implements AudioSink {
   /** What is playing now: a theme loop, a jingle, or nothing. */
   private current: SongKey | null = null;
   /** The theme the game asked for. Restored after a jingle and at unlock. */
-  private theme: ThemeId | null = null;
+  private theme: MusicId | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private tempo = 1;
   private paused = false;
@@ -88,7 +88,7 @@ class GameAudio implements AudioSink {
    * already playing is a no-op. While paused the request is remembered and
    * starts at resume.
    */
-  music(theme: ThemeId | null): void {
+  music(theme: MusicId | null): void {
     this.theme = theme;
     if (!this.engine || !this.ctx) return;
     if (theme === null) {
