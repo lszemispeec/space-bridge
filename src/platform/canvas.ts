@@ -120,7 +120,7 @@ export function setupScreen(canvas: HTMLCanvasElement): Screen {
     viewport: () => viewport,
     box: () => (active ? crtCanvas : canvas).getBoundingClientRect(),
     present() {
-      const b = composition(viewport.orientation);
+      const b = composition(viewport.layout);
       room.drawImage(frame, b.sx, b.sy, b.w, b.h, b.dx, b.dy, b.w, b.h);
     },
     flush(timeMs) {
