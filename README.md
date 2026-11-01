@@ -16,7 +16,7 @@ Cosmonauts climb out of the hatch high on the rocket, drop to the first crater, 
 - Cosmonauts leave the rocket only when the plate can reach every landing in time. The promise (a reaction margin, then one press interval per extra crater) is in `src/config/difficulty.ts`. It shrinks with the speed curve, and the curve is tuned so a good player (0.22 s reaction, 0.15 s per press) can follow the longest trip, from crater 4 back to crater 1, at the top speed of both modes, and still has the reaction margin at the top of Game B.
 - A round starts calm, with one or two cosmonauts, and fills up with the score: the density ramp in `src/config/difficulty.ts` raises the cap and shortens the spawn gaps until four or five are on screen at the top of the curve. The scheduler promise holds all the way up.
 - The crater creatures are cosmetic: one pair of eyes at a time peeks out of a random crater, blinks and looks around, and now and then a tentacle reaches up; a miss is a grab. `src/game/creatures.ts`, stepped by the renderer with its own seeded RNG.
-- Themes unlock with your best score: Desert Expedition at 250, Neon Orbit at 575.
+- Themes unlock with your best score: Desert Expedition at 250, Neon Orbit at 575, Vector at 900. Vector is green wireframe on black, like an arcade vector monitor; it comes with its own Vector display preset (wide glow, long afterglow, no scanlines or mask), which shows in the Display row once the theme is unlocked. The first time the Vector theme is shown on a device with WebGL2, the display switches to that preset; after that the Display row is yours.
 
 ## Run
 
@@ -27,7 +27,7 @@ npm install
 npm run dev        # http://localhost:5173, also reachable on the LAN for phones
 npm run check      # typecheck, lint, test, build
 npm run measure    # how far bots of different skill get, for tuning unlock targets
-npm run shots      # 4x screenshots of every theme, title and play, portrait and iPhone landscape shots, every display preset and the pause menu, from a running preview (needs Chrome)
+npm run shots      # 4x screenshots of every theme, title and play, portrait and iPhone landscape shots, every display preset, Vector through its preset and the pause menu, from a running preview (needs Chrome)
 npm run record     # a 16-19.5 s Game A clip with sound from a running preview (needs Chrome; ffmpeg for the MP4)
 ```
 

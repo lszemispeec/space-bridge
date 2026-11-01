@@ -2,8 +2,8 @@
  * Screenshots of every theme, title and play, at 4x, from a built preview,
  * plus the title and play on a portrait phone and on an iPhone 16 Pro in
  * landscape, in Safari and as a home-screen app, plus Polar through every
- * display preset and with the pause menu open. Phone shots print the game
- * canvas's size in CSS pixels.
+ * display preset and with the pause menu open, and Vector through its own
+ * preset. Phone shots print the game canvas's size in CSS pixels.
  *
  *   npm run build && npm run preview -- --port 4173 &
  *   npm run shots        # or: node scripts/screenshot.mjs http://localhost:4173/ shots [all|themes|display]
@@ -18,8 +18,10 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const [url = 'http://localhost:4173/', outDir = 'shots', set = 'all'] = process.argv.slice(2);
-const THEMES = ['polar-signal', 'desert-expedition', 'neon-orbit'];
+const THEMES = ['polar-signal', 'desert-expedition', 'neon-orbit', 'vector'];
 const PRESETS = ['off', 'crt', 'crt-glow', 'full'];
+/** Theme and preset pairs shot together: the Vector theme through its phosphor preset. */
+const THEME_PRESETS = [['vector', 'vector']];
 const CHROME =
   process.env.CHROME ??
   (process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : 'google-chrome');
@@ -180,24 +182,24 @@ async function shoot(theme, device = DESKTOP, name = `${theme}-{shot}-4x`) {
   await tab.close();
 }
 
-/** Polar in play through one display preset; with the pause menu open too for the first one. */
-async function shootDisplay(shader, withMenu) {
-  const tab = await openTab(THEMES[0], DESKTOP, shader);
+/** A theme in play through one display preset; with the pause menu open too when asked. */
+async function shootDisplay(theme, shader, withMenu) {
+  const tab = await openTab(theme, DESKTOP, shader);
   const caps = await tab.evaluate('window.spaceBridge.getCaps().shaders');
   const score = await tab.evaluate(PLAY);
-  await capture(tab.cdp, join(outDir, `${THEMES[0]}-display-${shader}-4x.png`), `score ${score}, webgl2 ${caps}`);
+  await capture(tab.cdp, join(outDir, `${theme}-display-${shader}-4x.png`), `score ${score}, webgl2 ${caps}`);
   if (withMenu) {
     const paused = await tab.evaluate(PAUSE);
-    await capture(tab.cdp, join(outDir, `${THEMES[0]}-pause-menu-4x.png`), `paused ${paused}`);
+    await capture(tab.cdp, join(outDir, `${theme}-pause-menu-4x.png`), `paused ${paused}`);
   }
   await tab.close();
 }
 
 const watchdog = setTimeout(() => {
-  console.error('Gave up after 120 s');
+  console.error('Gave up after 180 s');
   chrome.kill();
   process.exit(2);
-}, 120_000);
+}, 180_000);
 
 try {
   await mkdir(outDir, { recursive: true });
@@ -207,7 +209,8 @@ try {
     for (const [name, device] of Object.entries(PHONES)) await shoot(THEMES[0], device, `${name}-{shot}`);
   }
   if (set !== 'themes') {
-    for (const shader of PRESETS) await shootDisplay(shader, shader === 'off');
+    for (const shader of PRESETS) await shootDisplay(THEMES[0], shader, shader === 'off');
+    for (const [theme, shader] of THEME_PRESETS) await shootDisplay(theme, shader, false);
   }
 } finally {
   clearTimeout(watchdog);
