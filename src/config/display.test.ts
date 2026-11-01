@@ -9,12 +9,15 @@ describe('display presets', () => {
     for (const id of ['crt', 'crt-glow', 'full', 'vector'] as const) expect(needsShader(id)).toBe(true);
   });
 
-  it('makes Vector a green phosphor tube: wide glow, long afterglow, no mask or fringe, hardly any scanlines or curve', () => {
+  it('makes Vector a green phosphor tube: the CRT GLOW bloom, a longer afterglow than Full, no mask or fringe, hardly any scanlines or curve', () => {
     const vector = getShaderPreset('vector').params;
     const full = getShaderPreset('full').params;
-    expect(vector.glow).toBeGreaterThan(full.glow);
+    const glow = getShaderPreset('crt-glow').params;
+    // More glow than CRT GLOW turns an airborne 1 px wireframe cosmonaut into a blob (DEIM-452).
+    expect(vector.glow).toBe(glow.glow);
     expect(vector.persistence).toBeGreaterThan(full.persistence);
-    expect(vector.persistence).toBeLessThan(1);
+    // More than 0.6 smears half a hop behind the cosmonaut (DEIM-452).
+    expect(vector.persistence).toBeLessThanOrEqual(0.6);
     expect(vector.mask).toBe(0);
     expect(vector.aberration).toBe(0);
     expect(vector.scanlines).toBeLessThanOrEqual(0.05);
