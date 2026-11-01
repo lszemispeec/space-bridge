@@ -69,18 +69,35 @@ export interface OperatorLayout {
   controlStrip?: Placement & { w: number; h: number };
 }
 
+export interface OperatorHud {
+  scoreIcon: Placement;
+  digits: Placement & { pitch: number; count: number };
+  modeLabel: Placement;
+  lives: Placement & { pitch: number };
+  sound: Placement & { w: number; h: number };
+  lights: Placement;
+}
+
+/** The side room for short landscape screens: console panels left and right of the window, with their own HUD. */
+export interface SideLayout {
+  size: { w: number; h: number };
+  frame: string;
+  scene: { sx: number; sy: number; w: number; h: number; dx: number; dy: number };
+  panels: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
+  levers: { l: Placement; r: Placement };
+  leverTapZones: { l: Placement & { w: number; h: number }; r: Placement & { w: number; h: number } };
+  windowCornerCut: number;
+  hud: OperatorHud;
+  menu: Placement & { w: number; h: number };
+  recesses: Record<string, Placement & { w: number; h: number }>;
+}
+
 export interface OperatorRoom {
   background: string;
   landscape: OperatorLayout;
   portrait: OperatorLayout;
-  hud: {
-    scoreIcon: Placement;
-    digits: Placement & { pitch: number; count: number };
-    modeLabel: Placement;
-    lives: Placement & { pitch: number };
-    sound: Placement & { w: number; h: number };
-    lights: Placement;
-  };
+  side?: SideLayout;
+  hud: OperatorHud;
   /** The MENU button's rectangle; the renderer draws the button itself. */
   menu?: Placement & { w: number; h: number };
   /** The outer bezels the room plate draws around the readouts. */
@@ -108,6 +125,7 @@ export interface Atlas {
 export const REQUIRED_ANIMATIONS = [
   'frame.room.landscape',
   'frame.room.portrait',
+  'frame.room.side',
   'frame.lights',
   'ui.lever.l.idle',
   'ui.lever.l.pull',

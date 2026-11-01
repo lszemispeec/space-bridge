@@ -69,7 +69,7 @@ export const TAP_TARGETS = {
   titleMute: { x: 164, y: 190, w: 56, h: 16 },
 } as const satisfies Record<string, Rect>;
 
-/** `hudMute` is the sound readout on the console (`CONSOLE_HUD`); `hudMenu` is the MENU button (`CONSOLE_MENU_BUTTON`). */
+/** `hudMute` is the sound readout on the console (`RoomLayout.hud.sound`); `hudMenu` is the MENU button (`RoomLayout.menu`). */
 export type TapTargetId = keyof typeof TAP_TARGETS | 'hudMute' | 'hudMenu';
 
 /**
@@ -82,6 +82,7 @@ export type TapTargetId = keyof typeof TAP_TARGETS | 'hudMute' | 'hudMenu';
  * `cornerCut` is the size of the slanted upper mullions, which cover the
  * scene's top corners where x + y < cornerCut. The atlas carries the same
  * numbers in its `operatorRoom` table; the art test checks that the two agree.
+ * `SIDE_ROOM` is the third layout, with the console beside the window.
  */
 export const ROOM = {
   bezel: { side: 16, top: 12 },
@@ -93,31 +94,78 @@ export const ROOM = {
   leverTap: { w: 24, h: 48 },
 } as const;
 
+/**
+ * The side room, for short landscape screens such as a phone in Safari: the
+ * console is split into two panels left and right of the window, so the
+ * room is 448x256 instead of 352x320 and a short screen shows the scene
+ * larger. The panels hold the readouts at the top and the levers in the
+ * lower half, with tap zones twice the lever's width. The atlas's
+ * `operatorRoom.side` table carries the same numbers.
+ */
+export const SIDE_ROOM = {
+  panelW: 64,
+  top: 8,
+  h: 256,
+  levers: { left: { x: 14, y: 180 }, right: { x: 410, y: 180 } },
+  leverTap: { w: 40, h: 80, y: 160, inset: 6 },
+} as const;
+
 /** The name of the atlas plate drawn through the window: it fills the glass edge to edge. */
 export const ROOM_BACKGROUND = 'background.window';
 
 export type Orientation = 'landscape' | 'portrait';
 
+/**
+ * The shape of the room on the canvas: `landscape` and `portrait` put the
+ * console under the window; `side` puts it beside the window, for short
+ * landscape screens. `side` shows the whole scene, like `landscape`.
+ */
+export type LayoutId = Orientation | 'side';
+
+export const LAYOUTS: readonly LayoutId[] = ['landscape', 'portrait', 'side'];
+
 export type PlateSide = 'left' | 'right';
+
+/** The HUD readouts on the console, in room pixels. See `CONSOLE_HUD`. */
+export interface ConsoleHud {
+  scoreIcon: { x: number; y: number };
+  digits: { x: number; y: number; pitch: number; count: number };
+  modeLabel: { x: number; y: number };
+  lives: { x: number; y: number; pitch: number };
+  /** The sound readout, the `hudMute` tap target. */
+  sound: Rect;
+  /** The status lamp, a 6x6 loop. */
+  lights: { x: number; y: number };
+}
 
 /** Where the parts of the room sit on the visible canvas, in room pixels. */
 export interface RoomLayout {
+  id: LayoutId;
+  /** The screen orientation the layout is for; `side` is a landscape layout. */
   orientation: Orientation;
   w: number;
   h: number;
-  /** The part of the scene that shows through the window: the whole frame in landscape, the playfield in portrait. */
+  /** The part of the scene that shows through the window: the whole frame in landscape and side, the playfield in portrait. */
   window: Rect;
-  /** The console deck under the window, with the HUD readouts and the levers. */
-  console: Rect;
+  /** The console deck under the window, with the HUD readouts and the levers. Null in `side`, which has `panels`. */
+  console: Rect | null;
+  /** Side only: the two console panels beside the window. */
+  panels: Record<PlateSide, Rect> | null;
   /** Top-left corners of the two lever frames on the deck. Art only; the taps are `leverTaps`. */
   levers: Record<PlateSide, { x: number; y: number }>;
-  /** The lever tap zones: beside the window in landscape, in the strip in portrait. */
+  /** The lever tap zones: beside the window in landscape, in the strip in portrait, on the panels in side. */
   leverTaps: Record<PlateSide, Rect>;
   /** Portrait only: the strip at the bottom of the console that holds the lever taps. The room art draws it. */
   strip: Rect | null;
+  /** The HUD readouts, in room pixels. */
+  hud: ConsoleHud;
+  /** The MENU button, the `hudMenu` tap target. */
+  menu: Rect;
 }
 
-export function roomLayout(orientation: Orientation): RoomLayout {
+export function roomLayout(id: LayoutId): RoomLayout {
+  if (id === 'side') return sideLayout();
+  const orientation = id;
   const { side, top } = ROOM.bezel;
   const consoleH = ROOM.consoleH[orientation];
   const sceneW = orientation === 'landscape' ? SCREEN_W : PLAY_W;
@@ -129,11 +177,13 @@ export function roomLayout(orientation: Orientation): RoomLayout {
   const leverY = consoleY + ROOM.lever.drop;
   const tap = ROOM.leverTap;
   return {
+    id,
     orientation,
     w,
     h,
     window: { x: side, y: top, w: sceneW, h: SCREEN_H },
     console: { x: 0, y: consoleY, w, h: consoleH },
+    panels: null,
     levers: {
       left: { x: ROOM.lever.inset, y: leverY },
       right: { x: w - ROOM.lever.inset - ROOM.lever.w, y: leverY },
@@ -143,6 +193,34 @@ export function roomLayout(orientation: Orientation): RoomLayout {
       right: { x: side + sceneW - GUTTER_W + SIDE_BUTTONS.left.x, y: tapY, ...tap },
     },
     strip,
+    hud: CONSOLE_HUD,
+    menu: CONSOLE_MENU_BUTTON,
+  };
+}
+
+function sideLayout(): RoomLayout {
+  const { panelW, top, h } = SIDE_ROOM;
+  const w = SCREEN_W + 2 * panelW;
+  const tap = SIDE_ROOM.leverTap;
+  return {
+    id: 'side',
+    orientation: 'landscape',
+    w,
+    h,
+    window: { x: panelW, y: top, w: SCREEN_W, h: SCREEN_H },
+    console: null,
+    panels: {
+      left: { x: 0, y: 0, w: panelW, h },
+      right: { x: w - panelW, y: 0, w: panelW, h },
+    },
+    levers: SIDE_ROOM.levers,
+    leverTaps: {
+      left: { x: tap.inset, y: tap.y, w: tap.w, h: tap.h },
+      right: { x: w - tap.inset - tap.w, y: tap.y, w: tap.w, h: tap.h },
+    },
+    strip: null,
+    hud: SIDE_HUD,
+    menu: SIDE_MENU_BUTTON,
   };
 }
 
@@ -167,7 +245,23 @@ export const CONSOLE_HUD = {
   lives: { x: 52, y: 289, pitch: 20 },
   sound: { x: 166, y: 263, w: 36, h: 16 },
   lights: { x: 122, y: 288 },
-} as const;
+} as const satisfies ConsoleHud;
+
+/**
+ * The HUD readouts of the side room: the score, the mode and the lives on
+ * the left panel, the sound readout, the MENU button and the lamp on the
+ * right one. The lives sit closer together, at the life icon's own width,
+ * so three fit the 64 px panel. The atlas's `operatorRoom.side.hud` table
+ * carries the same numbers.
+ */
+export const SIDE_HUD = {
+  scoreIcon: { x: 7, y: 22 },
+  digits: { x: 10, y: 40, pitch: 8, count: 4 },
+  modeLabel: { x: 21, y: 26 },
+  lives: { x: 5, y: 61, pitch: 14 },
+  sound: { x: 404, y: 21, w: 36, h: 16 },
+  lights: { x: 419, y: 72 },
+} as const satisfies ConsoleHud;
 
 /**
  * The MENU button on the console, in room pixels, in its own recess right of
@@ -176,6 +270,9 @@ export const CONSOLE_HUD = {
  * It opens the pause menu, and closes it while the menu is open.
  */
 export const CONSOLE_MENU_BUTTON: Rect = { x: 210, y: 263, w: 36, h: 16 };
+
+/** The MENU button of the side room, under the sound readout on the right panel; `operatorRoom.side.menu` in the atlas. */
+export const SIDE_MENU_BUTTON: Rect = { x: 404, y: 47, w: 36, h: 16 };
 
 /**
  * The title's button row: both buttons and the gap between them. A tap in

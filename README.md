@@ -27,7 +27,7 @@ npm install
 npm run dev        # http://localhost:5173, also reachable on the LAN for phones
 npm run check      # typecheck, lint, test, build
 npm run measure    # how far bots of different skill get, for tuning unlock targets
-npm run shots      # 4x screenshots of every theme, title and play, portrait and landscape phone shots, every display preset and the pause menu, from a running preview (needs Chrome)
+npm run shots      # 4x screenshots of every theme, title and play, portrait and iPhone landscape shots, every display preset and the pause menu, from a running preview (needs Chrome)
 npm run record     # a 16-19.5 s Game A clip with sound from a running preview (needs Chrome; ffmpeg for the MP4)
 ```
 
@@ -36,7 +36,7 @@ For `npm run shots`, build and start the preview first: `npm run build && npm ru
 ## Stack
 
 - Vite, strict TypeScript, Canvas 2D. No game engine.
-- 320×240 internal scene, shown through the windshield of the operator room: a 352×320 canvas with the frame around the scene and the console deck with the HUD and the levers below it. The scene is drawn with the atlas's full-bleed `background.window` plate, so the sky and the terrain reach the glass. Integer scaling in device pixels, nearest-neighbour, letterboxed; a 1080p desktop shows the room at 3×. On a portrait screen the room is 288×344: the 256 px playfield is scaled to the width, and the lever taps move into a strip at the bottom of the console (`src/config/layout.ts`, `src/platform/viewport.ts`).
+- 320×240 internal scene, shown through the windshield of the operator room: a 352×320 canvas with the frame around the scene and the console deck with the HUD and the levers below it. The scene is drawn with the atlas's full-bleed `background.window` plate, so the sky and the terrain reach the glass. Nearest-neighbour, letterboxed inside the safe area; a dpr 1 screen scales by whole device pixels, a dense screen (dpr 2 and up) fills the viewport. On a short landscape screen, a phone in Safari or a 1080p desktop, the room is the 448×256 side room: the console splits into panels left and right of the window, so the scene comes out larger (a 1080p desktop shows it at 4×). On a portrait screen the room is 288×344: the 256 px playfield is scaled to the width, and the lever taps move into a strip at the bottom of the console (`src/config/layout.ts`, `src/platform/viewport.ts`).
 - Display presets are a WebGL2 post-process over the finished room canvas, drawn at device resolution on a second canvas (`src/platform/crt.ts`, presets in `src/config/display.ts`). The 2D path is untouched: Off shows the room canvas itself, and so does a lost context. The heavy bloom runs in a low-resolution pass; the device-resolution pass reads three texels per pixel.
 - The pause menu is a pure model (`src/game/menu.ts`): rows, cursor, and what a key or a tap does. The shell turns its results into commands for the rules, which freeze the round while `paused` is set; the renderer's scene clock stops with it, so the creatures, the hatches and the levers hold still. The music pauses in the engine and continues from the same step.
 - Fixed-timestep simulation at 60 Hz, rendering once per frame.

@@ -6,18 +6,29 @@ import { createCrtPass, webgl2Available } from './crt';
 import { menuTapAction, minHitSize, sideForPointer, tapAction, tapTarget, toRoomPoint } from './input';
 import { accumulateSteps, STEP_SECONDS } from './loop';
 import { loadSave, memoryStore, writeSave } from './storage';
-import { canvasToFrame, CANVAS_SIZE, chooseViewport, composition, fitScale } from './viewport';
+import { readInsets } from './canvas';
+import { canvasToFrame, CANVAS_SIZE, chooseLayout, chooseViewport, composition, fillScale, fitScale } from './viewport';
 
 const landscape = chooseViewport(1280, 960);
 const portrait = chooseViewport(390, 844, 3);
+/** The reporter's iPhone 16 Pro in Safari, landscape, with no safe-area insets. */
+const PHONE_SAFARI = [874, 300, 3] as const;
+/** The same phone as a home-screen app: no browser toolbar. */
+const PHONE_APP = [874, 402, 3] as const;
+/** Its notch at the sides and the home bar at the bottom. */
+const PHONE_INSETS = { top: 0, right: 59, bottom: 21, left: 59 };
+const side = chooseViewport(...PHONE_SAFARI);
 const ROOM_L = roomLayout('landscape');
 const ROOM_P = roomLayout('portrait');
+const ROOM_S = roomLayout('side');
 const WIN = ROOM_L.window;
+const consoleY = (room: { console: { y: number } | null }) => room.console?.y ?? -1;
 
 describe('CANVAS_SIZE', () => {
   it('is the operator room: the scene in the window and the console below, plus the lever strip in portrait', () => {
     expect(CANVAS_SIZE.landscape).toEqual({ w: 352, h: 320 });
     expect(CANVAS_SIZE.portrait).toEqual({ w: 288, h: 344 });
+    expect(CANVAS_SIZE.side).toEqual({ w: 448, h: 256 });
     expect(WIN).toEqual({ x: 16, y: 12, w: SCREEN_W, h: SCREEN_H });
     expect(ROOM_P.window).toEqual({ x: 16, y: 12, w: PLAY_W, h: SCREEN_H });
     expect(ROOM_P.strip).toEqual({ x: 16, y: 288, w: PLAY_W, h: PORTRAIT_STRIP.h });
@@ -45,22 +56,104 @@ describe('fitScale', () => {
   });
 });
 
+describe('fillScale', () => {
+  it('is the exact fit, never below 1, and never below the whole-number fit', () => {
+    const { w, h } = CANVAS_SIZE.side;
+    expect(fillScale(874, 300, 3, w, h)).toBeCloseTo(900 / 256);
+    expect(fillScale(1408, 1280, 1, CANVAS_SIZE.landscape.w, CANVAS_SIZE.landscape.h)).toBe(4);
+    expect(fillScale(200, 100, 1, w, h)).toBe(1);
+    for (const [vw, vh, dpr] of [[874, 300, 3], [390, 844, 3], [360, 640, 2], [1920, 1080, 1]] as const) {
+      expect(fillScale(vw, vh, dpr, w, h)).toBeGreaterThanOrEqual(fitScale(vw, vh, dpr, w, h));
+    }
+  });
+});
+
+describe('chooseLayout', () => {
+  it('keeps the console under the window on desktop, where it shows the scene as large or larger', () => {
+    expect(chooseLayout(1280, 960, 1)).toBe('landscape');
+    expect(chooseLayout(1408, 1280, 1)).toBe('landscape');
+    expect(chooseLayout(1000, 1000, 1)).toBe('landscape');
+    expect(chooseLayout(1280, 800, 1)).toBe('landscape');
+  });
+
+  it('puts the console beside the window on a short landscape screen', () => {
+    expect(chooseLayout(...PHONE_SAFARI)).toBe('side');
+    expect(chooseLayout(...PHONE_APP)).toBe('side');
+    expect(chooseLayout(844, 390, 3)).toBe('side');
+    // A wide dpr 1 screen too: 1080p shows the scene at 4x beside the panels, 3x above the console.
+    expect(chooseLayout(1920, 1080, 1)).toBe('side');
+    expect(chooseLayout(1366, 768, 1)).toBe('side');
+  });
+
+  it('always stacks the playfield on a tall screen', () => {
+    expect(chooseLayout(390, 844, 3)).toBe('portrait');
+    expect(chooseLayout(300, 310, 1)).toBe('portrait');
+  });
+});
+
 describe('chooseViewport', () => {
-  it('keeps the gutters at the sides on desktop and landscape phones', () => {
-    expect(landscape).toEqual({ orientation: 'landscape', scale: 3, width: 352, height: 320, cssW: 1056, cssH: 960 });
-    expect(chooseViewport(1408, 1280)).toMatchObject({ orientation: 'landscape', scale: 4, cssW: 1408, cssH: 1280 });
-    expect(chooseViewport(844, 390, 3)).toMatchObject({ orientation: 'landscape', scale: 3, cssW: 352, cssH: 320 });
-    expect(chooseViewport(1000, 1000)).toMatchObject({ orientation: 'landscape', scale: 2 });
+  it('keeps the console under the window at whole scales on desktop', () => {
+    expect(landscape).toEqual({ orientation: 'landscape', layout: 'landscape', scale: 3, width: 352, height: 320, cssW: 1056, cssH: 960 });
+    expect(chooseViewport(1408, 1280)).toMatchObject({ layout: 'landscape', scale: 4, cssW: 1408, cssH: 1280 });
+    expect(chooseViewport(1000, 1000)).toMatchObject({ layout: 'landscape', scale: 2 });
   });
 
-  it('stacks the playfield over the console and the levers on a portrait phone, scaled to the width', () => {
-    expect(portrait).toEqual({ orientation: 'portrait', scale: 4, width: 288, height: 344, cssW: 384, cssH: 1376 / 3 });
-    expect(chooseViewport(430, 932, 3)).toMatchObject({ orientation: 'portrait', scale: 4 });
-    expect(chooseViewport(360, 640, 2)).toMatchObject({ orientation: 'portrait', scale: 2 });
+  it('puts the console beside the window on a landscape phone and fills the screen', () => {
+    // Before: the 352x320 room at 2 device px per room px, 235x213 CSS px of a 874x300 screen.
+    expect(fitScale(...PHONE_SAFARI, CANVAS_SIZE.landscape.w, CANVAS_SIZE.landscape.h)).toBe(2);
+    expect(side).toMatchObject({ orientation: 'landscape', layout: 'side', width: 448, height: 256, cssH: 300 });
+    expect(side.scale).toBeCloseTo(3.515625);
+    expect(side.cssW).toBeCloseTo(525);
+    expect(side.cssW).toBeGreaterThanOrEqual(500);
+    const app = chooseViewport(...PHONE_APP);
+    expect(app).toMatchObject({ layout: 'side', cssH: 402 });
+    expect(app.cssW).toBeCloseTo(703.5);
+    expect(chooseViewport(844, 390, 3)).toMatchObject({ layout: 'side', cssH: 390 });
   });
 
-  it('never lets the portrait canvas outgrow a short viewport', () => {
-    expect(chooseViewport(300, 310, 1)).toMatchObject({ orientation: 'portrait', scale: 1 });
+  it('keeps the game inside the safe area, so the notch and the home bar cover nothing', () => {
+    const safe = chooseViewport(...PHONE_SAFARI, PHONE_INSETS);
+    expect(safe).toMatchObject({ layout: 'side', cssH: 300 - 21 });
+    expect(safe.cssW).toBeLessThanOrEqual(874 - 59 - 59);
+    expect(safe.cssW).toBeGreaterThan(480);
+    expect(chooseViewport(390, 844, 3, { top: 59, right: 0, bottom: 34, left: 0 })).toMatchObject({ layout: 'portrait', cssW: 390 });
+  });
+
+  it('stacks the playfield over the console and the levers on a portrait phone, filled to the width', () => {
+    // Before: 4 device px per room px, 384 CSS px wide. Fill: the whole 390 px.
+    expect(fitScale(390, 844, 3, CANVAS_SIZE.portrait.w, CANVAS_SIZE.portrait.h)).toBe(4);
+    expect(portrait).toMatchObject({ orientation: 'portrait', layout: 'portrait', scale: 4.0625, width: 288, height: 344, cssW: 390 });
+    expect(portrait.cssH).toBeCloseTo(465.83, 1);
+    expect(chooseViewport(430, 932, 3).scale).toBeGreaterThanOrEqual(4);
+    expect(chooseViewport(360, 640, 2)).toMatchObject({ layout: 'portrait', scale: 2.5 });
+  });
+
+  it('keeps whole scales on a dpr 1 screen and never lets the portrait canvas outgrow a short viewport', () => {
+    expect(chooseViewport(300, 310, 1)).toMatchObject({ layout: 'portrait', scale: 1 });
+    expect(chooseViewport(1920, 1080, 1)).toMatchObject({ layout: 'side', scale: 4, cssW: 1792, cssH: 1024 });
+    expect(chooseViewport(1366, 768, 1)).toMatchObject({ layout: 'side', scale: 3, cssW: 1344, cssH: 768 });
+    expect(chooseViewport(1280, 800, 1)).toMatchObject({ layout: 'landscape', scale: 2 });
+  });
+
+  it('shows the drawn lever tap zones at thumb size on the phone', () => {
+    for (const v of [side, chooseViewport(...PHONE_APP), chooseViewport(844, 390, 3)]) {
+      const cssPerPx = v.cssW / v.width;
+      for (const tap of Object.values(ROOM_S.leverTaps)) {
+        expect(tap.w * cssPerPx).toBeGreaterThanOrEqual(44);
+        expect(tap.h * cssPerPx).toBeGreaterThanOrEqual(44);
+      }
+    }
+    // Inside Safari's safe area the drawn zone is a hair under 44 px wide; the hit area is the whole half, see tapAction.
+    const safe = chooseViewport(...PHONE_SAFARI, PHONE_INSETS);
+    expect((ROOM_S.leverTaps.left.w * safe.cssW) / safe.width).toBeGreaterThan(43);
+    expect((ROOM_S.leverTaps.left.h * safe.cssW) / safe.width).toBeGreaterThan(80);
+  });
+});
+
+describe('readInsets', () => {
+  it('reads the safe-area custom properties and treats anything else as zero', () => {
+    const values: Record<string, string> = { '--safe-top': '0px', '--safe-left': '59px', '--safe-right': ' 59px', '--safe-bottom': '' };
+    expect(readInsets({ getPropertyValue: (name) => values[name] ?? '' })).toEqual({ top: 0, right: 59, bottom: 0, left: 59 });
   });
 });
 
@@ -72,6 +165,10 @@ describe('composition', () => {
   it('puts the playfield in the window in portrait; the room art draws the lever strip', () => {
     expect(composition('portrait')).toEqual({ sx: PLAY_X0, sy: 0, w: PLAY_W, h: SCREEN_H, dx: 16, dy: 12 });
   });
+
+  it('puts the whole scene between the panels in side', () => {
+    expect(composition('side')).toEqual({ sx: 0, sy: 0, w: SCREEN_W, h: SCREEN_H, dx: 64, dy: 8 });
+  });
 });
 
 describe('canvasToFrame', () => {
@@ -81,16 +178,28 @@ describe('canvasToFrame', () => {
     expect(canvasToFrame(WIN.x + SCREEN_W - 1, WIN.y + 100, landscape)).toEqual({ x: 319, y: 100 });
     expect(canvasToFrame(10, 20, landscape)).toBeNull();
     expect(canvasToFrame(WIN.x + SCREEN_W, WIN.y + 100, landscape)).toBeNull();
-    expect(canvasToFrame(100, ROOM_L.console.y, landscape)).toBeNull();
+    expect(canvasToFrame(100, consoleY(ROOM_L), landscape)).toBeNull();
     expect(canvasToFrame(352, 20, landscape)).toBeNull();
   });
 
   it('shifts the playfield back into the scene and drops the console and the strip in portrait', () => {
     expect(canvasToFrame(16, 12, portrait)).toEqual({ x: PLAY_X0, y: 0 });
     expect(canvasToFrame(126, 207, portrait)).toEqual({ x: 142, y: 195 });
-    expect(canvasToFrame(100, ROOM_P.console.y, portrait)).toBeNull();
+    expect(canvasToFrame(100, consoleY(ROOM_P), portrait)).toBeNull();
     expect(canvasToFrame(10, ROOM_P.strip?.y ?? 0, portrait)).toBeNull();
     expect(canvasToFrame(10, ROOM_P.h, portrait)).toBeNull();
+  });
+
+  it('shifts the window back to the scene in side and drops both panels', () => {
+    const win = ROOM_S.window;
+    expect(canvasToFrame(win.x, win.y, side)).toEqual({ x: 0, y: 0 });
+    expect(canvasToFrame(win.x + 10, win.y + 20, side)).toEqual({ x: 10, y: 20 });
+    expect(canvasToFrame(win.x + SCREEN_W - 1, win.y + SCREEN_H - 1, side)).toEqual({ x: 319, y: 239 });
+    expect(canvasToFrame(win.x - 1, 100, side)).toBeNull();
+    expect(canvasToFrame(win.x + SCREEN_W, 100, side)).toBeNull();
+    expect(canvasToFrame(100, win.y - 1, side)).toBeNull();
+    expect(canvasToFrame(100, win.y + SCREEN_H, side)).toBeNull();
+    expect(canvasToFrame(ROOM_S.leverTaps.left.x + 2, ROOM_S.leverTaps.left.y + 2, side)).toBeNull();
   });
 });
 
@@ -168,6 +277,30 @@ describe('tapAction', () => {
     expect(tapAction('playing', { x: 126, y: 207 }, 'portrait', 'left')).toBe('left');
   });
 
+  it('finds the sound readout and the MENU button on the side panels', () => {
+    const hud = ROOM_S.hud;
+    const menu = ROOM_S.menu;
+    const minHit = 44 / (side.cssW / side.width);
+    expect(tapAction('playing', { x: hud.sound.x + 18, y: hud.sound.y + 8 }, 'side', 'right')).toBe('mute');
+    expect(tapAction('title', { x: hud.sound.x + 18, y: hud.sound.y + 8 }, 'side', 'right', minHit)).toBe('mute');
+    expect(tapAction('playing', { x: menu.x + 18, y: menu.y + 8 }, 'side', 'right')).toBe('pause');
+    expect(tapAction('game_over', { x: menu.x + 18, y: menu.y + 8 }, 'side', 'right', minHit)).toBe('pause');
+    // Grown hit areas stay apart, and a tap on a lever zone or the window is a plate press.
+    expect(tapAction('playing', { x: menu.x + 18, y: menu.y + 1 }, 'side', 'right', minHit)).toBe('pause');
+    expect(tapAction('playing', { x: hud.sound.x + 18, y: hud.sound.y + hud.sound.h - 1 }, 'side', 'right', minHit)).toBe('mute');
+    expect(tapAction('playing', { x: ROOM_S.leverTaps.right.x + 20, y: ROOM_S.leverTaps.right.y + 40 }, 'side', 'right', minHit)).toBe('right');
+    expect(tapAction('playing', { x: ROOM_S.leverTaps.left.x + 20, y: ROOM_S.leverTaps.left.y + 40 }, 'side', 'left', minHit)).toBe('left');
+    expect(tapAction('playing', { x: 200, y: 120 }, 'side', 'left', minHit)).toBe('left');
+    expect(tapAction('playing', { x: 300, y: 120 }, 'side', 'right', minHit)).toBe('right');
+    // The title buttons follow the window.
+    expect(tapAction('title', { x: 100 + 64 + 28, y: 190 + 8 + 8 }, 'side', 'left')).toBe('theme');
+    expect(tapAction('title', { x: 164 + 64 + 28, y: 190 + 8 + 8 }, 'side', 'right')).toBe('mute');
+    expect(tapAction('title', { x: 160 + 64, y: 198 + 8 }, 'side', 'right')).toBe('none');
+    // The whole half is a plate press, panel edge to panel edge.
+    for (const x of [0, 30, 63, 64, 200]) expect(tapAction('playing', { x, y: 250 }, 'side', 'left', minHit)).toBe('left');
+    for (const x of [300, 384, 447]) expect(tapAction('playing', { x, y: 250 }, 'side', 'right', minHit)).toBe('right');
+  });
+
   it('treats everything else, including the frame and the letterbox, as a plate press', () => {
     expect(tapAction('title', { x: 8, y: 120 }, 'landscape', 'left')).toBe('left');
     expect(tapAction('title', { x: 100, y: 270 }, 'landscape', 'left')).toBe('left');
@@ -212,8 +345,18 @@ describe('menuTapAction', () => {
     expect(portraitTap).toEqual({ tap: { x: row.x + 3, y: row.y + 3 } });
   });
 
+  it('closes the menu from the side panel button and maps side window taps too', () => {
+    const menu = ROOM_S.menu;
+    expect(menuTapAction({ x: menu.x + 1, y: menu.y + 1 }, side)).toBe('back');
+    // The landscape MENU rectangle is in the window here, so a tap there is a menu tap, not a close.
+    expect(menuTapAction({ x: CONSOLE_MENU_BUTTON.x + 1, y: 200 }, side)).toEqual({ tap: { x: CONSOLE_MENU_BUTTON.x + 1 - 64, y: 192 } });
+    const row = menuRowRect(2);
+    expect(menuTapAction({ x: row.x + 64 + 3, y: row.y + 8 + 3 }, side)).toEqual({ tap: { x: row.x + 3, y: row.y + 3 } });
+    expect(menuTapAction({ x: 20, y: 200 }, side)).toBeNull();
+  });
+
   it('swallows taps on the console, the frame and off the canvas, so nothing moves the plate', () => {
-    expect(menuTapAction({ x: 100, y: ROOM_L.console.y + 10 }, landscape)).toBeNull();
+    expect(menuTapAction({ x: 100, y: consoleY(ROOM_L) + 10 }, landscape)).toBeNull();
     expect(menuTapAction({ x: 4, y: 100 }, landscape)).toBeNull();
     expect(menuTapAction(null, landscape)).toBeNull();
   });
@@ -246,7 +389,8 @@ describe('minHitSize', () => {
   it('shrinks in room pixels as the canvas grows on the screen', () => {
     expect(minHitSize(1408, 352)).toBe(11);
     expect(minHitSize(352 * (4 / 3), 352)).toBe(33);
-    expect(minHitSize(portrait.cssW, portrait.width)).toBe(33);
+    expect(minHitSize(portrait.cssW, portrait.width)).toBeCloseTo(32.49, 1);
+    expect(minHitSize(side.cssW, side.width)).toBeCloseTo(37.5, 1);
   });
 
   it('is zero without a canvas box', () => {

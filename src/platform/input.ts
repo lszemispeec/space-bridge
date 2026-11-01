@@ -18,8 +18,6 @@
  * reaches the plate.
  */
 import {
-  CONSOLE_HUD,
-  CONSOLE_MENU_BUTTON,
   frameToRoom,
   hitRect,
   inRect,
@@ -27,7 +25,7 @@ import {
   roomLayout,
   TAP_TARGETS,
   TITLE_BUTTON_ROW,
-  type Orientation,
+  type LayoutId,
   type Rect,
   type TapTargetId,
 } from '../config/layout';
@@ -128,11 +126,11 @@ const TARGET_ACTIONS: Record<TapTargetId, Action> = {
 };
 
 /** The buttons a tap can hit on a screen, with their rectangles in room pixels. */
-export function tapTargets(phase: Phase, orientation: Orientation): { id: TapTargetId; rect: Rect }[] {
-  const room = roomLayout(orientation);
+export function tapTargets(phase: Phase, layout: LayoutId): { id: TapTargetId; rect: Rect }[] {
+  const room = roomLayout(layout);
   const targets: { id: TapTargetId; rect: Rect }[] = [
-    { id: 'hudMute', rect: CONSOLE_HUD.sound },
-    { id: 'hudMenu', rect: CONSOLE_MENU_BUTTON },
+    { id: 'hudMute', rect: room.hud.sound },
+    { id: 'hudMenu', rect: room.menu },
   ];
   if (phase === 'title') {
     targets.push({ id: 'titleTheme', rect: frameToRoom(TAP_TARGETS.titleTheme, room) });
@@ -151,10 +149,10 @@ export function minHitSize(canvasCssWidth: number, canvasWidth: number): number 
  * The button a tap hits, or null. Hit areas are grown to `minHit` room
  * pixels; when grown areas overlap, the button whose centre is nearest wins.
  */
-export function tapTarget(phase: Phase, point: Point, orientation: Orientation, minHit = 0): TapTargetId | null {
+export function tapTarget(phase: Phase, point: Point, layout: LayoutId, minHit = 0): TapTargetId | null {
   let best: TapTargetId | null = null;
   let bestDistance = Infinity;
-  for (const { id, rect } of tapTargets(phase, orientation)) {
+  for (const { id, rect } of tapTargets(phase, layout)) {
     if (!inRect(hitRect(rect, minHit), point.x, point.y)) continue;
     const distance = Math.hypot(point.x - (rect.x + rect.w / 2), point.y - (rect.y + rect.h / 2));
     if (distance < bestDistance) {
@@ -166,11 +164,11 @@ export function tapTarget(phase: Phase, point: Point, orientation: Orientation, 
 }
 
 /** What a tap at a room point means on the current screen. */
-export function tapAction(phase: Phase, point: Point | null, orientation: Orientation, side: PlateMove, minHit = 0): Action {
+export function tapAction(phase: Phase, point: Point | null, layout: LayoutId, side: PlateMove, minHit = 0): Action {
   if (!point) return side;
-  const target = tapTarget(phase, point, orientation, minHit);
+  const target = tapTarget(phase, point, layout, minHit);
   if (target) return TARGET_ACTIONS[target];
-  const row = frameToRoom(TITLE_BUTTON_ROW, roomLayout(orientation));
+  const row = frameToRoom(TITLE_BUTTON_ROW, roomLayout(layout));
   if (phase === 'title' && inRect(hitRect(row, minHit), point.x, point.y)) return 'none';
   return side;
 }
@@ -182,7 +180,7 @@ export function tapAction(phase: Phase, point: Point | null, orientation: Orient
  */
 export function menuTapAction(point: Point | null, viewport: Viewport, minHit = 0): MenuInput | null {
   if (!point) return null;
-  if (inRect(hitRect(CONSOLE_MENU_BUTTON, minHit), point.x, point.y)) return 'back';
+  if (inRect(hitRect(roomLayout(viewport.layout).menu, minHit), point.x, point.y)) return 'back';
   const scene = canvasToFrame(point.x, point.y, viewport);
   return scene ? { tap: scene } : null;
 }
@@ -246,7 +244,7 @@ export function createInput(options: InputOptions): InputSource {
       return;
     }
     const side = sideForPointer(e.clientX, window.innerWidth);
-    const action = tapAction(options.getPhase(), point, viewport.orientation, side, minHit);
+    const action = tapAction(options.getPhase(), point, viewport.layout, side, minHit);
     pointers.set(e.pointerId, action);
     queue(action);
   };

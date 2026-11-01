@@ -9,7 +9,7 @@
  * edge; the old `background` plate would show its HUD band and gutters.
  */
 import { DIFFICULTY } from '../config/difficulty';
-import { CONSOLE_HUD, CONSOLE_MENU_BUTTON, type PlateSide, type Rect, type RoomLayout } from '../config/layout';
+import type { PlateSide, Rect, RoomLayout } from '../config/layout';
 import { getTheme, type ThemePalette } from '../config/themes';
 import type { GameState } from '../game/types';
 import type { HeldButtons } from '../platform/input';
@@ -18,8 +18,8 @@ import { drawText } from './font';
 import { drawConsoleButton } from './menu';
 import { animationFrames, animationMs, drawFrame, frameAt, frameOf, hasAnimation, type Art } from './sprites';
 
-/** The full-room plate per orientation, with the window left transparent. */
-const ROOM_PLATE = { landscape: 'frame.room.landscape', portrait: 'frame.room.portrait' } as const;
+/** The full-room plate per layout, with the window left transparent. */
+const ROOM_PLATE = { landscape: 'frame.room.landscape', portrait: 'frame.room.portrait', side: 'frame.room.side' } as const;
 const LIGHTS = 'frame.lights';
 const LEVER = { left: 'ui.lever.l', right: 'ui.lever.r' } as const;
 /**
@@ -74,9 +74,9 @@ function fill(ctx: CanvasRenderingContext2D, r: Rect, color: string): void {
   ctx.fillRect(r.x, r.y, r.w, r.h);
 }
 
-function drawReadouts(ctx: CanvasRenderingContext2D, s: GameState, held: HeldButtons, art: Art, nowMs: number): void {
+function drawReadouts(ctx: CanvasRenderingContext2D, room: RoomLayout, s: GameState, held: HeldButtons, art: Art, nowMs: number): void {
   const { atlas } = art;
-  const hud = CONSOLE_HUD;
+  const { hud } = room;
   const p = getTheme(s.save.settings.theme).palette;
   drawFrame(ctx, art, frameAt(atlas, 'hud.icon.score', nowMs), hud.scoreIcon.x, hud.scoreIcon.y);
   const digits = pad(s.score, hud.digits.count);
@@ -91,19 +91,19 @@ function drawReadouts(ctx: CanvasRenderingContext2D, s: GameState, held: HeldBut
   }
   const sound = frameAt(atlas, `ui.hud_sound.${soundState(s.save.settings.muted, held.mute)}`, nowMs);
   drawFrame(ctx, art, sound, hud.sound.x, hud.sound.y);
-  drawConsoleButton(ctx, CONSOLE_MENU_BUTTON, 'MENU', p, held.menu || s.paused);
+  drawConsoleButton(ctx, room.menu, 'MENU', p, held.menu || s.paused);
 }
 
 /** Draws the room over the page canvas, after the scene is in the window. */
 export function drawRoom(ctx: CanvasRenderingContext2D, room: RoomLayout, s: GameState, held: HeldButtons, levers: LeverPulls, art: Art, nowMs: number): void {
   const { atlas } = art;
-  drawFrame(ctx, art, frameAt(atlas, ROOM_PLATE[room.orientation], nowMs), 0, 0);
+  drawFrame(ctx, art, frameAt(atlas, ROOM_PLATE[room.id], nowMs), 0, 0);
   for (const side of ['left', 'right'] as const) {
     const at = room.levers[side];
     drawFrame(ctx, art, leverFrame(atlas, side, levers[side].pull, levers[side].releasing, nowMs), at.x, at.y);
   }
-  drawReadouts(ctx, s, held, art, nowMs);
-  drawFrame(ctx, art, frameAt(atlas, LIGHTS, nowMs), CONSOLE_HUD.lights.x, CONSOLE_HUD.lights.y);
+  drawReadouts(ctx, room, s, held, art, nowMs);
+  drawFrame(ctx, art, frameAt(atlas, LIGHTS, nowMs), room.hud.lights.x, room.hud.lights.y);
 }
 
 /** The room while the art loads: a flat fill, so the page never shows a blank canvas. */
