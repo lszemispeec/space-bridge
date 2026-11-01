@@ -2,6 +2,57 @@
 
 This document is the contract between the game code and the pixel art. The TypeScript type lives in `src/render/atlas.ts` (`Atlas`), together with `validateAtlas()`, which checks a JSON file against this contract. Run it on every atlas before you hand it over.
 
+## Side-console layout (art handoff)
+
+The optional **`operatorRoom.side`** entry adds a 448×256 layout for short
+landscape screens. `operatorRoom.revision` remains 9 for the unchanged common
+contract; `assets/<theme>/revision-10.json` records this additive handoff.
+No existing frame or animation changes. The new `frame.room.side` animation
+is one 1000ms looping hold, `frame.room.side.0`, with anchor (0,0).
+All themes share its atlas rectangle and every layout coordinate.
+
+The final rectangle table below uses **absolute room pixels**. Side-specific
+`hud`, `menu` and `recesses` live inside `operatorRoom.side`; do not use the
+shared console-under-window HUD for this layout. `panels.l/r` replaces the
+single `console` rectangle for side only. The engineer should extend the
+TypeScript layout contract and compare this atlas entry in the integration
+art tests when wiring up selection, rendering and input.
+
+| Entry | x | y | w | h | Notes |
+|---|---:|---:|---:|---:|---|
+| Room | 0 | 0 | 448 | 256 | Allowed maximum; 64px side panels |
+| Scene | 64 | 8 | 320 | 240 | Source (0,0); no crop or resampling |
+| Left panel | 0 | 0 | 64 | 256 | Includes unchanged inner 16px rail |
+| Right panel | 384 | 0 | 64 | 256 | Includes unchanged inner 16px rail |
+| Score/mode recess | 4 | 18 | 44 | 36 | Shared recess; label above digits |
+| Score icon | 7 | 22 | 12 | 12 | Existing sprite |
+| Mode label | 21 | 26 | 23 | 5 | Existing 3×5 bitmap font, GAME A/B |
+| Digits | 10 | 40 | 32 | 10 | Four 8×10 cells, pitch 8 |
+| Lives recess | 4 | 58 | 44 | 22 | 4px below score recess |
+| Lives | 5 | 61 | 42 | 16 | Three 14×16 cells, pitch 14 |
+| Sound recess | 402 | 18 | 40 | 22 | Same geometry as MENU |
+| SND/MUTE | 404 | 21 | 36 | 16 | Existing state sprites |
+| Menu recess | 402 | 44 | 40 | 22 | 4px below SND recess |
+| MENU | 404 | 47 | 36 | 16 | Engine bitmap label and border |
+| Status recess | 417 | 70 | 10 | 10 | 4px below MENU recess |
+| Status lamp | 419 | 72 | 6 | 6 | Existing four-frame animation |
+| Left lever | 14 | 180 | 24 | 40 | Existing idle/pull/release |
+| Right lever | 410 | 180 | 24 | 40 | Existing idle/pull/release |
+| Left lever tap zone | 6 | 160 | 40 | 80 | Lower half, contains every lever pose |
+| Right lever tap zone | 402 | 160 | 40 | 80 | Lower half, contains every lever pose |
+
+WindowCornerCut stays 20. The full glass and slanted mullions, and the 16px
+vertical rails, match the existing landscape frame exactly after translation
+(+48,-4). Four outer top rows are cropped to fit the 8px top; the bottom has
+8px trim. No panel, tap zone or readout crosses into the scene.
+
+At the reported 874×300 CSS px and DPR 3, integer device scale 3 gives a
+448×256 CSS room and a 320×240 CSS scene. Phone mocks are offline compositions
+at CSS and physical resolution. Layout selection should compare picture size
+against the existing landscape room, preserving desktop's larger option.
+This PR delivers art and metadata only; selection, hit testing and runtime
+font placement belong to the follow-up engineer integration.
+
 ## Files
 
 Each theme ships two files in `public/atlas/`:
