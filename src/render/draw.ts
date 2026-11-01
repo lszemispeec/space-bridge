@@ -403,7 +403,7 @@ export function createRenderer(): Renderer {
     },
     render(target, s, held, art, nowMs, overlay) {
       const ctx = target.scene;
-      const room = roomLayout(target.viewport.orientation);
+      const room = roomLayout(target.viewport.layout);
       if (!art) {
         drawLoading(ctx, getTheme(s.save.settings.theme));
         drawRoomLoading(target.room, room, getTheme(s.save.settings.theme).palette);

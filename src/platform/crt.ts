@@ -374,6 +374,7 @@ export function createCrtPass(canvas: HTMLCanvasElement, hooks: CrtHooks): CrtPa
       return lost;
     },
     resize(width, height) {
+      if (canvas.width === width && canvas.height === height) return;
       canvas.width = width;
       canvas.height = height;
     },
